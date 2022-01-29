@@ -1,10 +1,10 @@
 { lib, llvmPackages_11 , cmake, gtest
-, enableTests ? false
+, enableTests ? true
 , nlohmann_json
 }:
 
 llvmPackages_11.stdenv.mkDerivation rec {
-  pname = "ereolenwrapper";
+  pname = "ereolenwrappertests";
   version = "0.1.0";
   
   src = ./.;
@@ -20,7 +20,7 @@ llvmPackages_11.stdenv.mkDerivation rec {
   meta = with lib; {
     homepage = "https://github.com/xdHampus/ereolenWrapper";
     description = ''
-       C++ Wrapper for eReolen.dk RPC API
+       Tests for the ereolenwrapper
     '';
     licencse = licenses.agpl3Only;
     platforms = with platforms; linux ++ darwin;

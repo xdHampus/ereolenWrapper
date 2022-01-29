@@ -34,6 +34,18 @@
                  ];
                };
 
-               defaultPackage = pkgs.callPackage ./default.nix {};
+			   
+			   
+              defaultPackage = pkgs.callPackage ./default.nix {};
+
+			  packages = {
+			  	library 	= pkgs.callPackage ./default.nix {};
+				tests	 	= pkgs.callPackage ./tests.nix {};
+			  };
+
+		      checks = {
+		        tests = pkgs.callPackage ./tests.nix {};
+		      };
+
              });
 }

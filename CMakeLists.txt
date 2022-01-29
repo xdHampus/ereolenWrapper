@@ -6,7 +6,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "Do not build in-source. Please remove CMakeCache.txt and the CMakeFiles/ directory. Then build out-of-source.")
 endif()
 
-project(cpp-example
+project(ereolenwrapper
     VERSION 0.1.0
     LANGUAGES C CXX)
 
@@ -37,7 +37,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # Make our cmak
 
 option(ENABLE_INSTALL
     "Should ${PROJECT_NAME} be added to the install list? Useful if included using add_subdirectory." ON)
-option(ENABLE_TESTING "Should unit tests be compiled." ON)
+option(ENABLE_TESTING "Should unit tests be compiled." OFF)
 
 set(${PROJECT_NAME}_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
     CACHE STRING "Path to install ${PROJECT_NAME} Config*.cmake files to.")
@@ -66,6 +66,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_subdirectory(src)
 
+
 ###############
 ## Packaging ##
 ###############
@@ -85,10 +86,18 @@ if(ENABLE_INSTALL)
         NO_SET_AND_CHECK_MACRO
         NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-    install(
-        TARGETS ereolenwrapper
+   	if(ENABLE_TESTING)
+   	    install(
+        TARGETS ereolenwrapper ereolenwrappertests
         EXPORT ${PROJECT_NAME}_Targets
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    else()
+       	install(
+	        TARGETS ereolenwrapper
+	        EXPORT ${PROJECT_NAME}_Targets
+	        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+   	endif()
+
 
     install(DIRECTORY src
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
