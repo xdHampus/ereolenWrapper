@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-
+#include <math.h> 
 
 double sqrtP (const double) {
-	return 444.0;
+	return sqrt(double);
 }
 
 // Demonstrate some basic assertions.
