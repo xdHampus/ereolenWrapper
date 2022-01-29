@@ -5,6 +5,11 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env:
+      TEST_API_KEY : ${{ secrets.TEST_API_KEY }}
+      TEST_LIBRARY : ${{ secrets.TEST_LIBRARY }}
+      TEST_PASSWORD : ${{ secrets.TEST_PASSWORD }}
+      TEST_USERNAME : ${{ secrets.TEST_USERNAME }}    
     steps:
     - uses: actions/checkout@v2.4.0
     - uses: cachix/install-nix-action@v15
@@ -14,3 +19,4 @@ jobs:
     - run: nix build
     - run: nix run .#tests -L
     #- run: nix flake check
+    
