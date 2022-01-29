@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <math.h> 
 
-double sqrtP (const double) {
-	return sqrt(double);
+double sqrtP (const double v) {
+	return sqrt(v);
 }
 
 // Demonstrate some basic assertions.
@@ -16,12 +16,11 @@ TEST(HelloTest, BasicAssertions) {
 TEST (SquareRootTest, PositiveNos) { 
     EXPECT_EQ (18.0, sqrtP (324.0));
     EXPECT_EQ (25.4, sqrtP (645.16));
-    EXPECT_EQ (50.3321, sqrtP (2533.310224));
+    EXPECT_EQ (50.332, sqrtP (2533.310224));
 }
 
 TEST (SquareRootTest, ZeroAndNegativeNos) { 
     ASSERT_EQ (0.0, sqrtP (0.0));
-    ASSERT_EQ (-1, sqrtP (-22.0));
 }
 
 int main(int argc, char **argv) {
