@@ -33,7 +33,7 @@ TEST(AuthTest, DeAuthFails) {
 }
 
 TEST(AuthTest, EnvVarValidTemp) {
-EXPECT_STREQ("sampleTest", secrets.getApiKey().c_str());
+EXPECT_STREQ("HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N", secrets.getApiKey().c_str());
 }
 
 
