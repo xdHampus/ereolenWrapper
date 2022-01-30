@@ -9,14 +9,14 @@
 #include <nlohmann/json.hpp>
 
 
-std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std::string password, std::string library) {
+std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std::string password, ereol::Library library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
             ereol::Auth::authMethod,
             {
               ereol::ApiEnv::getApiKey(),
               ereol::ApiEnv::getAppVersion(),
               ereol::ApiEnv::getLanguage(),
-              library,
+              ereol::ApiEnv::getLibraryCode(library),
               username,
               password
             }
@@ -53,7 +53,7 @@ bool ereol::Auth::deauthenticate(ereol::Token token) {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
                     ereol::ApiEnv::getLanguage(),
-                    token.library
+                    ereol::ApiEnv::getLibraryCode(token.library)
             }
     );
 
@@ -86,7 +86,7 @@ bool ereol::Auth::isAuthenticated(ereol::Token token) {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
                     ereol::ApiEnv::getLanguage(),
-                    token.library
+                    ereol::ApiEnv::getLibraryCode(token.library)
             }
     );
 

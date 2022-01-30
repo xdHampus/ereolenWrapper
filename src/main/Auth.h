@@ -8,21 +8,22 @@
 
 #include <string>
 #include <optional>
+#include "ApiEnv.h"
 
 namespace ereol {
     struct Token {
         int timeFetched;
         std::string sessid;
-        std::string library;
+        std::string expirationDate;
+        ereol::Library library;
     };
     class Auth {
     private:
         inline static const std::string authMethod = "authenticate";
         inline static const std::string isAuthMethod = "isAuthenticated";
         inline static const std::string deAuthMethod = "deauthenticate";
-
     public:
-        static std::optional<Token> authenticate(std::string username, std::string password, std::string library);
+        static std::optional<Token> authenticate(std::string username, std::string password, ereol::Library library);
         static bool deauthenticate(Token token);
         static bool isAuthenticated(Token token);
     };
