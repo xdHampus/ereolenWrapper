@@ -11,6 +11,7 @@ TEST(HelloTest, BasicAssertions) {
   EXPECT_STRNE("hello", "world");
   // Expect equality.
   EXPECT_EQ(7 * 6, 42);
+
 }
 
 TEST (SquareRootTest, PositiveNos) { 

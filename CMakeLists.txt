@@ -15,12 +15,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(APPLE)
 add_compile_options(-mmacosx-version-min=10.15)
 endif()
+
 ############################
 ##  Modules and scripts   ##
 ############################
 
 # Standard CMake modules
-
 include(CTest)                          # Must be called before adding tests but after calling project(). This automatically calls enable_testing() and configures ctest targets when using Make/Ninja
 include(CMakeDependentOption)           # This is a really useful scripts that creates options that depends on other options. It can even be used with generator expressions !
 include(GNUInstallDirs)                 # This will define the default values for installation directories (all platforms even if named GNU)
@@ -28,7 +28,6 @@ include(InstallRequiredSystemLibraries) # Tell CMake that the `install` target n
 include(CMakePackageConfigHelpers)      # Helper to create relocatable packages
 
 # Custom modules and scripts
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # Make our cmake scripts available
 
 ###############
@@ -46,11 +45,11 @@ set(${PROJECT_NAME}_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NA
 ##  Dependencies  ##
 ####################
 
-#find_package(spdlog REQUIRED)
+#nlohmann json
 find_package(nlohmann_json 3.2.0 REQUIRED)
-
-
-
+#CPR
+find_package(cpr REQUIRED)
+#GTests
 if(ENABLE_TESTING)
     find_package(GTest REQUIRED)
     include(GoogleTest)
@@ -63,9 +62,7 @@ endif()
 
 # Use the project root to find includes
 include_directories(${PROJECT_SOURCE_DIR})
-
 add_subdirectory(src)
-
 
 ###############
 ## Packaging ##

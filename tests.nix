@@ -1,6 +1,6 @@
 { lib, llvmPackages_11 , cmake, gtest
-, enableTests ? true
-, nlohmann_json
+, enableTests ? true, customLibs ? []
+, nlohmann_json, openssl, curl, zlib
 }:
 
 llvmPackages_11.stdenv.mkDerivation rec {
@@ -9,9 +9,12 @@ llvmPackages_11.stdenv.mkDerivation rec {
   
   src = ./.;
 
-  nativeBuildInputs = [ cmake gtest ];
-  buildInputs = [ nlohmann_json ];
-  
+  nativeBuildInputs = [ cmake gtest openssl ];
+  buildInputs = [
+  		nlohmann_json
+  		curl zlib
+  ] ++ customLibs;
+
   cmakeFlags = [
       "-DENABLE_INSTALL=ON"
       "-DENABLE_TESTING=${if enableTests then "ON" else "OFF"}"
