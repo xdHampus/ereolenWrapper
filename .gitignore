@@ -2,3 +2,4 @@ result/
 result
 .idea
 cmake-build-*
+secrets

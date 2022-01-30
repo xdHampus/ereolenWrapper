@@ -40,7 +40,8 @@
                    openssl
 				   curl
 				   zlib
-                 ] ++ clibs;
+               ] ++ clibs;
+                 
                };
 
 			  packages = {
@@ -51,11 +52,12 @@
 
               defaultPackage = pkgs.callPackage ./default.nix {customLibs=clibs;};
 
-
-
 		      checks = {
 		        tests = pkgs.callPackage ./tests.nix {customLibs=clibs;};
 		      };
+
+
+
 
              });
 }
