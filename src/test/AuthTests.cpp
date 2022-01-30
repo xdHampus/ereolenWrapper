@@ -9,9 +9,12 @@
 Secrets secrets = Secrets();
 
 TEST(AuthTest, AuthSucceeds) {
-    std::optional<ereol::Token> optToken = ereol::Auth::authenticate(secrets.getApiKey(), secrets.getPassword(), secrets.getPassword());
+    std::optional<ereol::Token> optToken = ereol::Auth::authenticate(secrets.getUsername(), secrets.getPassword(), secrets.getLibrary());
     EXPECT_TRUE(optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(optToken.value()));
+    if(optToken.has_value()){
+        EXPECT_TRUE(ereol::Auth::isAuthenticated(optToken.value()));
+        EXPECT_EQ(secrets.getLibrary(), optToken.value().library);
+    }
 }
 
 TEST(AuthTest, AuthFails) {
@@ -20,22 +23,20 @@ TEST(AuthTest, AuthFails) {
 }
 
 TEST(AuthTest, DeAuthSucceeds) {
-    std::optional<ereol::Token> optToken = ereol::Auth::authenticate(secrets.getApiKey(), secrets.getPassword(), secrets.getPassword());
+    std::optional<ereol::Token> optToken = ereol::Auth::authenticate(secrets.getUsername(), secrets.getPassword(), secrets.getLibrary());
     EXPECT_TRUE(optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(optToken.value()));
-    EXPECT_TRUE(ereol::Auth::deauthenticate(optToken.value()));
-    EXPECT_FALSE(ereol::Auth::isAuthenticated(optToken.value()));
+    if(optToken.has_value()){
+        EXPECT_TRUE(ereol::Auth::isAuthenticated(optToken.value()));
+        EXPECT_TRUE(ereol::Auth::deauthenticate(optToken.value()));
+        EXPECT_FALSE(ereol::Auth::isAuthenticated(optToken.value()));
+    }
 }
 TEST(AuthTest, DeAuthFails) {
     ereol::Token token;
-    token.token = "abcjasha22hahdja2";
+    token.sessid = "abcjasha22hahdja2";
+    token.library = "nowhere";
     EXPECT_FALSE(ereol::Auth::deauthenticate(token));
 }
-
-TEST(AuthTest, EnvVarValidTemp) {
-EXPECT_STREQ("HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N", secrets.getApiKey().c_str());
-}
-
 
 
 
