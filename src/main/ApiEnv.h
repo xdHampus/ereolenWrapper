@@ -127,7 +127,8 @@ namespace ereol {
         inline static const std::string rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
         inline static const std::string appVersion = "android_3.5.3";
         inline static const std::string language = "da";
-        inline static const std::string libNames[100] = {
+        inline static const int libCount = 100;
+        inline static const std::string libNames[libCount] = {
                 "Albertslund",
                 "Allerød",
                 "Assens",
@@ -229,7 +230,7 @@ namespace ereol {
                 "Aalborg",
                 "Aarhus"
         };
-        inline static const std::string libCodes[100] = {
+        inline static const std::string libCodes[libCount] = {
                 "albertslundbib",
                 "alleroedbib",
                 "assensbib",
@@ -340,6 +341,7 @@ namespace ereol {
         static std::string getRPC() { return rpcEndpoint; }
         static std::string getAppVersion() { return appVersion; }
         static std::string getLanguage() { return language; }
+        static int getLibraryCount() { return libCount; }
 
         static std::string getLibraryName(ereol::Library library) {
             return libNames[library];
@@ -347,6 +349,20 @@ namespace ereol {
         static std::string getLibraryCode(ereol::Library library) {
             return libCodes[library];
         }
+        static std::optional<ereol::Library> getLibraryFromCode(std::string libraryCode){
+            long libIndex = std::distance(libCodes,
+                          std::find(
+                                  libCodes,
+                                  libCodes + libCount,
+                                  libraryCode));
+            
+            if(libIndex > 0 && libIndex < libCount){
+                return {static_cast<ereol::Library>(libIndex)};
+            }
+            return {};
+        }
+
+
 
         static nlohmann::json convertRpcPayloadToJSON(RpcPayload rpcPayload){
             nlohmann::json j;
