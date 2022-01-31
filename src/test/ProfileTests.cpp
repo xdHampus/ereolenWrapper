@@ -25,7 +25,7 @@ public:
                     "3002cc7e-90d4-4f67-bc76-de62590423db",
                     "7ab14d7f-4b75-4f9b-b3d5-ffffb7422cd8",
                     1643587442,
-                    646179441,
+                    1646179441,
                     "http://acs.pubhub.dk:8080/fulfillment/URLLink.acsm?action=enterloan&ordersource=Pubhub&orderid=7ab14d7f-4b75-4f9b-b3d5-ffffb7422cd8&resid=urn%3Auuid%3A8fcc0bc8-e75e-450a-a969-c292a0b478f0&rights=%24lat%231646175841%24&gbauthdate=01%2f30%2f2022+23%3a04+UTC&dateval=1643587441&gblver=4&auth=6ba3d8b243bef18e4c5c4a6575ffc83aeb6b7482",
                     true
             },
@@ -128,7 +128,7 @@ public:
     std::vector<ereol::LoanHistorical> loanHistoryMockData = {
             {
                     ereol::LoanIdentifier{
-                            "eyJpIjoiOTc4ODcwMjMxMjYyMSIsImMiOiJlcmVvbGVuIn0=",
+                            "eyJpIjoiOTc4ODcwMjMxMjYyMSIsInMiOiI4NzA5NzAtYmFzaXM6NjE2ODQ4OTEifQ==",
                             "9788702312621"
                     },
                     "023a64382e6d8611b31506bb810d997abcca8f1aefd35bfe9a77c2ab4eda16f2",
@@ -141,7 +141,7 @@ public:
             },
             {
                     ereol::LoanIdentifier{
-                            "eyJpIjoiOTc4ODcyODExNzg1OSIsImMiOiJuZXRseWRib2cifQ==",
+                            "eyJpIjoiOTc4ODcyODExNzg1OSIsInMiOiI4NzA5NzAtYmFzaXM6NjE2OTk5NTMifQ==",
                             "9788728117859"
                     },
                     "b963fffcdec03276228276ba7a5cc938d85cf16a7382accc36c54def37a208b8",
@@ -154,7 +154,7 @@ public:
             },
             {
                     ereol::LoanIdentifier{
-                            "eyJpIjoiOTc4ODc2NDQ4MDkyNCIsImMiOiJuZXRseWRib2cifQ==",
+                            "eyJpIjoiOTc4ODc2NDQ4MDkyNCIsInMiOiI4NzA5NzAtYmFzaXM6NjE3NDYwMDUifQ==",
                             "9788764480924"
                     },
                     "ea45589fbaf653a0dd990ed70c57afe282a9aff2511609c0689c55e992c6ccab",
@@ -167,7 +167,7 @@ public:
             },
             {
                     ereol::LoanIdentifier{
-                            "eyJpIjoiOTc4ODcyNjE1MzY2OCIsImMiOiJlcmVvbGVuIn0=",
+                            "eyJpIjoiOTc4ODcyNjE1MzY2OCIsInMiOiI4NzA5NzAtYmFzaXM6NDg5MDA3NDcifQ==",
                             "9788726153668"
                     },
                     "bf27a2896c2530f5199df78b110a1ce698d67ff99229c6653affd3634586798c",
@@ -219,7 +219,7 @@ TEST(ProfileTest, TestLibProfile){
 }
 
 //TODO: Add DISABLED_ prefix to disable tests when eReolen state inevitably changes
-TEST(ProfileTest, DISABLED_GetLoansTest) {
+TEST(ProfileTest, GetLoansTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -246,7 +246,7 @@ TEST(ProfileTest, DISABLED_GetLoansTest) {
     }
 
 }
-TEST(ProfileTest, DISABLED_GetChecklistTest) {
+TEST(ProfileTest, GetChecklistTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -269,7 +269,7 @@ TEST(ProfileTest, DISABLED_GetChecklistTest) {
 
 }
 
-TEST(ProfileTest, DISABLED_GetReservationsTest) {
+TEST(ProfileTest, GetReservationsTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -294,7 +294,7 @@ TEST(ProfileTest, DISABLED_GetReservationsTest) {
         }
     }
 }
-TEST(ProfileTest, DISABLED_GetLoanHistoryTest) {
+TEST(ProfileTest, GetLoanHistoryTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
