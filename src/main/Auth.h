@@ -9,23 +9,18 @@
 #include <string>
 #include <optional>
 #include "ApiEnv.h"
+#include "src/main/structs/Token.h"
 
 namespace ereol {
-    struct Token {
-        int timeFetched;
-        std::string sessid;
-        std::string expirationDate;
-        ereol::Library library;
-    };
     class Auth {
     private:
         inline static const std::string authMethod = "authenticate";
         inline static const std::string isAuthMethod = "isAuthenticated";
         inline static const std::string deAuthMethod = "deauthenticate";
     public:
-        static std::optional<Token> authenticate(std::string username, std::string password, ereol::Library library);
-        static bool deauthenticate(Token token);
-        static bool isAuthenticated(Token token);
+        static std::optional<ereol::Token> authenticate(std::string username, std::string password, ereol::Library library);
+        static bool deauthenticate(ereol::Token token);
+        static bool isAuthenticated(ereol::Token token);
     };
 }
 

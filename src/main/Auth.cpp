@@ -4,6 +4,9 @@
 
 #include "Auth.h"
 #include "ApiEnv.h"
+#include "src/main/structs/Library.h"
+#include "src/main/structs/RpcPayload.h"
+#include "src/main/structs/Token.h"
 #include <cpr/cpr.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
