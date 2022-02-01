@@ -4,8 +4,7 @@ on:
   push:
 jobs:
   tests:
-    runs-on: self-hosted
-    #runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     env:
       TEST_API_KEY : ${{ secrets.TEST_API_KEY }}
       TEST_LIBRARY : ${{ secrets.TEST_LIBRARY }}
