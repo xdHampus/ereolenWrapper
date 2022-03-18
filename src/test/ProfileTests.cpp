@@ -12,7 +12,7 @@
 #include <optional>
 #include <vector>
 
-//TODO: Change integrations test to avoid state from eReolen.dk
+//TODO: Change integrations test to rely on mock server such that state from eReolen.dk is avoided
 class ProfileTestHelper {
 public:
 
@@ -198,7 +198,7 @@ public:
 ProfileTestHelper profileTH = ProfileTestHelper();
 
 
-TEST(ProfileTest, TestLibProfile){
+TEST(ProfileTest, DISABLED_TestLibProfile){
     ereol::Library library = ereol::Library::ALLEROED;
     int expectedMaxConcurrentLoansPerBorrower = 10;
     int expectedMaxConcurrentReservationsPerBorrower = 3;
@@ -219,7 +219,7 @@ TEST(ProfileTest, TestLibProfile){
 }
 
 //TODO: Add DISABLED_ prefix to disable tests when eReolen state inevitably changes
-TEST(ProfileTest, GetLoansTest) {
+TEST(ProfileTest, DISABLED_GetLoansTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -246,7 +246,7 @@ TEST(ProfileTest, GetLoansTest) {
     }
 
 }
-TEST(ProfileTest, GetChecklistTest) {
+TEST(ProfileTest, DISABLED_GetChecklistTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -269,7 +269,7 @@ TEST(ProfileTest, GetChecklistTest) {
 
 }
 
-TEST(ProfileTest, GetReservationsTest) {
+TEST(ProfileTest, DISABLED_GetReservationsTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -294,7 +294,7 @@ TEST(ProfileTest, GetReservationsTest) {
         }
     }
 }
-TEST(ProfileTest, GetLoanHistoryTest) {
+TEST(ProfileTest, DISABLED_GetLoanHistoryTest) {
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
