@@ -7,16 +7,22 @@
 #include "../main/ApiEnv.h"
 #include <optional>
 
-
-Secrets secrets = Secrets();
+class AuthTestHelper {
+public:
+    Secrets secrets;
+    AuthTestHelper() {
+        secrets = Secrets();
+    }
+};
+AuthTestHelper authTH = AuthTestHelper();
 
 TEST(AuthTest, AuthSucceeds) {
-    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(secrets.getLibrary());
+    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(authTH.secrets.getLibrary());
     EXPECT_TRUE(optLibrary.has_value());
 
     std::optional<ereol::Token> optToken = ereol::Auth::authenticate(
-            secrets.getUsername(),
-            secrets.getPassword(),
+            authTH.secrets.getUsername(),
+            authTH.secrets.getPassword(),
             optLibrary.value());
 
     EXPECT_TRUE(optToken.has_value());
@@ -32,12 +38,12 @@ TEST(AuthTest, AuthFails) {
 }
 
 TEST(AuthTest, DeAuthSucceeds) {
-    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(secrets.getLibrary());
+    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(authTH.secrets.getLibrary());
     EXPECT_TRUE(optLibrary.has_value());
 
     std::optional<ereol::Token> optToken = ereol::Auth::authenticate(
-            secrets.getUsername(),
-            secrets.getPassword(),
+            authTH.secrets.getUsername(),
+            authTH.secrets.getPassword(),
             optLibrary.value());
 
     EXPECT_TRUE(optToken.has_value());

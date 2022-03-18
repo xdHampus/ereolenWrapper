@@ -36,7 +36,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # Make our cmak
 
 option(ENABLE_INSTALL
     "Should ${PROJECT_NAME} be added to the install list? Useful if included using add_subdirectory." ON)
-option(ENABLE_TESTING "Should unit tests be compiled." OFF)
+option(ENABLE_TESTING "Should unit tests be compiled." ON)
 
 set(${PROJECT_NAME}_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
     CACHE STRING "Path to install ${PROJECT_NAME} Config*.cmake files to.")

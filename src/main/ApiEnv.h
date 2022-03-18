@@ -8,118 +8,10 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include "src/main/structs/Library.h"
+#include "src/main/structs/RpcPayload.h"
 
 namespace ereol {
-    struct RpcPayload {
-        std::string jsonrpc = "2.0";
-        std::string method;
-        std::vector<std::string> params;
-        std::string id = "bf808188-c534-3369-3f00-5d8c1a389ccd";
-    };
-
-    enum Library {
-        ALBERTSLUND,
-        ALLEROED,
-        ASSENS,
-        BALLERUP,
-        BILLUND,
-        BORNHOLM,
-        BROENDBY,
-        BROENDERSLEV,
-        BYARBOKASAVNIO,
-        DRAGOER,
-        EGEDAL,
-        ESBJERG,
-        FAVRSKOV,
-        FAXE,
-        FREDENSBORG,
-        FREDERICIA,
-        FREDERIKSBERG,
-        FREDERIKSHAVN,
-        FREDERIKSSUND,
-        FURESOE,
-        FAABORG_MIDTFYN,
-        GENTOFTE,
-        GLADSAXE,
-        GLOSTRUP,
-        GREVE,
-        GRIBSKOV,
-        GULDBORGSUND,
-        HADERSLEV,
-        HALSNAES,
-        HEDENSTED,
-        HELSINGOER,
-        HERLEV,
-        HERNING,
-        HILLEROED,
-        HJOERRING,
-        HOLBAEK,
-        HOLSTEBRO,
-        HORSENS,
-        HVIDOVRE,
-        HOEJE_TAASTRUP,
-        HOERSHOLM,
-        IKAST_BRANDE,
-        ISHOEJ,
-        JAMMERBUGT,
-        KALUNDBORG,
-        KALAALLIT,
-        KERTEMINDE,
-        KOLDING,
-        KOEBENHAVN,
-        KOEGE,
-        LANGELAND,
-        LEJRE,
-        LEMVIG,
-        LOLLAND,
-        LYNGBY,
-        LAESOE,
-        MARIAGERFJORD,
-        MIDDELFART,
-        MORSOE,
-        NORDDJURS,
-        NORDFYN,
-        NYBORG,
-        NAESTVED,
-        ODDER,
-        ODENSE,
-        ODSHERRED,
-        RANDERS,
-        REBILD,
-        RINGKOEBING_SKJERN,
-        RINGSTED,
-        ROSKILDE,
-        RUDERSDAL,
-        ROEDOVRE,
-        SAMSOE,
-        SILKEBORG,
-        SKANDERBORG,
-        SKIVE,
-        SLAGELSE,
-        SOLROED,
-        SOROE,
-        STEVNS,
-        STRUER,
-        SVENDBORG,
-        SYDDJURS,
-        SYDSLESVIG,
-        SOENDERBORG,
-        THISTED,
-        TOENDER,
-        TAARNBY,
-        VALLENSBAEK,
-        VARDE,
-        VEJEN,
-        VEJLE,
-        VESTHIMMERLAND,
-        VIBORG,
-        VORDINGBORG,
-        AEROE,
-        AABENRAA,
-        AALBORG,
-        AARHUS,
-    };
-
 
     class ApiEnv {
     private:
@@ -342,7 +234,6 @@ namespace ereol {
         static std::string getAppVersion() { return appVersion; }
         static std::string getLanguage() { return language; }
         static int getLibraryCount() { return libCount; }
-
         static std::string getLibraryName(ereol::Library library) {
             return libNames[library];
         }
@@ -364,7 +255,7 @@ namespace ereol {
 
 
 
-        static nlohmann::json convertRpcPayloadToJSON(RpcPayload rpcPayload){
+        static nlohmann::json convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload){
             nlohmann::json j;
 
             j["jsonrpc"] = rpcPayload.jsonrpc;
@@ -375,7 +266,7 @@ namespace ereol {
             return j;
         }
         static std::string getRpcPayloadJSON(std::string method, std::vector<std::string> params){
-            RpcPayload rpcPayload;
+            ereol::RpcPayload rpcPayload;
             rpcPayload.method = method;
             rpcPayload.params = params;
 
