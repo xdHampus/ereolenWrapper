@@ -34,6 +34,8 @@
 				   					
                    # Development time dependencies
                    gtest
+                   python39
+                   python39Packages.flask
 
                    # Build time and Run time dependencies
                    nlohmann_json

@@ -17,6 +17,8 @@ public:
 AuthTestHelper authTH = AuthTestHelper();
 
 TEST(AuthTest, AuthSucceeds) {
+    ereol::ApiEnv::setRPC("http://localhost:5000/mock-rpc");
+
     std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(authTH.secrets.getLibrary());
     EXPECT_TRUE(optLibrary.has_value());
 
