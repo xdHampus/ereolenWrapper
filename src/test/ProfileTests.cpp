@@ -12,7 +12,6 @@
 #include <optional>
 #include <vector>
 
-//TODO: Change integrations test to rely on mock server such that state from eReolen.dk is avoided
 class ProfileTestHelper {
 public:
 
@@ -184,21 +183,33 @@ public:
     Secrets secrets;
     std::optional<ereol::Library> optLibrary = {};
     std::optional<ereol::Token> optToken = {};
+    bool loaded = false;
+
     ProfileTestHelper() {
         secrets = Secrets();
-        optLibrary = ereol::ApiEnv::getLibraryFromCode(secrets.getLibrary());
-        if(optLibrary.has_value()){
-            optToken = ereol::Auth::authenticate(
-                    secrets.getUsername(),
-                    secrets.getPassword(),
-                    optLibrary.value());
-        }
     };
+
+    void ensureLoaded(){
+        if(!loaded){
+            ereol::ApiEnv::setRPC("http://localhost:5000/mock-rpc");
+            optLibrary = ereol::ApiEnv::getLibraryFromCode(secrets.getLibrary());
+            if(optLibrary.has_value()){
+                optToken = ereol::Auth::authenticate(
+                        secrets.getUsername(),
+                        secrets.getPassword(),
+                        optLibrary.value());
+            }
+            loaded = true;
+        }
+    }
+
 };
 ProfileTestHelper profileTH = ProfileTestHelper();
 
 
-TEST(ProfileTest, DISABLED_TestLibProfile){
+TEST(ProfileTest, TestLibProfile){
+    ereol::ApiEnv::setRPC("http://localhost:5000/mock-rpc");
+
     ereol::Library library = ereol::Library::ALLEROED;
     int expectedMaxConcurrentLoansPerBorrower = 10;
     int expectedMaxConcurrentReservationsPerBorrower = 3;
@@ -218,8 +229,9 @@ TEST(ProfileTest, DISABLED_TestLibProfile){
 
 }
 
-//TODO: Add DISABLED_ prefix to disable tests when eReolen state inevitably changes
-TEST(ProfileTest, DISABLED_GetLoansTest) {
+TEST(ProfileTest, GetLoansTest) {
+    profileTH.ensureLoaded();
+
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -246,7 +258,10 @@ TEST(ProfileTest, DISABLED_GetLoansTest) {
     }
 
 }
-TEST(ProfileTest, DISABLED_GetChecklistTest) {
+TEST(ProfileTest, GetChecklistTest) {
+    profileTH.ensureLoaded();
+
+
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -269,7 +284,9 @@ TEST(ProfileTest, DISABLED_GetChecklistTest) {
 
 }
 
-TEST(ProfileTest, DISABLED_GetReservationsTest) {
+TEST(ProfileTest, GetReservationsTest) {
+    profileTH.ensureLoaded();
+
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 
@@ -294,7 +311,9 @@ TEST(ProfileTest, DISABLED_GetReservationsTest) {
         }
     }
 }
-TEST(ProfileTest, DISABLED_GetLoanHistoryTest) {
+TEST(ProfileTest, GetLoanHistoryTest) {
+    profileTH.ensureLoaded();
+
     EXPECT_TRUE(profileTH.optToken.has_value());
     EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
 

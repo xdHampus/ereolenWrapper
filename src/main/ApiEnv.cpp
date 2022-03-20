@@ -7,7 +7,7 @@
 #include <string>
 
 const std::string ereol::ApiEnv::apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
-const std::string ereol::ApiEnv::rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
+std::string ereol::ApiEnv::rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
 const std::string ereol::ApiEnv::appVersion = "android_3.5.3";
 const std::string ereol::ApiEnv::language = "da";
 

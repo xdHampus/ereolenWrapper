@@ -10,12 +10,14 @@ jobs:
       TEST_LIBRARY : ${{ secrets.TEST_LIBRARY }}
       TEST_PASSWORD : ${{ secrets.TEST_PASSWORD }}
       TEST_USERNAME : ${{ secrets.TEST_USERNAME }}    
+      FLASK_APP : "src/test/mock-server/app.py"
     steps:
     - uses: actions/checkout@v2.4.0
     - uses: cachix/install-nix-action@v15
       with:
         extra_nix_config: |
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+    - run: nix develop -c "flask" "run" "--host=0.0.0.0" &
     - run: nix build
     - run: nix run .#tests -L
     #- run: nix flake check
