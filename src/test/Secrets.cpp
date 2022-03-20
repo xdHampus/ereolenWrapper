@@ -4,18 +4,17 @@
 
 #include "Secrets.h"
 
-
 Secrets::Secrets() {
-    if(const char* apiKeyEnv = std::getenv(Secrets::apiKeyEnvVar.c_str())){
+    if(const char* apiKeyEnv = std::getenv("TEST_API_KEY")){
         Secrets::apiKey = apiKeyEnv;
     }
-    if(const char* usernameEnv = std::getenv(Secrets::usernameEnvVar.c_str())){
+    if(const char* usernameEnv = std::getenv("TEST_USERNAME")){
         Secrets::username = usernameEnv;
     }
-    if(const char* passwordEnv = std::getenv(Secrets::passwordEnvVar.c_str())){
+    if(const char* passwordEnv = std::getenv("TEST_PASSWORD")){
         Secrets::password = passwordEnv;
     }
-    if(const char* libraryEnv = std::getenv(Secrets::libraryEnvVar.c_str())){
+    if(const char* libraryEnv = std::getenv("TEST_LIBRARY")){
         Secrets::library = libraryEnv;
     }
 }

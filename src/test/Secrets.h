@@ -9,10 +9,6 @@
 
 class Secrets {
 private:
-    inline static const std::string apiKeyEnvVar = "TEST_API_KEY";
-    inline static const std::string usernameEnvVar = "TEST_USERNAME";
-    inline static const std::string passwordEnvVar = "TEST_PASSWORD";
-    inline static const std::string libraryEnvVar = "TEST_LIBRARY";
     std::string apiKey;
     std::string username;
     std::string password;
