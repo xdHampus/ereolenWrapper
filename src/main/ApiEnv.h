@@ -8,8 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <nlohmann/json.hpp>
-#include <cpr/cpr.h>
+#include <optional>
 #include "src/main/structs/Library.h"
 #include "src/main/structs/RpcPayload.h"
 
@@ -36,7 +35,7 @@ namespace ereol {
         static std::string getLibraryCode(ereol::Library library);
 
         static std::optional<ereol::Library> getLibraryFromCode(std::string libraryCode);
-        static nlohmann::json convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload);
+        static std::string convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload);
         static std::string getRpcPayloadJSON(std::string method, std::vector<std::string> params);
 
     };
