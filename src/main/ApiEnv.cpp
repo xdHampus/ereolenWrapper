@@ -4,6 +4,7 @@
 
 #include "ApiEnv.h"
 #include <nlohmann/json.hpp>
+#include <cpr/cpr.h>
 #include <string>
 
 const std::string ereol::ApiEnv::apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
@@ -243,7 +244,7 @@ std::optional<ereol::Library> ereol::ApiEnv::getLibraryFromCode(std::string libr
 
 
 
-nlohmann::json ereol::ApiEnv::convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload){
+std::string ereol::ApiEnv::convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload){
     nlohmann::json j;
 
     j["jsonrpc"] = rpcPayload.jsonrpc;
@@ -251,12 +252,12 @@ nlohmann::json ereol::ApiEnv::convertRpcPayloadToJSON(ereol::RpcPayload rpcPaylo
     j["params"] = rpcPayload.params;
     j["id"] = rpcPayload.id;
 
-    return j;
+    return j.dump();
 }
 std::string ereol::ApiEnv::getRpcPayloadJSON(std::string method, std::vector<std::string> params){
     ereol::RpcPayload rpcPayload;
     rpcPayload.method = method;
     rpcPayload.params = params;
 
-    return convertRpcPayloadToJSON(rpcPayload).dump();
+    return convertRpcPayloadToJSON(rpcPayload);
 }

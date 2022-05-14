@@ -1,5 +1,5 @@
 #add_executable(ereolenwrapper ereolenwrapper.cpp)
-add_library(${PROJECT_NAME} STATIC structs/LibraryProfile.h structs/LoanActive.h structs/RpcPayload.h structs/Library.h ApiEnv.cpp structs/Token.h structs/ChecklistItem.h structs/LoanHistorical.h structs/LoanIdentifier.h structs/Reservation.h)
+add_library(${PROJECT_NAME} SHARED structs/LibraryProfile.h structs/LoanActive.h structs/RpcPayload.h structs/Library.h ApiEnv.cpp structs/Token.h structs/ChecklistItem.h structs/LoanHistorical.h structs/LoanIdentifier.h structs/Reservation.h)
 
 target_sources(${PROJECT_NAME} PRIVATE
 		ereolenwrapper.cpp

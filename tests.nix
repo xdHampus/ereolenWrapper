@@ -15,6 +15,10 @@ llvmPackages_11.stdenv.mkDerivation rec {
   		curl zlib
   ] ++ customLibs;
 
+  preConfigure = "
+    sed -i 's/ SHARED / STATIC /g' src/main/CMakeLists.txt
+  ";
+
   cmakeFlags = [
       "-DENABLE_INSTALL=ON"
       "-DENABLE_TESTING=${if enableTests then "ON" else "OFF"}"
