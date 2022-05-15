@@ -4,8 +4,9 @@
 
 #ifndef EREOLENWRAPPER_LIBRARY_H
 #define EREOLENWRAPPER_LIBRARY_H
-
+#ifdef __cplusplus 
 namespace ereol {
+#endif
     enum Library {
         ALBERTSLUND,
         ALLEROED,
@@ -108,6 +109,8 @@ namespace ereol {
         AALBORG,
         AARHUS,
     };
+#ifdef __cplusplus 
 }
+#endif
 
 #endif //EREOLENWRAPPER_LIBRARY_H

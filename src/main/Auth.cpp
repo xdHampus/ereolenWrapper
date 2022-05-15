@@ -7,6 +7,7 @@
 #include "src/main/structs/Library.h"
 #include "src/main/structs/RpcPayload.h"
 #include "src/main/structs/Token.h"
+#ifdef __cplusplus 
 #include <cpr/cpr.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -115,3 +116,27 @@ bool ereol::Auth::isAuthenticated(ereol::Token token) {
 }
 
 
+extern "C" { 
+    namespace ereol {
+#endif
+        Token*  ereol_Auth_authenticate(char* username, char* password, Library* library) {
+            std::string sU(username);
+            std::string sP(password);
+            std::optional<Token> optToken = ereol::Auth::authenticate(sU, sP, *library);
+            if(optToken.has_value()){
+                return &optToken.value();
+            } else {
+                return nullptr;
+            }
+        }
+        bool  ereol_Auth_deauthenticate(Token* token) {
+            return ereol::Auth::deauthenticate(*token);
+
+        }
+        bool  ereol_Auth_isAuthenticated(Token* token) {
+            return ereol::Auth::isAuthenticated(*token);
+        }
+#ifdef __cplusplus 
+    };
+}
+#endif  // __cplusplus 

@@ -3,6 +3,7 @@
 //
 
 #include "Profile.h"
+#ifdef __cplusplus 
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
 
@@ -248,4 +249,54 @@ std::optional<std::vector<ereol::LoanHistorical>> ereol::Profile::getLoanHistory
         }
     } else { //TODO: Handle HTTP errors
     }
-    return {};}
+    return {};
+}
+
+extern "C" { 
+    namespace ereol {
+#endif
+        LibraryProfile*  ereol_Profile_getLibraryProfile(Library* library) {
+            std::optional<LibraryProfile> optLibraryProfile = ereol::Profile::getLibraryProfile(*library);
+            if(optLibraryProfile.has_value()){
+                return &optLibraryProfile.value();
+            } else {
+                return nullptr;
+            }
+        }
+        LoanActive*  ereol_Profile_getLoans(Token* token) {
+            std::optional<std::vector<LoanActive>> optLoans = ereol::Profile::getLoans(*token);
+            if(optLoans.has_value()){
+                return optLoans.value().data();
+            } else {
+                return nullptr;
+            }
+        }
+        ChecklistItem*  ereol_Profile_getChecklist(Token* token) {
+            std::optional<std::vector<ChecklistItem>> optChecklist = ereol::Profile::getCheckList(*token);
+            if(optChecklist.has_value()){
+                return optChecklist.value().data();
+            } else {
+                return nullptr;
+            }
+        }        
+        Reservation*  ereol_Profile_getReservations(Token* token) {
+            std::optional<std::vector<Reservation>> optReservations = ereol::Profile::getReservations(*token);
+            if(optReservations.has_value()){
+                return optReservations.value().data();
+            } else {
+                return nullptr;
+            }
+        }
+        LoanHistorical*  ereol_Profile_getLoanHistory(Token* token) {
+            std::optional<std::vector<LoanHistorical>> optLoanHistory = ereol::Profile::getLoanHistory(*token);
+            if(optLoanHistory.has_value()){
+                return optLoanHistory.value().data();
+            } else {
+                return nullptr;
+            }
+        }                
+
+#ifdef __cplusplus 
+    };
+}
+#endif  // __cplusplus 
