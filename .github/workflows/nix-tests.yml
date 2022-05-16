@@ -18,7 +18,5 @@ jobs:
         extra_nix_config: |
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
     - run: nix develop -c "flask" "run" "--host=0.0.0.0" &
-    #- run: nix build -L
     - run: nix run .#tests -L
-    #- run: nix flake check
     
