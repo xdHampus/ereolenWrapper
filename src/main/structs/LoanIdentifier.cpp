@@ -10,7 +10,7 @@
             }
             void ereol_LoanIdentifier_delete(LoanIdentifier* m)  
             { 
-                m->~LoanIdentifier();  
+                delete m;
             } 
             const char*  ereol_LoanIdentifier_getIdentifier(LoanIdentifier* m)  
             { return m->identifier.c_str(); }

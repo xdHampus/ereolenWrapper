@@ -9,7 +9,7 @@
             }
             void ereol_ChecklistItem_delete(ChecklistItem* m)  
             { 
-                m->~ChecklistItem();  
+                delete m; 
             } 
             LoanIdentifier*  ereol_ChecklistItem_getLoanIdentifier(ChecklistItem* m)
             { return &m->loanIdentifier; }

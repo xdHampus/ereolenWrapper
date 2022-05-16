@@ -19,6 +19,7 @@ namespace ereol {
         bool isSubscription;
     };
 #else
+#include <stdbool.h>
 //struct
 typedef struct LoanActive LoanActive;
 LoanActive*  ereol_LoanActive_instantiate(); 

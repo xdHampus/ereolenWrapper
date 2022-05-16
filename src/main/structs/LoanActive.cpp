@@ -9,7 +9,7 @@
             }
             void ereol_LoanActive_delete(LoanActive* m)      
             { 
-                m->~LoanActive();  
+                delete m;
             } 
             LoanIdentifier*  ereol_LoanActive_getLoanIdentifier(LoanActive* m) 
             { return &m->loanIdentifier; }

@@ -1,10 +1,11 @@
-{ lib, stdenv, fetchgit, cmake, meson, curl
+{ lib, stdenv, fetchgit 
+  , cmake
   , unityExtensionFixture ? false
   , unityExtensionMemory ? false
  }:
 
 stdenv.mkDerivation rec {
-  pname = "libunitytest";
+  pname = "unity";
   version = "2.5.2";
 
   src = fetchgit {
@@ -14,12 +15,9 @@ stdenv.mkDerivation rec {
     fetchSubmodules = false;
   };
 
-  nativeBuildInputs = [ cmake meson ];
-  buildInputs = [ curl meson];
+  nativeBuildInputs = [ cmake ];
 
   cmakeFlags = [
-  	"-DCMAKE_BUILD_TYPE=Release"
-  	"-DCPR_BUILD_TESTS=OFF" 
     "-DUNITY_EXTENSION_FIXTURE=${if unityExtensionFixture then "ON" else "OFF"}"
     "-DUNITY_EXTENSION_MEMORY=${if unityExtensionMemory then "ON" else "OFF"}"
   ];

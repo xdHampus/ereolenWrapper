@@ -14,7 +14,16 @@
     clibs = [
       (pkgs.callPackage ./libs/cpr/default.nix {})
     ];
-
+    ereolenWrapperDrv = pkgs.callPackage ./default.nix {customLibs=clibs;};
+    libcprDrv = pkgs.callPackage ./libs/cpr/default.nix {};
+    libunityDrv = pkgs.callPackage ./libs/unity/default.nix {};
+    testsDrv = pkgs.callPackage ./tests.nix {customLibs=clibs;};
+    ctestsDrv = pkgs.callPackage ./src/test/c-interface/tests.nix {
+      customLibs=[
+        ereolenWrapperDrv
+        (pkgs.callPackage ./libs/unity/default.nix {unityExtensionFixture = true;})
+      ];
+    };
     pkgs = import nixpkgs {
       inherit system;
       overlays = [];
@@ -22,51 +31,25 @@
     };
   in {
     devShell = pkgs.mkShell rec {
-      # Update the name to something that suites your project.
       name = "ereolenWrapper";
-
       packages = with pkgs; [
-      # Development Tools
-      llvmPackages_11.clang
-      cmake
-      cmakeCurses
-      gitFull # cmake FetchContent
-      #jetbrains.clion
-
-      # Development time dependencies
-      gtest
-      python39
-      python39Packages.flask
-
-      # Build time and Run time dependencies
-      nlohmann_json
-      openssl
-      curl
-      zlib
+        # Development Tools
+        gitFull #jetbrains.clion
+        # Dependencies
+        llvmPackages_11.clang cmake zlib openssl gtest # cmake FetchContent #cmakeCurses
+        nlohmann_json curl
+        python39 python39Packages.flask 
       ] ++ clibs;
-
     };
     packages = {
-      ereolenWrapper = pkgs.callPackage ./default.nix {customLibs=clibs;};
-      libCpr = pkgs.callPackage ./libs/cpr/default.nix {};
-      libUnitytest = pkgs.callPackage ./libs/unity/default.nix {};
-      tests = pkgs.callPackage ./tests.nix {customLibs=clibs;};
-      cTests = pkgs.callPackage ./src/test/c-interface/tests.nix {
-        customLibs=[
-          #(pkgs.callPackage ./default.nix {customLibs=clibs;})
-          (pkgs.callPackage ./libs/unity/default.nix {unityExtensionFixture = true;})
-        ];
-      };
+      ereolenWrapper = ereolenWrapperDrv;
+      libcpr = libcprDrv;
+      libunity = libunityDrv;
     }; 
-    defaultPackage = pkgs.callPackage ./default.nix {customLibs=clibs;};
+    defaultPackage = ereolenWrapperDrv;
     checks = {
-      tests = pkgs.callPackage ./tests.nix {customLibs=clibs;};
-      cTests = pkgs.callPackage ./src/test/c-interface/tests.nix {
-        customLibs=[
-          #(pkgs.callPackage ./default.nix {customLibs=clibs;})
-          (pkgs.callPackage ./libs/unity/default.nix {unityExtensionFixture = true;})
-        ];
-      };
+      tests = testsDrv;
+      ctests = ctestsDrv;
     };
   });
 }
