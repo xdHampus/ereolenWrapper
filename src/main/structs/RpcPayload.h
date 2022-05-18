@@ -1,10 +1,6 @@
-//
-// Created by root on 1/30/22.
-//
-
 #ifndef EREOLENWRAPPER_RPCPAYLOAD_H
 #define EREOLENWRAPPER_RPCPAYLOAD_H
-
+#include "../util/InterfaceUtilC.h"
 #ifdef __cplusplus 
 #include <vector>
 #include <string>
@@ -22,18 +18,18 @@ RpcPayload*  ereol_RpcPayload_instantiate();
 void ereol_RpcPayload_delete(RpcPayload* m);
 //jsonrpc
 const char*  ereol_RpcPayload_getJsonRPC(RpcPayload* m); 
-void   ereol_RpcPayload_setJsonRPC(RpcPayload* m,  char* cp); 
+void   ereol_RpcPayload_setJsonRPC(RpcPayload* m,  const char* cp); 
 //method
 const char*  ereol_RpcPayload_getMethod(RpcPayload* m); 
-void   ereol_RpcPayload_setMethod(RpcPayload* m,  char* cp); 
+void   ereol_RpcPayload_setMethod(RpcPayload* m,  const char* cp); 
 //params
-const char**  ereol_RpcPayload_getParams(RpcPayload* m); 
+VectorStrC*  ereol_RpcPayload_getParams(RpcPayload* m); 
 size_t ereol_RpcPayload_getParams_size(RpcPayload* m); 
-void ereol_RpcPayload_getParams_insert(RpcPayload* m, char* x); 
-void   ereol_RpcPayload_setParams(RpcPayload* m,  char** arr, size_t n); 
+void ereol_RpcPayload_getParams_insert(RpcPayload* m, const char* x); 
+void   ereol_RpcPayload_setParams(RpcPayload* m,  const char** arr, size_t n); 
 //id
 const char*  ereol_RpcPayload_getId(RpcPayload* m); 
-void   ereol_RpcPayload_setId(RpcPayload* m,  char* cp); 
+void   ereol_RpcPayload_setId(RpcPayload* m,  const char* cp); 
 #endif //end __cplusplus
 #ifdef __cplusplus 
 }

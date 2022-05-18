@@ -12,10 +12,11 @@ include(CTest)
 add_executable(ereolenwrapperctests 
 test_runners/all_tests.c
 TestProductionCode.c 
-TestProductionCode2.c 
+StructTests.c 
 test_runners/TestProductionCode_Runner.c 
-test_runners/TestProductionCode2_Runner.c 
+test_runners/StructTests_Runner.c 
 )
+
 target_link_libraries(ereolenwrapperctests unity::framework ereolenwrapper::ereolenwrapper)
 add_test(test_meh ereolenwrapperctests)
 

@@ -12,7 +12,8 @@ add_library(${PROJECT_NAME} SHARED
 	structs/Reservation.h structs/Reservation.cpp
 	structs/RpcPayload.h structs/RpcPayload.cpp 
 	structs/Token.h structs/Token.cpp 
-	)
+	util/InterfaceUtilC.h util/InterfaceUtilC.cpp
+)
 
 target_sources(${PROJECT_NAME} PRIVATE
 		ereolenwrapper.cpp

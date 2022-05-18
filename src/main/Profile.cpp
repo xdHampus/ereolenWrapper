@@ -3,9 +3,15 @@
 //
 
 #include "Profile.h"
+#include "util/InterfaceUtilC.h"
 #ifdef __cplusplus 
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
+const std::string ereol::Profile::libraryProfileMethod = "ereolen.getLibraryProfile";
+const std::string ereol::Profile::loansMethod = "getLoans";
+const std::string ereol::Profile::checklistMethod = "ereolen.getCheckList";
+const std::string ereol::Profile::reservationsMethod = "getReservations";
+const std::string ereol::Profile::loanHistoryMethod = "getLoanHistory";
 
 std::optional<ereol::LibraryProfile> ereol::Profile::getLibraryProfile(ereol::Library library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
@@ -255,6 +261,7 @@ std::optional<std::vector<ereol::LoanHistorical>> ereol::Profile::getLoanHistory
 extern "C" { 
     namespace ereol {
 #endif
+
         LibraryProfile*  ereol_Profile_getLibraryProfile(Library* library) {
             std::optional<LibraryProfile> optLibraryProfile = ereol::Profile::getLibraryProfile(*library);
             if(optLibraryProfile.has_value()){
@@ -266,6 +273,7 @@ extern "C" {
         LoanActive*  ereol_Profile_getLoans(Token* token) {
             std::optional<std::vector<LoanActive>> optLoans = ereol::Profile::getLoans(*token);
             if(optLoans.has_value()){
+                //return ereol::AllocateVector(&optLoans.value())->data();
                 return optLoans.value().data();
             } else {
                 return nullptr;

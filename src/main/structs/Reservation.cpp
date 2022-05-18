@@ -9,7 +9,7 @@
             }
             void ereol_Reservation_delete(Reservation* m)   
             { 
-                m->~Reservation();  
+               delete m;
             } 
             LoanIdentifier*  ereol_Reservation_getLoanIdentifier(Reservation* m) 
             { return &m->loanIdentifier; }

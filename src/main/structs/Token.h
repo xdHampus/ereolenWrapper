@@ -25,13 +25,13 @@ int  ereol_Token_getTimeFetched(Token* m);
 void   ereol_Token_setTimeFetched(Token* m,  int utc); 
 //sessid
 const char*  ereol_Token_getSessid(Token* m); 
-void   ereol_Token_setSessid(Token* m,  char* cp); 
+void   ereol_Token_setSessid(Token* m,  const char* cp); 
 //expirationDate
 const char*  ereol_Token_getExpirationDate(Token* m); 
-void   ereol_Token_setExpirationDate(Token* m,  char* cp); 
+void   ereol_Token_setExpirationDate(Token* m, const char* cp); 
 //library
-Library*  ereol_Token_getLibrary(Token* m); 
-void   ereol_Token_setLibrary(Token* m,  Library* library); 
+enum Library  ereol_Token_getLibrary(Token* m); 
+void   ereol_Token_setLibrary(Token* m, enum Library library); 
 #endif
 #ifdef __cplusplus 
 }

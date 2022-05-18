@@ -34,7 +34,8 @@
       name = "ereolenWrapper";
       packages = with pkgs; [
         # Development Tools
-        gitFull #jetbrains.clion
+        gitFull gdb valgrind
+        #jetbrains.clion
         # Dependencies
         llvmPackages_11.clang cmake zlib openssl gtest # cmake FetchContent #cmakeCurses
         nlohmann_json curl

@@ -19,18 +19,17 @@
 namespace ereol {
     class Profile {
     private:
-        inline static const std::string libraryProfileMethod = "ereolen.getLibraryProfile";
-        inline static const std::string loansMethod = "getLoans";
-        inline static const std::string checklistMethod = "ereolen.getCheckList";
-        inline static const std::string reservationsMethod = "getReservations";
-        inline static const std::string loanHistoryMethod = "getLoanHistory";
+        static const std::string libraryProfileMethod;
+        static const std::string loansMethod;
+        static const std::string checklistMethod;
+        static const std::string reservationsMethod;
+        static const std::string loanHistoryMethod;
     public:
         static std::optional<ereol::LibraryProfile> getLibraryProfile(ereol::Library library);
         static std::optional<std::vector<ereol::LoanActive>> getLoans(ereol::Token token);
         static std::optional<std::vector<ereol::ChecklistItem>> getCheckList(ereol::Token token);
         static std::optional<std::vector<ereol::Reservation>> getReservations(ereol::Token token);
         static std::optional<std::vector<ereol::LoanHistorical>> getLoanHistory(ereol::Token token);
-
     };
 #else
 LibraryProfile*  ereol_Profile_getLibraryProfile(Library* library); 

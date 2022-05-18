@@ -3,7 +3,7 @@
 static void runAllTests(void)
 {
   RUN_TEST_GROUP(ProductionCode);
-  RUN_TEST_GROUP(ProductionCode2);
+  RUN_TEST_GROUP(StructTests);
 }
 
 int main(int argc, const char* argv[])
