@@ -12,6 +12,9 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+const std::string ereol::Auth::authMethod   = "authenticate";
+const std::string ereol::Auth::isAuthMethod = "isAuthenticated";
+const std::string ereol::Auth::deAuthMethod = "deauthenticate";
 
 std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std::string password, ereol::Library library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(

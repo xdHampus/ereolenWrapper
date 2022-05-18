@@ -9,9 +9,9 @@
 namespace ereol {
     class Auth {
     private:
-        inline static const std::string authMethod = "authenticate";
-        inline static const std::string isAuthMethod = "isAuthenticated";
-        inline static const std::string deAuthMethod = "deauthenticate";
+        static const std::string authMethod;
+        static const std::string isAuthMethod;
+        static const std::string deAuthMethod;
     public:
         static std::optional<ereol::Token> authenticate(std::string username, std::string password, ereol::Library library);
         static bool deauthenticate(ereol::Token token);
