@@ -11,6 +11,8 @@ namespace ereol {
         std::vector<std::string> params;
         std::string id = "bf808188-c534-3369-3f00-5d8c1a389ccd";
     };
+    void from_json(const std::string  &s, ereol::RpcPayload& x);
+    void to_json(std::string & s, const ereol::RpcPayload & x);    
 #else
 //struct
 typedef struct RpcPayload RpcPayload;

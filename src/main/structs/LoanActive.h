@@ -18,6 +18,8 @@ namespace ereol {
         std::string downloadUrl;
         bool isSubscription;
     };
+    void from_json(const std::string  &s, ereol::LoanActive& x);
+    void to_json(std::string & s, const ereol::LoanActive & x);    
 #else
 #include <stdbool.h>
 //struct

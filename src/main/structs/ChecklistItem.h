@@ -13,6 +13,8 @@ namespace ereol {
         ereol::LoanIdentifier loanIdentifier;
         int creationDateUtc;
     };
+    void from_json(const std::string  &s, ereol::ChecklistItem& x);
+    void to_json(std::string & s, const ereol::ChecklistItem & x);
 #else
 //struct
 typedef struct ChecklistItem ChecklistItem;

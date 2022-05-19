@@ -15,6 +15,8 @@ namespace ereol {
         std::string expirationDate;
         ereol::Library library;
     };
+    void from_json(const std::string  &s, ereol::Token& x);
+    void to_json(std::string & s, const ereol::Token & x);   
 #else
 //struct
 typedef struct Token Token;

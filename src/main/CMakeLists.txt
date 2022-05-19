@@ -12,8 +12,16 @@ add_library(${PROJECT_NAME} SHARED
 	structs/Reservation.h structs/Reservation.cpp
 	structs/RpcPayload.h structs/RpcPayload.cpp 
 	structs/Token.h structs/Token.cpp 
+	structs/Contributor.h
+	structs/Language.h
+	structs/MediaType.h 
+	structs/Product.h 
+	structs/ProductType.h 
+
 	util/InterfaceUtilC.h util/InterfaceUtilC.cpp
 )
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_sources(${PROJECT_NAME} PRIVATE
 		ereolenwrapper.cpp

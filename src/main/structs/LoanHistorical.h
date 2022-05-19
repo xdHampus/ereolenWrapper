@@ -16,6 +16,9 @@ namespace ereol {
         std::string publicationDate;
         std::vector<std::string> materialTypes;
     };
+
+    void from_json(const std::string  &s, ereol::LoanHistorical& x);
+    void to_json(std::string & s, const ereol::LoanHistorical & x);        
 #else
 //struct
 typedef struct LoanHistorical LoanHistorical;

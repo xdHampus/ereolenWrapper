@@ -18,6 +18,8 @@ namespace ereol {
         int expireUtc;
         int expectedRedeemDateUtc;
     };
+    void from_json(const std::string  &s, ereol::Reservation& x);
+    void to_json(std::string & s, const ereol::Reservation & x);       
 #else
 //struct
 typedef struct Reservation Reservation;
