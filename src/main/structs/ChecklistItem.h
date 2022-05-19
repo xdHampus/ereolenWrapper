@@ -1,10 +1,8 @@
-//
-// Created by root on 1/30/22.
-//
-
 #ifndef EREOLENWRAPPER_CHECKLISTITEM_H
 #define EREOLENWRAPPER_CHECKLISTITEM_H
+
 #include "LoanIdentifier.h"
+
 #ifdef __cplusplus 
 #include <vector>
 #include <string>
@@ -30,4 +28,5 @@ void   ereol_ChecklistItem_setCreationDateUTC(ChecklistItem* m,  int utc);
 #ifdef __cplusplus 
 }
 #endif
+
 #endif //EREOLENWRAPPER_CHECKLISTITEM_H
