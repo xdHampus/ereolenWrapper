@@ -5,8 +5,8 @@
 #ifndef EREOLENWRAPPER_APIENV_H
 #define EREOLENWRAPPER_APIENV_H
 
-#include "src/main/structs/Library.h"
-#include "src/main/structs/RpcPayload.h"
+#include "src/main/model/Library.h"
+#include "src/main/model/RpcPayload.h"
 
 #ifdef __cplusplus 
 #include <string>

@@ -1,14 +1,14 @@
 #include "unity.h"
 #include "unity_fixture.h"
 #include "src/main/util/InterfaceUtilC.h"
-#include "src/main/structs/ChecklistItem.h"
-#include "src/main/structs/LibraryProfile.h"
-#include "src/main/structs/LoanActive.h"
-#include "src/main/structs/LoanHistorical.h"
-#include "src/main/structs/LoanIdentifier.h"
-#include "src/main/structs/Reservation.h"
-#include "src/main/structs/RpcPayload.h"
-#include "src/main/structs/Token.h"
+#include "src/main/model/ChecklistItem.h"
+#include "src/main/model/LibraryProfile.h"
+#include "src/main/model/LoanActive.h"
+#include "src/main/model/LoanHistorical.h"
+#include "src/main/model/LoanIdentifier.h"
+#include "src/main/model/Reservation.h"
+#include "src/main/model/RpcPayload.h"
+#include "src/main/model/Token.h"
 
 
 TEST_GROUP(StructTests);

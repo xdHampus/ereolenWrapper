@@ -6,12 +6,12 @@
 #define EREOLENWRAPPER_PROFILE_H
 
 #include "ApiEnv.h"
-#include "structs/LibraryProfile.h"
-#include "structs/LoanActive.h"
-#include "structs/Token.h"
-#include "structs/ChecklistItem.h"
-#include "structs/LoanHistorical.h"
-#include "src/main/structs/Reservation.h"
+#include "model/LibraryProfile.h"
+#include "model/LoanActive.h"
+#include "model/Token.h"
+#include "model/ChecklistItem.h"
+#include "model/LoanHistorical.h"
+#include "src/main/model/Reservation.h"
 #ifdef __cplusplus 
 #include <string>
 #include <optional>

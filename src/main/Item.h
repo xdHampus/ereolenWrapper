@@ -4,7 +4,7 @@
 
 #ifndef EREOLENWRAPPER_ITEM_H
 #define EREOLENWRAPPER_ITEM_H
-#include "structs/Token.h"
+#include "model/Token.h"
 #ifdef __cplusplus 
 #include <string>
 #include <optional>

@@ -2,7 +2,7 @@
 #define EREOLENWRAPPER_AUTH_H
 
 #include "ApiEnv.h"
-#include "src/main/structs/Token.h"
+#include "src/main/model/Token.h"
 #ifdef __cplusplus 
 #include <string>
 #include <optional>

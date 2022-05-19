@@ -4,9 +4,9 @@
 
 #include "Auth.h"
 #include "ApiEnv.h"
-#include "src/main/structs/Library.h"
-#include "src/main/structs/RpcPayload.h"
-#include "src/main/structs/Token.h"
+#include "src/main/model/Library.h"
+#include "src/main/model/RpcPayload.h"
+#include "src/main/model/Token.h"
 #ifdef __cplusplus 
 #include <cpr/cpr.h>
 #include <iostream>

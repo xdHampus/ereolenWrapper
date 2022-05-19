@@ -11,26 +11,37 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../structs/ChecklistItem.h"
+#include "../model/ChecklistItem.h"
+#include "../model/Contributor.h"
+#include "../model/LoanActive.h"
+#include "../model/LoanHistorical.h"
 
 /*
-#include "../structs/LoanActive.h"
-#include "../structs/LibraryProfile.h"
-#include "../structs/Reservation.h"
-#include "../structs/LoanHistorical.h"
-#include "../structs/Product.h"
-#include "../structs/ProductType.h"
-#include "../structs/MediaType.h"
-#include "../structs/Contributor.h"
+#include "../model/LoanActive.h"
+#include "../model/LibraryProfile.h"
+#include "../model/Reservation.h"
+#include "../model/Product.h"
+#include "../model/ProductType.h"
+#include "../model/MediaType.h"
+#include "../model/Contributor.h"
 */
 
 namespace nlohmann {
 
     void from_json(const json & j, ereol::ChecklistItem & x);
     void to_json(json & j, const ereol::ChecklistItem & x);
-    /*
+
     void from_json(const json & j, ereol::Contributor & x);
     void to_json(json & j, const ereol::Contributor & x);
+
+    void from_json(const json & j, ereol::LoanActive & x);
+    void to_json(json & j, const ereol::LoanActive & x);
+
+    void from_json(const json & j, ereol::LoanHistorical & x);
+    void to_json(json & j, const ereol::LoanHistorical & x);
+
+/*
+
 
     void from_json(const json & j, ereol::Product & x);
     void to_json(json & j, const ereol::Product & x);
@@ -57,26 +68,11 @@ namespace nlohmann {
     void from_json(const json & j, ereol::ProductType & x);
     void to_json(json & j, const ereol::ProductType & x);
 
-*/
 
 
 
-/*
 
-    inline void from_json(const json & j, ereol::Contributor& x) {
-        x.type = j.at("type").get<std::string>();
-        x.composedName = j.at("composedName").get<std::string>();
-        x.firstName = j.at("firstName").get<std::string>();
-        x.lastName = j.at("lastName").get<std::string>();
-    }
 
-    inline void to_json(json & j, const ereol::Contributor & x) {
-        j = json::object();
-        j["type"] = x.type;
-        j["composedName"] = x.composedName;
-        j["firstName"] = x.firstName;
-        j["lastName"] = x.lastName;
-    }
 
     inline void from_json(const json & j, ereol::Product& x) {
         x.identifier = j.at("identifier").get<std::string>();
@@ -141,30 +137,7 @@ namespace nlohmann {
         j["eReolenGlobalUrl"] = x.eReolenGlobalUrl;
     }
 
-    inline void from_json(const json & j, ereol::LoanHistoryElement& x) {
-        x.loanId = j.at("loanId").get<std::string>();
-        x.identifier = j.at("identifier").get<std::string>();
-        x.loanDate = j.at("loanDate").get<uint64_t>();
-        x.manuallyAdded = j.at("manuallyAdded").get<bool>();
-        x.isbn = j.at("isbn").get<std::string>();
-        x.title = j.at("title").get<std::string>();
-        x.creator = j.at("creator").get<std::string>();
-        x.publicationDate = j.at("publicationDate").get<std::string>();
-        x.materialTypes = j.at("materialTypes").get<std::vector<std::string>>();
-    }
 
-    inline void to_json(json & j, const ereol::LoanHistoryElement & x) {
-        j = json::object();
-        j["loanId"] = x.loanId;
-        j["identifier"] = x.identifier;
-        j["loanDate"] = x.loanDate;
-        j["manuallyAdded"] = x.manuallyAdded;
-        j["isbn"] = x.isbn;
-        j["title"] = x.title;
-        j["creator"] = x.creator;
-        j["publicationDate"] = x.publicationDate;
-        j["materialTypes"] = x.materialTypes;
-    }
 
     inline void from_json(const json & j, ereol::Reservation& x) {
         x.identifier = j.at("identifier").get<std::string>();
@@ -215,28 +188,7 @@ namespace nlohmann {
         j["maxConcurrentAudioReservationsPerBorrower"] = x.maxConcurrentAudioReservationsPerBorrower;
     }
 
-    inline void from_json(const json & j, ereol::Loan& x) {
-        x.identifier = j.at("identifier").get<std::string>();
-        x.isbn = j.at("isbn").get<std::string>();
-        x.retailerOrderNumber = j.at("retailerOrderNumber").get<std::string>();
-        x.internalOrderNumber = j.at("internalOrderNumber").get<std::string>();
-        x.orderDate = j.at("orderDate").get<uint64_t>();
-        x.expireDate = j.at("expireDate").get<uint64_t>();
-        x.downloadUrl = j.at("downloadUrl").get<std::string>();
-        x.isSubscription = j.at("isSubscription").get<bool>();
-    }
 
-    inline void to_json(json & j, const ereol::Loan & x) {
-        j = json::object();
-        j["identifier"] = x.identifier;
-        j["isbn"] = x.isbn;
-        j["retailerOrderNumber"] = x.retailerOrderNumber;
-        j["internalOrderNumber"] = x.internalOrderNumber;
-        j["orderDate"] = x.orderDate;
-        j["expireDate"] = x.expireDate;
-        j["downloadUrl"] = x.downloadUrl;
-        j["isSubscription"] = x.isSubscription;
-    }
 
     inline void from_json(const json & j, ereol::ProductType & x) {
         if (j == "audiobook"    || j == "Lydbog") x = ereol::ProductType::AUDIOBOOK;
