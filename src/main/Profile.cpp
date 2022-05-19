@@ -5,8 +5,9 @@
 #include "Profile.h"
 #include "util/InterfaceUtilC.h"
 #ifdef __cplusplus 
-#include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
+#include "util/JSONHelper.h"
+
 const std::string ereol::Profile::libraryProfileMethod = "ereolen.getLibraryProfile";
 const std::string ereol::Profile::loansMethod = "getLoans";
 const std::string ereol::Profile::checklistMethod = "ereolen.getCheckList";
@@ -134,14 +135,8 @@ std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(er
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    ereol::ChecklistItem result = {
-                            ereol::LoanIdentifier{
-                                    item.value()["identifier"].get<std::string>(),
-                                    item.value()["isbn"].get<std::string>()
-                            },
-                            item.value()["creationDateUtc"].get<int>()
-                    };
-                    results.push_back(result);
+                    nlohmann::json jj = item;
+                    results.push_back(jj.get<ereol::ChecklistItem>());
                 }
 
                 return {results};

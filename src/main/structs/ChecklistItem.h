@@ -11,7 +11,7 @@
 namespace ereol {
     struct ChecklistItem {
         ereol::LoanIdentifier loanIdentifier;
-        int creationDateUtc;
+        uint64_t creationDateUtc;
     };
     void from_json(const std::string  &s, ereol::ChecklistItem& x);
     void to_json(std::string & s, const ereol::ChecklistItem & x);
@@ -24,7 +24,7 @@ void ereol_ChecklistItem_delete(ChecklistItem* m);
 LoanIdentifier*  ereol_ChecklistItem_getLoanIdentifier(ChecklistItem* m); 
 void   ereol_ChecklistItem_setLoanIdentifier(ChecklistItem* m,  LoanIdentifier* identifier); 
 //creationDateUtc
-int  ereol_ChecklistItem_getCreationDateUTC(ChecklistItem* m); 
+uint64_t  ereol_ChecklistItem_getCreationDateUTC(ChecklistItem* m); 
 void   ereol_ChecklistItem_setCreationDateUTC(ChecklistItem* m,  int utc); 
 #endif
 #ifdef __cplusplus 

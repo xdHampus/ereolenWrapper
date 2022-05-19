@@ -10,20 +10,25 @@
 
 
 #include <nlohmann/json.hpp>
-#include "JSONHelper.h"
 
-#include "../structs/Loan.h"
-#include "../structs/LibraryProfile.h"
 #include "../structs/ChecklistItem.h"
+
+/*
+#include "../structs/LoanActive.h"
+#include "../structs/LibraryProfile.h"
 #include "../structs/Reservation.h"
-#include "../structs/LoanHistoryElement.h"
+#include "../structs/LoanHistorical.h"
 #include "../structs/Product.h"
 #include "../structs/ProductType.h"
 #include "../structs/MediaType.h"
 #include "../structs/Contributor.h"
+*/
 
+namespace nlohmann {
 
-namespace ereol {
+    void from_json(const json & j, ereol::ChecklistItem & x);
+    void to_json(json & j, const ereol::ChecklistItem & x);
+    /*
     void from_json(const json & j, ereol::Contributor & x);
     void to_json(json & j, const ereol::Contributor & x);
 
@@ -36,8 +41,6 @@ namespace ereol {
     void from_json(const json & j, ereol::Reservation & x);
     void to_json(json & j, const ereol::Reservation & x);
 
-    void from_json(const json & j, ereol::ChecklistItem & x);
-    void to_json(json & j, const ereol::ChecklistItem & x);
 
     void from_json(const json & j, ereol::LibraryProfile & x);
     void to_json(json & j, const ereol::LibraryProfile & x);
@@ -53,6 +56,26 @@ namespace ereol {
 
     void from_json(const json & j, ereol::ProductType & x);
     void to_json(json & j, const ereol::ProductType & x);
+
+*/
+
+    inline void from_json(const json & j, ereol::ChecklistItem& x) {
+        x.loanIdentifier.identifier = j.at("identifier").get<std::string>();
+        x.loanIdentifier.isbn = j.at("isbn").get<std::string>();
+        x.creationDateUtc = j.at("creationDateUtc").get<uint64_t>();
+    }
+
+    inline void to_json(json & j, const ereol::ChecklistItem & x) {
+        j = json::object();
+        j["identifier"] = x.loanIdentifier.identifier;
+        j["isbn"] = x.loanIdentifier.isbn;
+        j["creationDateUtc"] = x.creationDateUtc;
+    }
+
+
+
+
+/*
 
     inline void from_json(const json & j, ereol::Contributor& x) {
         x.type = j.at("type").get<std::string>();
@@ -258,5 +281,6 @@ namespace ereol {
             default: throw "This should not happen";
         }
     }
+    */
 
 }
