@@ -10,21 +10,19 @@
 #include <string>
 namespace ereol {
     struct Token {
-        int timeFetched;
+        uint64_t timeFetched;
         std::string sessid;
         std::string expirationDate;
         ereol::Library library;
     };
-    void from_json(const std::string  &s, ereol::Token& x);
-    void to_json(std::string & s, const ereol::Token & x);   
 #else
 //struct
 typedef struct Token Token;
 Token*  ereol_Token_instantiate(); 
 void ereol_Token_delete(Token* m);      
 //timeFetched
-int  ereol_Token_getTimeFetched(Token* m); 
-void   ereol_Token_setTimeFetched(Token* m,  int utc); 
+uint64_t  ereol_Token_getTimeFetched(Token* m); 
+void   ereol_Token_setTimeFetched(Token* m,  uint64_t utc); 
 //sessid
 const char*  ereol_Token_getSessid(Token* m); 
 void   ereol_Token_setSessid(Token* m,  const char* cp); 

@@ -58,13 +58,13 @@ namespace nlohmann {
             { return m->internalOrderNumber.c_str(); } 
             void ereol_LoanActive_setInternalOrderNumber(LoanActive* m,  char* cp) 
             { m->internalOrderNumber.assign(cp); }             
-            int  ereol_LoanActive_getOrderDate(LoanActive* m) 
+            uint64_t  ereol_LoanActive_getOrderDate(LoanActive* m) 
             { return m->orderDate; } 
-            void ereol_LoanActive_setOrderDate(LoanActive* m,  int utc) 
+            void ereol_LoanActive_setOrderDate(LoanActive* m,  uint64_t utc) 
             { m->orderDate = utc; } 
-            int ereol_LoanActive_getExpireDate(LoanActive* m) 
+            uint64_t ereol_LoanActive_getExpireDate(LoanActive* m) 
             { return m->expireDate; } 
-            void ereol_LoanActive_setExpireDate(LoanActive* m,  int utc) 
+            void ereol_LoanActive_setExpireDate(LoanActive* m,  uint64_t utc) 
             { m->expireDate = utc; } 
             const char* ereol_LoanActive_getDownloadUrl(LoanActive* m) 
             { return m->downloadUrl.c_str(); } 

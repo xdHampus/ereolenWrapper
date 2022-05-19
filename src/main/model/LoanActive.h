@@ -13,8 +13,8 @@ namespace ereol {
         ereol::LoanIdentifier loanIdentifier;
         std::string retailerOrderNumber;
         std::string internalOrderNumber;
-        int orderDate;
-        int expireDate;
+        uint64_t orderDate;
+        uint64_t expireDate;
         std::string downloadUrl;
         bool isSubscription;
     };
@@ -36,11 +36,11 @@ void   ereol_LoanActive_setRetailerOrderNumber(LoanActive* m,  char* cp);
 const char*  ereol_LoanActive_getInternalOrderNumber(LoanActive* m); 
 void   ereol_LoanActive_setInternalOrderNumber(LoanActive* m,  char* cp); 
 //orderDate
-int  ereol_LoanActive_getOrderDate(LoanActive* m); 
-void   ereol_LoanActive_setOrderDate(LoanActive* m,  int utc); 
+uint64_t  ereol_LoanActive_getOrderDate(LoanActive* m); 
+void   ereol_LoanActive_setOrderDate(LoanActive* m,  uint64_t utc); 
 //expireDate
-int  ereol_LoanActive_getExpireDate(LoanActive* m); 
-void   ereol_LoanActive_setExpireDate(LoanActive* m,  int utc); 
+uint64_t  ereol_LoanActive_getExpireDate(LoanActive* m); 
+void   ereol_LoanActive_setExpireDate(LoanActive* m,  uint64_t utc); 
 //downloadUrl
 const char*  ereol_LoanActive_getDownloadUrl(LoanActive* m); 
 void   ereol_LoanActive_setDownloadUrl(LoanActive* m,  char* cp); 

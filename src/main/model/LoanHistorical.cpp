@@ -60,9 +60,9 @@ namespace nlohmann {
             { return m->loanId.c_str(); } 
             void   ereol_LoanHistorical_setLoanId(LoanHistorical* m,  const char* cp) 
             { m->loanId.assign(cp); }    
-            int  ereol_LoanHistorical_getLoanDate(LoanHistorical* m) 
+            uint64_t  ereol_LoanHistorical_getLoanDate(LoanHistorical* m) 
             { return m->loanDate; } 
-            void   ereol_LoanHistorical_setLoanDate(LoanHistorical* m,  int utc)
+            void   ereol_LoanHistorical_setLoanDate(LoanHistorical* m,  uint64_t utc)
             { m->loanDate = utc; }             
             bool  ereol_LoanHistorical_getManuallyAdded(LoanHistorical* m) 
             { return m->manuallyAdded; } 

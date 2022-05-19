@@ -18,17 +18,17 @@ typedef struct Contributor Contributor;
 Contributor*  ereol_Contributor_instantiate(); 
 void ereol_Contributor_delete(Contributor* m);    
 //type
-const char*  ereol_LoanHistorical_getType(LoanHistorical* m); 
-void   ereol_LoanHistorical_setType(LoanHistorical* m, const char* cp); 
+const char*  ereol_Contributor_getType(Contributor* m); 
+void   ereol_Contributor_setType(Contributor* m, const char* cp); 
 //composedName
-const char*  ereol_LoanHistorical_getComposedName(LoanHistorical* m); 
-void   ereol_LoanHistorical_setComposedName(LoanHistorical* m, const char* cp); 
+const char*  ereol_Contributor_getComposedName(Contributor* m); 
+void   ereol_Contributor_setComposedName(Contributor* m, const char* cp); 
 //firstName
-const char*  ereol_LoanHistorical_getFirstName(LoanHistorical* m); 
-void   ereol_LoanHistorical_setFirstName(LoanHistorical* m, const char* cp); 
+const char*  ereol_Contributor_getFirstName(Contributor* m); 
+void   ereol_Contributor_setFirstName(Contributor* m, const char* cp); 
 //lastName
-const char*  ereol_LoanHistorical_getLastName(LoanHistorical* m); 
-void   ereol_LoanHistorical_setLastName(LoanHistorical* m, const char* cp);   
+const char*  ereol_Contributor_getLastName(Contributor* m); 
+void   ereol_Contributor_setLastName(Contributor* m, const char* cp);   
 #endif
 #ifdef __cplusplus 
 }

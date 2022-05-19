@@ -9,7 +9,7 @@ namespace ereol {
     struct LoanHistorical {
         ereol::LoanIdentifier loanIdentifier;
         std::string loanId;
-        int loanDate;
+        uint64_t loanDate;
         bool manuallyAdded;
         std::string title;
         std::string creator;
@@ -31,8 +31,8 @@ void   ereol_LoanHistorical_setLoanIdentifier(LoanHistorical* m,  LoanIdentifier
 const char*  ereol_LoanHistorical_getLoanId(LoanHistorical* m); 
 void   ereol_LoanHistorical_setLoanId(LoanHistorical* m, const char* cp); 
 //loanDate
-int  ereol_LoanHistorical_getLoanDate(LoanHistorical* m); 
-void   ereol_LoanHistorical_setLoanDate(LoanHistorical* m,  int utc); 
+uint64_t  ereol_LoanHistorical_getLoanDate(LoanHistorical* m); 
+void   ereol_LoanHistorical_setLoanDate(LoanHistorical* m,  uint64_t utc); 
 //manuallyAdded
 bool  ereol_LoanHistorical_getManuallyAdded(LoanHistorical* m); 
 void   ereol_LoanHistorical_setManuallyAdded(LoanHistorical* m,  bool state); 

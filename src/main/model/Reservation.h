@@ -7,16 +7,15 @@
 
 #include "LoanIdentifier.h"
 #ifdef __cplusplus 
-#include <vector>
 #include <string>
 namespace ereol {
     struct Reservation {
         ereol::LoanIdentifier loanIdentifier;
         std::string bookId;
         std::string status;
-        int createdUtc;
-        int expireUtc;
-        int expectedRedeemDateUtc;
+        uint64_t createdUtc;
+        uint64_t expireUtc;
+        uint64_t expectedRedeemDateUtc;
     };
     void from_json(const std::string  &s, ereol::Reservation& x);
     void to_json(std::string & s, const ereol::Reservation & x);       
@@ -35,14 +34,14 @@ void             ereol_Reservation_setBookId(Reservation* m,  char* cp);
 const char*      ereol_Reservation_getStatus(Reservation* m); 
 void             ereol_Reservation_setStatus(Reservation* m,  char* cp); 
 //createdUtc
-int              ereol_Reservation_getCreatedUTC(Reservation* m); 
-void             ereol_Reservation_setCreatedUTC(Reservation* m,  int utc); 
+uint64_t              ereol_Reservation_getCreatedUTC(Reservation* m); 
+void             ereol_Reservation_setCreatedUTC(Reservation* m,  uint64_t utc); 
 //expireUtc
-int              ereol_Reservation_getExpireUTC(Reservation* m); 
-void             ereol_Reservation_setExpireUTC(Reservation* m,  int utc);
+uint64_t              ereol_Reservation_getExpireUTC(Reservation* m); 
+void             ereol_Reservation_setExpireUTC(Reservation* m,  uint64_t utc);
 //expectedRedeemDateUtc 
-int              ereol_Reservation_getExpectedRedeemDateUTC(Reservation* m); 
-void             ereol_Reservation_setExpectedRedeemDateUTC(Reservation* m,  int utc);  
+uint64_t              ereol_Reservation_getExpectedRedeemDateUTC(Reservation* m); 
+void             ereol_Reservation_setExpectedRedeemDateUTC(Reservation* m,  uint64_t utc);  
 #endif
 #ifdef __cplusplus 
 }

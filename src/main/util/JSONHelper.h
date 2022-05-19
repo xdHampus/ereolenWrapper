@@ -15,16 +15,9 @@
 #include "../model/Contributor.h"
 #include "../model/LoanActive.h"
 #include "../model/LoanHistorical.h"
-
-/*
-#include "../model/LoanActive.h"
-#include "../model/LibraryProfile.h"
-#include "../model/Reservation.h"
+#include "../model/LoanIdentifier.h"
 #include "../model/Product.h"
-#include "../model/ProductType.h"
-#include "../model/MediaType.h"
-#include "../model/Contributor.h"
-*/
+#include "../model/Reservation.h"
 
 namespace nlohmann {
 
@@ -40,24 +33,19 @@ namespace nlohmann {
     void from_json(const json & j, ereol::LoanHistorical & x);
     void to_json(json & j, const ereol::LoanHistorical & x);
 
-/*
-
+    void from_json(const json & j, ereol::LoanIdentifier & x);
+    void to_json(json & j, const ereol::LoanIdentifier & x);
 
     void from_json(const json & j, ereol::Product & x);
     void to_json(json & j, const ereol::Product & x);
-
-    void from_json(const json & j, ereol::LoanHistoryElement & x);
-    void to_json(json & j, const ereol::LoanHistoryElement & x);
 
     void from_json(const json & j, ereol::Reservation & x);
     void to_json(json & j, const ereol::Reservation & x);
 
 
-    void from_json(const json & j, ereol::LibraryProfile & x);
-    void to_json(json & j, const ereol::LibraryProfile & x);
 
-    void from_json(const json & j, ereol::Loan & x);
-    void to_json(json & j, const ereol::Loan & x);
+/*
+
 
     void from_json(const json & j, ereol::Language & x);
     void to_json(json & j, const ereol::Language & x);
@@ -74,104 +62,6 @@ namespace nlohmann {
 
 
 
-    inline void from_json(const json & j, ereol::Product& x) {
-        x.identifier = j.at("identifier").get<std::string>();
-        x.title = j.at("title").get<std::string>();
-        x.publisher = j.at("publisher").get<std::string>();
-        x.createdDate = ereol::get_optional<uint64_t>(j, "createdDate");
-        x.updatedDate = ereol::get_optional<uint64_t>(j, "updatedDate");
-        x.cover = ereol::get_optional<std::string>(j, "cover");
-        x.thumbnail = ereol::get_optional<std::string>(j, "thumbnail");
-        x.contributors = ereol::get_optional<std::vector<ereol::Contributor>>(j, "contributors");
-        x.description = j.at("description").get<std::string>();
-        x.isbn = j.at("isbn").get<std::string>();
-        x.phid = ereol::get_optional<std::string>(j, "phid");
-        x.firstPublished = ereol::get_optional<uint64_t>(j, "firstPublished");
-        x.language = j.at("language").get<std::string>();
-        x.duration = ereol::get_optional<uint64_t>(j, "duration");
-        x.format = ereol::get_optional<std::string>(j, "format");
-        x.mediaType = j.at("mediaType").get<std::string>();
-        x.creators = ereol::get_optional<std::vector<std::string>>(j, "creators");
-        x.abstract = ereol::get_optional<std::string>(j, "abstract");
-        x.series = ereol::get_optional<std::vector<std::string>>(j, "series");
-        x.year = ereol::get_optional<std::string>(j, "year");
-        x.edition = ereol::get_optional<std::string>(j, "edition");
-        x.subjects = ereol::get_optional<std::vector<std::string>>(j, "subjects");
-        x.types = ereol::get_optional<std::vector<std::string>>(j, "types");
-        x.shelfmark = ereol::get_optional<std::string>(j, "shelfmark");
-        x.productType = ereol::get_optional<std::string>(j, "icon");
-        x.seriesPart = ereol::get_optional<std::string>(j, "seriesPart");
-        x.subscription = ereol::get_optional<std::string>(j, "subscription");
-        x.eReolenGlobalUrl = ereol::get_optional<std::string>(j, "eReolenGlobalUrl");
-    }
-
-    inline void to_json(json & j, const ereol::Product & x) {
-        j = json::object();
-        j["identifier"] = x.identifier;
-        j["title"] = x.title;
-        j["publisher"] = x.publisher;
-        j["createdDate"] = x.createdDate;
-        j["updatedDate"] = x.updatedDate;
-        j["cover"] = x.cover;
-        j["thumbnail"] = x.thumbnail;
-        j["contributors"] = x.contributors;
-        j["description"] = x.description;
-        j["isbn"] = x.isbn;
-        j["phid"] = x.phid;
-        j["firstPublished"] = x.firstPublished;
-        j["language"] = x.language;
-        j["duration"] = x.duration;
-        j["format"] = x.format;
-        j["mediaType"] = x.mediaType;
-        j["creators"] = x.creators;
-        j["abstract"] = x.abstract;
-        j["series"] = x.series;
-        j["year"] = x.year;
-        j["edition"] = x.edition;
-        j["subjects"] = x.subjects;
-        j["types"] = x.types;
-        j["shelfmark"] = x.shelfmark;
-        j["icon"] = x.icon;
-        j["seriesPart"] = x.seriesPart;
-        j["subscription"] = x.subscription;
-        j["eReolenGlobalUrl"] = x.eReolenGlobalUrl;
-    }
-
-
-
-    inline void from_json(const json & j, ereol::Reservation& x) {
-        x.identifier = j.at("identifier").get<std::string>();
-        x.isbn = j.at("isbn").get<std::string>();
-        x.bookid = j.at("bookid").get<std::string>();
-        x.createdUtc = j.at("createdUtc").get<uint64_t>();
-        x.status = j.at("status").get<std::string>();
-        x.expireUtc = j.at("expireUtc").get<uint64_t>();
-        x.expectedRedeemDateUtc = j.at("expectedRedeemDateUtc").get<uint64_t>();
-    }
-
-    inline void to_json(json & j, const ereol::Reservation & x) {
-        j = json::object();
-        j["identifier"] = x.identifier;
-        j["isbn"] = x.isbn;
-        j["bookid"] = x.bookid;
-        j["createdUtc"] = x.createdUtc;
-        j["status"] = x.status;
-        j["expireUtc"] = x.expireUtc;
-        j["expectedRedeemDateUtc"] = x.expectedRedeemDateUtc;
-    }
-
-    inline void from_json(const json & j, ereol::ChecklistItem& x) {
-        x.identifier = j.at("identifier").get<std::string>();
-        x.isbn = j.at("isbn").get<std::string>();
-        x.creationDateUtc = j.at("creationDateUtc").get<uint64_t>();
-    }
-
-    inline void to_json(json & j, const ereol::ChecklistItem & x) {
-        j = json::object();
-        j["identifier"] = x.identifier;
-        j["isbn"] = x.isbn;
-        j["creationDateUtc"] = x.creationDateUtc;
-    }
 
     inline void from_json(const json & j, ereol::LibraryProfile& x) {
         x.maxConcurrentLoansPerBorrower = j.at("maxConcurrentLoansPerBorrower").get<uint>();

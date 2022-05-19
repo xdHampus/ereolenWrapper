@@ -83,19 +83,7 @@ std::optional<std::vector<ereol::LoanActive>> ereol::Profile::getLoans(ereol::To
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    ereol::LoanActive result = {
-                            ereol::LoanIdentifier{
-                                    item.value()["identifier"].get<std::string>(),
-                                    item.value()["isbn"].get<std::string>()
-                            },
-                            item.value()["retailerOrderNumber"].get<std::string>(),
-                            item.value()["internalOrderNumber"].get<std::string>(),
-                            item.value()["orderDate"].get<int>(),
-                            item.value()["expireDate"].get<int>(),
-                            item.value()["downloadUrl"].get<std::string>(),
-                            item.value()["isSubscription"].get<bool>()
-                    };
-                    results.push_back(result);
+                    results.push_back(item.value().get<ereol::LoanActive>());
                 }
 
                 return {results};
@@ -137,7 +125,6 @@ std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(er
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    nlohmann::json jitem = item;
                     results.push_back(item.value().get<ereol::ChecklistItem>());
                 }
                 return {results};
@@ -177,18 +164,7 @@ std::optional<std::vector<ereol::Reservation>> ereol::Profile::getReservations(e
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    ereol::Reservation result = {
-                            ereol::LoanIdentifier{
-                                    item.value()["identifier"].get<std::string>(),
-                                    item.value()["isbn"].get<std::string>()
-                            },
-                            item.value()["bookid"].get<std::string>(),
-                            item.value()["status"].get<std::string>(),
-                            item.value()["createdUtc"].get<int>(),
-                            item.value()["expireUtc"].get<int>(),
-                            item.value()["expectedRedeemDateUtc"].get<int>()
-                    };
-                    results.push_back(result);
+                    results.push_back(item.value().get<ereol::Reservation>());
                 }
                 return {results};
             } else { //TODO: Invalid input or no result
@@ -227,23 +203,8 @@ std::optional<std::vector<ereol::LoanHistorical>> ereol::Profile::getLoanHistory
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    ereol::LoanHistorical result = {
-                            ereol::LoanIdentifier{
-                                    item.value()["identifier"].get<std::string>(),
-                                    item.value()["isbn"].get<std::string>()
-                            },
-                            item.value()["loanId"].get<std::string>(),
-                            item.value()["loanDate"].get<int>(),
-                            item.value()["manuallyAdded"].get<bool>(),
-                            item.value()["title"].get<std::string>(),
-                            item.value()["creator"].get<std::string>(),
-                            item.value()["publicationDate"].get<std::string>(),
-                            item.value()["materialTypes"].get<std::vector<std::string>>()
-                    };
-                    
-                    results.push_back(result);
+                    results.push_back(item.value().get<ereol::LoanHistorical>());                    
                 }
-
                 return {results};
             } else { //TODO: Invalid input or no result
             }
