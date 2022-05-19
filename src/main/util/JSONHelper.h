@@ -11,6 +11,9 @@
 
 #include <nlohmann/json.hpp>
 
+#include <string>
+#include <optional>
+
 #include "../model/ChecklistItem.h"
 #include "../model/Contributor.h"
 #include "../model/LoanActive.h"
@@ -18,6 +21,21 @@
 #include "../model/LoanIdentifier.h"
 #include "../model/Product.h"
 #include "../model/Reservation.h"
+
+
+namespace ereol {
+    template <typename T>
+    inline std::optional<T> get_optional(const  nlohmann::json & j, const char * property) {
+        if (j.find(property) != j.end()) {
+            return std::optional<T>(j.at(property).get<T>());
+        }
+        return std::optional<T>();
+    }
+    template <typename T>
+    inline std::optional<T> get_optional(const  nlohmann::json & j, std::string property) {
+        return get_optional<T>(j, property.data());
+    }
+}
 
 namespace nlohmann {
 

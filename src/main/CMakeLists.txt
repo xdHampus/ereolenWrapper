@@ -12,12 +12,10 @@ add_library(${PROJECT_NAME} SHARED
 	model/Reservation.h model/Reservation.cpp
 	model/RpcPayload.h model/RpcPayload.cpp 
 	model/Token.h model/Token.cpp 
-	model/Contributor.h
-	model/Language.h
-	model/MediaType.h 
-	model/Product.h 
-	model/ProductType.h 
-
+	model/Contributor.h model/Contributor.cpp               				
+	model/Product.h 	model/Product.cpp                				
+	          				
+	model/Language.h model/MediaType.h model/ProductType.h              				
 	util/InterfaceUtilC.h util/InterfaceUtilC.cpp
 )
 
