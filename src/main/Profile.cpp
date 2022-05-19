@@ -126,6 +126,8 @@ std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(er
             cpr::Cookies{{"PHPSESSID", token.sessid}});
 
 
+
+
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
 
@@ -135,10 +137,9 @@ std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(er
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    nlohmann::json jj = item;
-                    results.push_back(jj.get<ereol::ChecklistItem>());
+                    nlohmann::json jitem = item;
+                    results.push_back(item.value().get<ereol::ChecklistItem>());
                 }
-
                 return {results};
             } else { //TODO: Invalid input or no result
             }
