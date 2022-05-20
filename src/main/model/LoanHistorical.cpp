@@ -19,7 +19,7 @@ namespace nlohmann {
         x.loanIdentifier.identifier = j.at("identifier").get<std::string>();
         x.loanIdentifier.isbn = j.at("isbn").get<std::string>();
         x.loanId = j.at("loanId").get<std::string>();
-        x.loanDate = j.at("loanDate").get<uint64_t>();
+        x.loanDate = j.at("loanDate").get<int64_t>();
         x.manuallyAdded = j.at("manuallyAdded").get<bool>();
         x.title = j.at("title").get<std::string>();
         x.creator = j.at("creator").get<std::string>();
@@ -60,9 +60,9 @@ namespace nlohmann {
             { return m->loanId.c_str(); } 
             void   ereol_LoanHistorical_setLoanId(LoanHistorical* m,  const char* cp) 
             { m->loanId.assign(cp); }    
-            uint64_t  ereol_LoanHistorical_getLoanDate(LoanHistorical* m) 
+            int64_t  ereol_LoanHistorical_getLoanDate(LoanHistorical* m) 
             { return m->loanDate; } 
-            void   ereol_LoanHistorical_setLoanDate(LoanHistorical* m,  uint64_t utc)
+            void   ereol_LoanHistorical_setLoanDate(LoanHistorical* m,  int64_t utc)
             { m->loanDate = utc; }             
             bool  ereol_LoanHistorical_getManuallyAdded(LoanHistorical* m) 
             { return m->manuallyAdded; } 

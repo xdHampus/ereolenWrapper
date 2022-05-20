@@ -18,10 +18,10 @@ namespace ereol {
         std::string language;
         std::string mediaType;
 
-        std::optional<uint64_t> createdDate;
-        std::optional<uint64_t> updatedDate;
-        std::optional<uint64_t> firstPublished;
-        std::optional<uint64_t> duration;    
+        std::optional<int64_t> createdDate;
+        std::optional<int64_t> updatedDate;
+        std::optional<int64_t> firstPublished;
+        std::optional<int64_t> duration;    
 
         std::optional<std::string> productType;
         std::optional<std::string> cover;
@@ -73,17 +73,17 @@ void   ereol_Product_setMediaType(Product* m, const char* cp);
 
 
 //createdDate
-uint64_t  ereol_Product_getCreatedDate(Product* m); 
-void   ereol_Product_setCreatedDate(Product* m,  uint64_t unixTime); 
+int64_t  ereol_Product_getCreatedDate(Product* m); 
+void   ereol_Product_setCreatedDate(Product* m,  int64_t unixTime); 
 //updatedDate
-uint64_t  ereol_Product_getUpdatedDate(Product* m); 
-void   ereol_Product_setUpdatedDate(Product* m,  uint64_t unixTime); 
+int64_t  ereol_Product_getUpdatedDate(Product* m); 
+void   ereol_Product_setUpdatedDate(Product* m,  int64_t unixTime); 
 //firstPublished
-uint64_t  ereol_Product_getFirstPublished(Product* m); 
-void   ereol_Product_setFirstPublished(Product* m,  uint64_t unixTime); 
+int64_t  ereol_Product_getFirstPublished(Product* m); 
+void   ereol_Product_setFirstPublished(Product* m,  int64_t unixTime); 
 //duration
-uint64_t  ereol_Product_getDuration(Product* m); 
-void   ereol_Product_setDuration(Product* m,  uint64_t unixTime); 
+int64_t  ereol_Product_getDuration(Product* m); 
+void   ereol_Product_setDuration(Product* m,  int64_t unixTime); 
 
 //productType
 const char*  ereol_Product_getProductType(Product* m); 

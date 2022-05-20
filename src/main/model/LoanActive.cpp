@@ -17,8 +17,8 @@ namespace nlohmann {
         x.loanIdentifier.isbn = j.at("isbn").get<std::string>();
         x.retailerOrderNumber = j.at("retailerOrderNumber").get<std::string>();
         x.internalOrderNumber = j.at("internalOrderNumber").get<std::string>();
-        x.orderDate = j.at("orderDate").get<uint64_t>();
-        x.expireDate = j.at("expireDate").get<uint64_t>();
+        x.orderDate = j.at("orderDate").get<int64_t>();
+        x.expireDate = j.at("expireDate").get<int64_t>();
         x.downloadUrl = j.at("downloadUrl").get<std::string>();
         x.isSubscription = j.at("isSubscription").get<bool>();
     }
@@ -58,13 +58,13 @@ namespace nlohmann {
             { return m->internalOrderNumber.c_str(); } 
             void ereol_LoanActive_setInternalOrderNumber(LoanActive* m,  char* cp) 
             { m->internalOrderNumber.assign(cp); }             
-            uint64_t  ereol_LoanActive_getOrderDate(LoanActive* m) 
+            int64_t  ereol_LoanActive_getOrderDate(LoanActive* m) 
             { return m->orderDate; } 
-            void ereol_LoanActive_setOrderDate(LoanActive* m,  uint64_t utc) 
+            void ereol_LoanActive_setOrderDate(LoanActive* m,  int64_t utc) 
             { m->orderDate = utc; } 
-            uint64_t ereol_LoanActive_getExpireDate(LoanActive* m) 
+            int64_t ereol_LoanActive_getExpireDate(LoanActive* m) 
             { return m->expireDate; } 
-            void ereol_LoanActive_setExpireDate(LoanActive* m,  uint64_t utc) 
+            void ereol_LoanActive_setExpireDate(LoanActive* m,  int64_t utc) 
             { m->expireDate = utc; } 
             const char* ereol_LoanActive_getDownloadUrl(LoanActive* m) 
             { return m->downloadUrl.c_str(); } 

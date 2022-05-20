@@ -16,7 +16,7 @@ namespace nlohmann {
     void from_json(const json & j, ereol::ChecklistItem& x) {
         x.loanIdentifier.identifier = j.at("identifier").get<std::string>();
         x.loanIdentifier.isbn = j.at("isbn").get<std::string>();
-        x.creationDateUtc = j.at("creationDateUtc").get<uint64_t>();
+        x.creationDateUtc = j.at("creationDateUtc").get<int64_t>();
     }
 
     void to_json(json & j, const ereol::ChecklistItem & x) {
@@ -42,7 +42,7 @@ namespace nlohmann {
             { return &m->loanIdentifier; }
             void   ereol_ChecklistItem_setLoanIdentifier(ChecklistItem* m, LoanIdentifier* identifier)
             { m->loanIdentifier = *identifier; } 
-            uint64_t  ereol_ChecklistItem_getCreationDateUTC(ChecklistItem* m)
+            int64_t  ereol_ChecklistItem_getCreationDateUTC(ChecklistItem* m)
             { return m->creationDateUtc; } 
             void   ereol_ChecklistItem_setCreationDateUTC(ChecklistItem* m,  int utc)
             { m->creationDateUtc = utc; } 
