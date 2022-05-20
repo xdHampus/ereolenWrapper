@@ -28,10 +28,10 @@ namespace nlohmann {
         x.language = j.at("language").get<std::string>();
         x.mediaType = j.at("mediaType").get<std::string>();
 
-        x.createdDate = ereol::get_optional<uint64_t>(j, "createdDate");
-        x.updatedDate = ereol::get_optional<uint64_t>(j, "updatedDate");
-        x.firstPublished = ereol::get_optional<uint64_t>(j, "firstPublished");
-        x.duration = ereol::get_optional<uint64_t>(j, "duration");
+        x.createdDate = ereol::get_optional<int64_t>(j, "createdDate");
+        x.updatedDate = ereol::get_optional<int64_t>(j, "updatedDate");
+        x.firstPublished = ereol::get_optional<int64_t>(j, "firstPublished");
+        x.duration = ereol::get_optional<int64_t>(j, "duration");
 
         x.productType = ereol::get_optional<std::string>(j, "icon");
         x.cover = ereol::get_optional<std::string>(j, "cover");
@@ -140,25 +140,25 @@ namespace nlohmann {
 
 
 
-            uint64_t ereol_Product_getCreatedDate(Product* m) 
+            int64_t ereol_Product_getCreatedDate(Product* m) 
             { if(!m->createdDate.has_value()){ return 0; } return m->createdDate.value(); } 
-            void   ereol_Product_setCreatedDate(Product* m,  uint64_t unixTime)
-            { m->createdDate = std::optional<uint64_t>(unixTime); }            
+            void   ereol_Product_setCreatedDate(Product* m,  int64_t unixTime)
+            { m->createdDate = std::optional<int64_t>(unixTime); }            
 
-            uint64_t  ereol_Product_getUpdatedDate(Product* m) 
+            int64_t  ereol_Product_getUpdatedDate(Product* m) 
             { if(!m->updatedDate.has_value()){ return 0; } return m->updatedDate.value(); } 
-            void   ereol_Product_setUpdatedDate(Product* m,  uint64_t unixTime)
-            { m->updatedDate = std::optional<uint64_t>(unixTime); }             
+            void   ereol_Product_setUpdatedDate(Product* m,  int64_t unixTime)
+            { m->updatedDate = std::optional<int64_t>(unixTime); }             
             
-            uint64_t  ereol_Product_getFirstPublished(Product* m) 
+            int64_t  ereol_Product_getFirstPublished(Product* m) 
             { if(!m->firstPublished.has_value()){ return 0; } return m->firstPublished.value(); } 
-            void   ereol_Product_setFirstPublished(Product* m,  uint64_t unixTime)
-            { m->firstPublished = std::optional<uint64_t>(unixTime); }             
+            void   ereol_Product_setFirstPublished(Product* m,  int64_t unixTime)
+            { m->firstPublished = std::optional<int64_t>(unixTime); }             
             
-            uint64_t  ereol_Product_getDuration(Product* m) 
+            int64_t  ereol_Product_getDuration(Product* m) 
             { if(!m->duration.has_value()){ return 0; } return m->duration.value(); } 
-            void   ereol_Product_setDuration(Product* m, uint64_t unixTime)
-            { m->duration = std::optional<uint64_t>(unixTime); }             
+            void   ereol_Product_setDuration(Product* m, int64_t unixTime)
+            { m->duration = std::optional<int64_t>(unixTime); }             
 
 
 

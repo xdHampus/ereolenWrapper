@@ -11,9 +11,9 @@
             { 
                 delete m;
             } 
-            uint64_t  ereol_Token_getTimeFetched(Token* m) 
+            int64_t  ereol_Token_getTimeFetched(Token* m) 
             { return m->timeFetched; } 
-            void   ereol_Token_setTimeFetched(Token* m,  uint64_t utc) 
+            void   ereol_Token_setTimeFetched(Token* m,  int64_t utc) 
             { m->timeFetched = utc; }             
             const char*  ereol_Token_getSessid(Token* m) 
             { return m->sessid.c_str(); } 

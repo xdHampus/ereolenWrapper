@@ -10,7 +10,7 @@
 #include <string>
 namespace ereol {
     struct Token {
-        uint64_t timeFetched;
+        int64_t timeFetched;
         std::string sessid;
         std::string expirationDate;
         ereol::Library library;
@@ -21,8 +21,8 @@ typedef struct Token Token;
 Token*  ereol_Token_instantiate(); 
 void ereol_Token_delete(Token* m);      
 //timeFetched
-uint64_t  ereol_Token_getTimeFetched(Token* m); 
-void   ereol_Token_setTimeFetched(Token* m,  uint64_t utc); 
+int64_t  ereol_Token_getTimeFetched(Token* m); 
+void   ereol_Token_setTimeFetched(Token* m,  int64_t utc); 
 //sessid
 const char*  ereol_Token_getSessid(Token* m); 
 void   ereol_Token_setSessid(Token* m,  const char* cp); 
