@@ -41,6 +41,7 @@ option(ENABLE_TESTING "Should unit tests be compiled." ON)
 set(${PROJECT_NAME}_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
     CACHE STRING "Path to install ${PROJECT_NAME} Config*.cmake files to.")
 
+
 ####################
 ##  Dependencies  ##
 ####################
@@ -67,6 +68,8 @@ add_subdirectory(src)
 ###############
 ## Packaging ##
 ###############
+set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 
 if(ENABLE_INSTALL)
     # Use version checking helper provided by CMake so that users can

@@ -256,7 +256,6 @@ TEST(ProfileTest, GetLoansTest) {
             i++;
         }
     }
-
 }
 TEST(ProfileTest, GetChecklistTest) {
     profileTH.ensureLoaded();

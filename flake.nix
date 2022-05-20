@@ -9,57 +9,48 @@
 
   outputs = { self, nixpkgs, ... }@inputs: inputs.utils.lib.eachSystem [
     "x86_64-linux" "i686-linux" "aarch64-linux" "x86_64-darwin"
-  ] (system: let 
-                clibs = [
-                   (pkgs.callPackage ./libs/cpr/default.nix {})
-                ];
-  				pkgs = import nixpkgs {
-                   inherit system;
-                   overlays = [];
-                   config.allowUnfree = true;
-
-                 };
-             in {
-               devShell = pkgs.mkShell rec {
-                 # Update the name to something that suites your project.
-                 name = "ereolenWrapper";
-
-                 packages = with pkgs; [
-                   # Development Tools
-                   llvmPackages_11.clang
-                   cmake
-                   cmakeCurses
-                   gitFull # cmake FetchContent
-				   #jetbrains.clion
-				   					
-                   # Development time dependencies
-                   gtest
-                   python39
-                   python39Packages.flask
-
-                   # Build time and Run time dependencies
-                   nlohmann_json
-                   openssl
-				   curl
-				   zlib
-               ] ++ clibs;
-                 
-               };
-
-			  packages = {
-			  	library = pkgs.callPackage ./default.nix {customLibs=clibs;};
-				tests = pkgs.callPackage ./tests.nix {customLibs=clibs;};
-				libCpr = pkgs.callPackage ./libs/cpr/default.nix {};
-			  }; 
-
-              defaultPackage = pkgs.callPackage ./default.nix {customLibs=clibs;};
-
-		      checks = {
-		        tests = pkgs.callPackage ./tests.nix {customLibs=clibs;};
-		      };
-
-
-
-
-             });
+  ] (system: 
+  let 
+    clibs = [
+      (pkgs.callPackage ./libs/cpr/default.nix {})
+    ];
+    ereolenWrapperDrv = pkgs.callPackage ./default.nix {customLibs=clibs;};
+    libcprDrv = pkgs.callPackage ./libs/cpr/default.nix {};
+    libunityDrv = pkgs.callPackage ./libs/unity/default.nix {};
+    testsDrv = pkgs.callPackage ./tests.nix {customLibs=clibs;};
+    ctestsDrv = pkgs.callPackage ./src/test/c-interface/tests.nix {
+      customLibs=[
+        ereolenWrapperDrv
+        (pkgs.callPackage ./libs/unity/default.nix {unityExtensionFixture = true;})
+      ];
+    };
+    pkgs = import nixpkgs {
+      inherit system;
+      overlays = [];
+      config.allowUnfree = true;
+    };
+  in {
+    devShell = pkgs.mkShell rec {
+      name = "ereolenWrapper";
+      packages = with pkgs; [
+        # Development Tools
+        gitFull gdb valgrind
+        #jetbrains.clion
+        # Dependencies
+        llvmPackages_11.clang cmake zlib openssl gtest # cmake FetchContent #cmakeCurses
+        nlohmann_json curl
+        python39 python39Packages.flask 
+      ] ++ clibs;
+    };
+    packages = {
+      ereolenWrapper = ereolenWrapperDrv;
+      libcpr = libcprDrv;
+      libunity = libunityDrv;
+    }; 
+    defaultPackage = ereolenWrapperDrv;
+    checks = {
+      tests = testsDrv;
+      ctests = ctestsDrv;
+    };
+  });
 }

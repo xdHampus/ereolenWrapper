@@ -170,9 +170,6 @@ def m_product(data, app):
 
 
 
-
-
-
 #TODO: Fill in mock data
 def resp_about_creator_1(data):
     return no_results(data)

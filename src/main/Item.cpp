@@ -1,18 +1,21 @@
-//
-// Created by root on 1/30/22.
-//
-
-#include "Profile.h"
+#include "Item.h"
 #include "util/InterfaceUtilC.h"
 #ifdef __cplusplus 
+#include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
-#include "util/JSONHelper.h"
+const std::string ereol::Item::otherTypesOfSameTitleMethod = "getOtherTypesOfSameTitle";
+const std::string ereol::Item::moreOfSameGenreMethod = "getMoreOfSameGenre";
+const std::string ereol::Item::moreOfSameCreatorMethod = "getMoreOfSameCreator";
+const std::string ereol::Item::moreInSameSeriesMethod = "getMoreInSameSeries";
+const std::string ereol::Item::somethingSimilarMethod = "getSomethingSimilar";
+const std::string ereol::Item::aboutCreatorsMethod = "getAboutCreators";
+const std::string ereol::Item::reviewsMethod = "getReviews";
+const std::string ereol::Item::coversMethod = "getCovers";
+const std::string ereol::Item::personalRecommendationsMethod = "getPersonalRecommendations";
+const std::string ereol::Item::loanStatusesMethod = "ereolen.getLoanStatuses";
+const std::string ereol::Item::productMethod = "getProduct";
 
-const std::string ereol::Profile::libraryProfileMethod = "ereolen.getLibraryProfile";
-const std::string ereol::Profile::loansMethod = "getLoans";
-const std::string ereol::Profile::checklistMethod = "ereolen.getCheckList";
-const std::string ereol::Profile::reservationsMethod = "getReservations";
-const std::string ereol::Profile::loanHistoryMethod = "getLoanHistory";
+
 
 std::optional<ereol::LibraryProfile> ereol::Profile::getLibraryProfile(ereol::Library library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
@@ -83,7 +86,19 @@ std::optional<std::vector<ereol::LoanActive>> ereol::Profile::getLoans(ereol::To
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    results.push_back(item.value().get<ereol::LoanActive>());
+                    ereol::LoanActive result = {
+                            ereol::LoanIdentifier{
+                                    item.value()["identifier"].get<std::string>(),
+                                    item.value()["isbn"].get<std::string>()
+                            },
+                            item.value()["retailerOrderNumber"].get<std::string>(),
+                            item.value()["internalOrderNumber"].get<std::string>(),
+                            item.value()["orderDate"].get<int>(),
+                            item.value()["expireDate"].get<int>(),
+                            item.value()["downloadUrl"].get<std::string>(),
+                            item.value()["isSubscription"].get<bool>()
+                    };
+                    results.push_back(result);
                 }
 
                 return {results};
@@ -114,8 +129,6 @@ std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(er
             cpr::Cookies{{"PHPSESSID", token.sessid}});
 
 
-
-
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
 
@@ -125,8 +138,16 @@ std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(er
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    results.push_back(item.value().get<ereol::ChecklistItem>());
+                    ereol::ChecklistItem result = {
+                            ereol::LoanIdentifier{
+                                    item.value()["identifier"].get<std::string>(),
+                                    item.value()["isbn"].get<std::string>()
+                            },
+                            item.value()["creationDateUtc"].get<int>()
+                    };
+                    results.push_back(result);
                 }
+
                 return {results};
             } else { //TODO: Invalid input or no result
             }
@@ -164,7 +185,18 @@ std::optional<std::vector<ereol::Reservation>> ereol::Profile::getReservations(e
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    results.push_back(item.value().get<ereol::Reservation>());
+                    ereol::Reservation result = {
+                            ereol::LoanIdentifier{
+                                    item.value()["identifier"].get<std::string>(),
+                                    item.value()["isbn"].get<std::string>()
+                            },
+                            item.value()["bookid"].get<std::string>(),
+                            item.value()["status"].get<std::string>(),
+                            item.value()["createdUtc"].get<int>(),
+                            item.value()["expireUtc"].get<int>(),
+                            item.value()["expectedRedeemDateUtc"].get<int>()
+                    };
+                    results.push_back(result);
                 }
                 return {results};
             } else { //TODO: Invalid input or no result
@@ -203,8 +235,23 @@ std::optional<std::vector<ereol::LoanHistorical>> ereol::Profile::getLoanHistory
 
                 for (const auto& item : jr["result"]["data"].items())
                 {
-                    results.push_back(item.value().get<ereol::LoanHistorical>());                    
+                    ereol::LoanHistorical result = {
+                            ereol::LoanIdentifier{
+                                    item.value()["identifier"].get<std::string>(),
+                                    item.value()["isbn"].get<std::string>()
+                            },
+                            item.value()["loanId"].get<std::string>(),
+                            item.value()["loanDate"].get<int>(),
+                            item.value()["manuallyAdded"].get<bool>(),
+                            item.value()["title"].get<std::string>(),
+                            item.value()["creator"].get<std::string>(),
+                            item.value()["publicationDate"].get<std::string>(),
+                            item.value()["materialTypes"].get<std::vector<std::string>>()
+                    };
+                    
+                    results.push_back(result);
                 }
+
                 return {results};
             } else { //TODO: Invalid input or no result
             }
@@ -227,33 +274,38 @@ extern "C" {
                 return nullptr;
             }
         }
-        VectorVoid*  ereol_Profile_getLoans(Token* token) {
+        LoanActive*  ereol_Profile_getLoans(Token* token) {
             std::optional<std::vector<LoanActive>> optLoans = ereol::Profile::getLoans(*token);
             if(optLoans.has_value()){
-                return new ereol::VectorVoid(optLoans.value());
-            } 
-            return nullptr;
+                //return ereol::AllocateVector(&optLoans.value())->data();
+                return optLoans.value().data();
+            } else {
+                return nullptr;
+            }
         }
-        VectorVoid*  ereol_Profile_getChecklist(Token* token) {
+        ChecklistItem*  ereol_Profile_getChecklist(Token* token) {
             std::optional<std::vector<ChecklistItem>> optChecklist = ereol::Profile::getCheckList(*token);
             if(optChecklist.has_value()){
-                return new ereol::VectorVoid(optChecklist.value());
+                return optChecklist.value().data();
+            } else {
+                return nullptr;
             }
-            return nullptr;
         }        
-        VectorVoid*  ereol_Profile_getReservations(Token* token) {
+        Reservation*  ereol_Profile_getReservations(Token* token) {
             std::optional<std::vector<Reservation>> optReservations = ereol::Profile::getReservations(*token);
             if(optReservations.has_value()){
-                return new ereol::VectorVoid(optReservations.value());
+                return optReservations.value().data();
+            } else {
+                return nullptr;
             }
-            return nullptr;
         }
-        VectorVoid*  ereol_Profile_getLoanHistory(Token* token) {
+        LoanHistorical*  ereol_Profile_getLoanHistory(Token* token) {
             std::optional<std::vector<LoanHistorical>> optLoanHistory = ereol::Profile::getLoanHistory(*token);
             if(optLoanHistory.has_value()){
-                return new ereol::VectorVoid(optLoanHistory.value());
+                return optLoanHistory.value().data();
+            } else {
+                return nullptr;
             }
-            return nullptr;
         }                
 
 #ifdef __cplusplus 

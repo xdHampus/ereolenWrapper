@@ -1,11 +1,29 @@
 #add_executable(ereolenwrapper ereolenwrapper.cpp)
-add_library(${PROJECT_NAME} SHARED structs/LibraryProfile.h structs/LoanActive.h structs/RpcPayload.h structs/Library.h ApiEnv.cpp structs/Token.h structs/ChecklistItem.h structs/LoanHistorical.h structs/LoanIdentifier.h structs/Reservation.h)
+add_library(${PROJECT_NAME} SHARED 
+	ApiEnv.h ApiEnv.cpp 
+	Auth.h Auth.cpp
+	Profile.h Profile.cpp 
+	model/ChecklistItem.h model/ChecklistItem.cpp 
+	model/Library.h 
+	model/LibraryProfile.h 
+	model/LoanActive.h model/LoanActive.cpp
+	model/LoanHistorical.h model/LoanHistorical.cpp
+	model/LoanIdentifier.h model/LoanIdentifier.cpp 
+	model/Reservation.h model/Reservation.cpp
+	model/RpcPayload.h model/RpcPayload.cpp 
+	model/Token.h model/Token.cpp 
+	model/Contributor.h model/Contributor.cpp               				
+	model/Product.h 	model/Product.cpp                				
+	          				
+	model/Language.h model/MediaType.h model/ProductType.h               				
+	util/InterfaceUtilC.h util/InterfaceUtilC.cpp
+	util/JSONHelper.h
+)
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_sources(${PROJECT_NAME} PRIVATE
 		ereolenwrapper.cpp
-		ApiEnv.h
-		Auth.cpp Auth.h
-		Profile.cpp Profile.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
