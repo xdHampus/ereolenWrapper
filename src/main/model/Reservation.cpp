@@ -16,10 +16,10 @@ namespace nlohmann {
         x.loanIdentifier.identifier = j.at("identifier").get<std::string>();
         x.loanIdentifier.isbn = j.at("isbn").get<std::string>();
         x.bookId = j.at("bookid").get<std::string>();
-        x.createdUtc = j.at("createdUtc").get<uint64_t>();
+        x.createdUtc = j.at("createdUtc").get<int64_t>();
         x.status = j.at("status").get<std::string>();
-        x.expireUtc = j.at("expireUtc").get<uint64_t>();
-        x.expectedRedeemDateUtc = j.at("expectedRedeemDateUtc").get<uint64_t>();     
+        x.expireUtc = j.at("expireUtc").get<int64_t>();
+        x.expectedRedeemDateUtc = j.at("expectedRedeemDateUtc").get<int64_t>();     
     }
 
     void to_json(json & j, const ereol::Reservation & x) {
@@ -56,17 +56,17 @@ namespace nlohmann {
             { return m->status.c_str(); } 
             void ereol_Reservation_setStatus(Reservation* m,  char* cp) 
             { m->status.assign(cp); }             
-            uint64_t ereol_Reservation_getCreatedUTC(Reservation* m) 
+            int64_t ereol_Reservation_getCreatedUTC(Reservation* m) 
             { return m->createdUtc; } 
-            void ereol_Reservation_setCreatedUTC(Reservation* m,  uint64_t utc) 
+            void ereol_Reservation_setCreatedUTC(Reservation* m,  int64_t utc) 
             { m->createdUtc = utc; } 
-            uint64_t ereol_Reservation_getExpireUTC(Reservation* m) 
+            int64_t ereol_Reservation_getExpireUTC(Reservation* m) 
             { return m->expireUtc; } 
-            void ereol_Reservation_setExpireUTC(Reservation* m,  uint64_t utc)
+            void ereol_Reservation_setExpireUTC(Reservation* m,  int64_t utc)
             { m->expireUtc = utc; } 
-            uint64_t ereol_Reservation_getExpectedRedeemDateUTC(Reservation* m) 
+            int64_t ereol_Reservation_getExpectedRedeemDateUTC(Reservation* m) 
             { return m->expectedRedeemDateUtc; } 
-            void ereol_Reservation_setExpectedRedeemDateUTC(Reservation* m,  uint64_t utc)  
+            void ereol_Reservation_setExpectedRedeemDateUTC(Reservation* m,  int64_t utc)  
             { m->expectedRedeemDateUtc = utc; }             
 #ifdef __cplusplus 
     };
