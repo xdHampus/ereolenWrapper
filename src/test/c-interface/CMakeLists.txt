@@ -1,4 +1,4 @@
-project("My Awesome Tested Project" C) 
+project("eReolenWrapper C Interface Tests" C) 
 cmake_minimum_required(VERSION 3.0)
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
@@ -9,16 +9,12 @@ find_package(ereolenwrapper REQUIRED)
 
 include(CTest)
 
-add_executable(ereolenwrapperctests 
-test_runners/all_tests.c
-TestProductionCode.c 
-StructTests.c 
-test_runners/TestProductionCode_Runner.c 
-test_runners/StructTests_Runner.c 
+add_executable(ereolenwrapperctests test_runners/all_tests.c
+    StructTests.c   test_runners/StructTests_Runner.c 
 )
 
 target_link_libraries(ereolenwrapperctests unity::framework ereolenwrapper::ereolenwrapper)
-add_test(test_meh ereolenwrapperctests)
+add_test(c_interface_tests ereolenwrapperctests)
 
 install(
     TARGETS ereolenwrapperctests

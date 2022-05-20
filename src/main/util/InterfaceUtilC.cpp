@@ -2,6 +2,8 @@
 
 #ifdef __cplusplus 
 #include <functional>
+#include <vector>
+#include <string>
 #include <cstring>
 #include <algorithm>
 ereol::VectorStrC::VectorStrC(std::vector<std::string> *v) {
@@ -11,16 +13,30 @@ ereol::VectorStrC::VectorStrC(std::vector<std::string> *v) {
 const char** ereol::VectorStrC::data(){
     return ereol::VectorStrC::m_v->data();
 }
+size_t ereol::VectorStrC::size(){
+    return ereol::VectorStrC::m_v->size();
+}
 ereol::VectorStrC::~VectorStrC(){
     delete ereol::VectorStrC::m_v;
 }
 
-template<class T>
-std::vector<T>* AllocateVector(std::vector<T>* v){
-    typename std::vector<T>* o = new std::vector<T>(v->size());
-    std::swap_ranges(v->begin(), v->end(), o->begin());
-    return o;
+ereol::VectorVoid::VectorVoid(std::vector<void*> *v) {
+    ereol::VectorVoid::m_v = v;
 }
+size_t ereol::VectorVoid::size(){
+    return ereol::VectorVoid::m_v->size();
+}
+void** ereol::VectorVoid::data(){
+    return ereol::VectorVoid::m_v->data();
+}
+void ereol::VectorVoid::clear(){
+    return ereol::VectorVoid::m_v->clear();
+}
+ereol::VectorVoid::~VectorVoid(){
+    delete ereol::VectorVoid::m_v;
+}
+
+              
 
 #else
 #endif
@@ -32,6 +48,18 @@ extern "C" {
         { delete v; }
         const char**  ereol_VectorStrC_getData(VectorStrC* v) 
         { return v->data(); } 
+        size_t  ereol_VectorStrC_size(VectorStrC* v) 
+        { return v->size(); } 
+
+        void  ereol_VectorVoid_delete(VectorVoid* v)
+        { delete v; }        
+        void  ereol_VectorVoid_clear(VectorVoid* v)
+        { v->clear(); }
+        void**  ereol_VectorVoid_getData(VectorVoid* v) 
+        { return v->data(); } 
+        size_t  ereol_VectorVoid_size(VectorVoid* v) 
+        { return v->size(); }         
+
 #ifdef __cplusplus 
     };
 }

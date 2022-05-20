@@ -227,38 +227,33 @@ extern "C" {
                 return nullptr;
             }
         }
-        LoanActive*  ereol_Profile_getLoans(Token* token) {
+        VectorVoid*  ereol_Profile_getLoans(Token* token) {
             std::optional<std::vector<LoanActive>> optLoans = ereol::Profile::getLoans(*token);
             if(optLoans.has_value()){
-                //return ereol::AllocateVector(&optLoans.value())->data();
-                return optLoans.value().data();
-            } else {
-                return nullptr;
-            }
+                return new ereol::VectorVoid(optLoans.value());
+            } 
+            return nullptr;
         }
-        ChecklistItem*  ereol_Profile_getChecklist(Token* token) {
+        VectorVoid*  ereol_Profile_getChecklist(Token* token) {
             std::optional<std::vector<ChecklistItem>> optChecklist = ereol::Profile::getCheckList(*token);
             if(optChecklist.has_value()){
-                return optChecklist.value().data();
-            } else {
-                return nullptr;
+                return new ereol::VectorVoid(optChecklist.value());
             }
+            return nullptr;
         }        
-        Reservation*  ereol_Profile_getReservations(Token* token) {
+        VectorVoid*  ereol_Profile_getReservations(Token* token) {
             std::optional<std::vector<Reservation>> optReservations = ereol::Profile::getReservations(*token);
             if(optReservations.has_value()){
-                return optReservations.value().data();
-            } else {
-                return nullptr;
+                return new ereol::VectorVoid(optReservations.value());
             }
+            return nullptr;
         }
-        LoanHistorical*  ereol_Profile_getLoanHistory(Token* token) {
+        VectorVoid*  ereol_Profile_getLoanHistory(Token* token) {
             std::optional<std::vector<LoanHistorical>> optLoanHistory = ereol::Profile::getLoanHistory(*token);
             if(optLoanHistory.has_value()){
-                return optLoanHistory.value().data();
-            } else {
-                return nullptr;
+                return new ereol::VectorVoid(optLoanHistory.value());
             }
+            return nullptr;
         }                
 
 #ifdef __cplusplus 

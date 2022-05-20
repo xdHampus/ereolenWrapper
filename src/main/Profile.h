@@ -32,11 +32,12 @@ namespace ereol {
         static std::optional<std::vector<ereol::LoanHistorical>> getLoanHistory(ereol::Token token);
     };
 #else
+#include "util/InterfaceUtilC.h"
 LibraryProfile*  ereol_Profile_getLibraryProfile(Library* library); 
-LoanActive*  ereol_Profile_getLoans(Token* token); 
-ChecklistItem* ereol_Profile_getChecklist(Token* token); 
-Reservation*  ereol_Profile_getReservations(Token* token); 
-LoanHistorical*  ereol_Profile_getLoanHistory(Token* token); 
+VectorVoid* ereol_Profile_getLoans(Token* token); 
+VectorVoid* ereol_Profile_getChecklist(Token* token); 
+VectorVoid* ereol_Profile_getReservations(Token* token); 
+VectorVoid* ereol_Profile_getLoanHistory(Token* token); 
 #endif
 #ifdef __cplusplus 
 }

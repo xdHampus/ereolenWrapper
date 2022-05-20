@@ -74,16 +74,16 @@ void   ereol_Product_setMediaType(Product* m, const char* cp);
 
 //createdDate
 uint64_t  ereol_Product_getCreatedDate(Product* m); 
-void   ereol_Product_setCreatedDate(Product* m,  uint64_t unix); 
+void   ereol_Product_setCreatedDate(Product* m,  uint64_t unixTime); 
 //updatedDate
 uint64_t  ereol_Product_getUpdatedDate(Product* m); 
-void   ereol_Product_setUpdatedDate(Product* m,  uint64_t unix); 
+void   ereol_Product_setUpdatedDate(Product* m,  uint64_t unixTime); 
 //firstPublished
 uint64_t  ereol_Product_getFirstPublished(Product* m); 
-void   ereol_Product_setFirstPublished(Product* m,  uint64_t unix); 
+void   ereol_Product_setFirstPublished(Product* m,  uint64_t unixTime); 
 //duration
 uint64_t  ereol_Product_getDuration(Product* m); 
-void   ereol_Product_setDuration(Product* m,  uint64_t unix); 
+void   ereol_Product_setDuration(Product* m,  uint64_t unixTime); 
 
 //productType
 const char*  ereol_Product_getProductType(Product* m); 
@@ -123,10 +123,10 @@ const char*  ereol_Product_getEReolenGlobalUrl(Product* m);
 void   ereol_Product_setEReolenGlobalUrl(Product* m, const char* cp); 
 
 //contributors
-Contributor* ereol_Product_getContributors(Product* m); 
+VectorVoid* ereol_Product_getContributors(Product* m); 
 size_t ereol_Product_getContributors_size(Product* m); 
 void ereol_Product_getContributors_insert(Product* m, const Contributor* x); 
-void ereol_Product_setContributors(Product* m, const  Contributor* arr, size_t n);    
+void ereol_Product_setContributors(Product* m, const  Contributor** arr, size_t n);    
 
 
 //creators

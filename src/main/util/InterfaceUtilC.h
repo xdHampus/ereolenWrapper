@@ -5,8 +5,6 @@
 #include <string> 
 namespace ereol {
 
-template<class T>
-std::vector<T>* AllocateVector(std::vector<T>* v);
 
 class VectorStrC
 {
@@ -15,15 +13,47 @@ class VectorStrC
     public:
         VectorStrC(std::vector<std::string> *v);
         const char** data();
+        size_t size();
         ~VectorStrC();
 
 };
 
+class VectorVoid
+{
+    private:
+        std::vector<void*>* m_v;
+    public:
+        template<typename T, typename A>
+        VectorVoid(std::vector<T, A> &v) {
+            ereol::VectorVoid::m_v = new std::vector<void*>();
+            ereol::VectorVoid::m_v->reserve(v.size());
+            int i;
+            for(i = 0; i < v.size(); i++){
+                T* t = &v[i];
+                ereol::VectorVoid::m_v->push_back((void*)t);
+            }
+        };
+        VectorVoid(std::vector<void*> *v);
+        void** data();
+        void clear();
+        size_t size();
+        ~VectorVoid();
+};
+
+
+
 #else
 //c_str_vector
 typedef struct VectorStrC VectorStrC;
-void ereol_VectorStrC_delete(VectorStrC* v);   
+void ereol_VectorStrC_delete(VectorStrC* v);
+size_t ereol_VectorStrC_size(VectorStrC* v);   
 const char** ereol_VectorStrC_getData(VectorStrC* v);   
+//vectorvoid
+typedef struct VectorVoid VectorVoid;
+void ereol_VectorVoid_delete(VectorVoid* v);
+void ereol_VectorVoid_clear(VectorVoid* v);
+size_t ereol_VectorVoid_size(VectorVoid* v);   
+void** ereol_VectorVoid_getData(VectorVoid* v);   
 
 #endif //end __cplusplus
 #ifdef __cplusplus 

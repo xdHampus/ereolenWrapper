@@ -15,8 +15,9 @@ add_library(${PROJECT_NAME} SHARED
 	model/Contributor.h model/Contributor.cpp               				
 	model/Product.h 	model/Product.cpp                				
 	          				
-	model/Language.h model/MediaType.h model/ProductType.h              				
+	model/Language.h model/MediaType.h model/ProductType.h               				
 	util/InterfaceUtilC.h util/InterfaceUtilC.cpp
+	util/JSONHelper.h
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)

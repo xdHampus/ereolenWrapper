@@ -9,6 +9,8 @@
 #include "src/main/model/Reservation.h"
 #include "src/main/model/RpcPayload.h"
 #include "src/main/model/Token.h"
+#include "src/main/model/Contributor.h"
+#include "src/main/model/Product.h"
 
 
 TEST_GROUP(StructTests);
@@ -83,6 +85,33 @@ TEST(StructTests, ChecklistItemManipulation)
     
     ereol_ChecklistItem_delete(t);
 }
+
+
+TEST(StructTests, ContributorManipulation)
+{
+    //Init
+    const char* type = "type str";
+    const char* composedName = "composedName str";
+    const char* firstName = "firstName str";
+    const char* lastName = "lastName str";
+    Contributor* t = ereol_Contributor_instantiate();
+
+    //Manipulate
+    ereol_Contributor_setType(t, type);
+    ereol_Contributor_setComposedName(t, composedName);
+    ereol_Contributor_setFirstName(t, firstName);
+    ereol_Contributor_setLastName(t, lastName);
+
+    //Verify
+    TEST_ASSERT_EQUAL_STRING(type, ereol_Contributor_getType(t));
+    TEST_ASSERT_EQUAL_STRING(composedName, ereol_Contributor_getComposedName(t));
+    TEST_ASSERT_EQUAL_STRING(firstName, ereol_Contributor_getFirstName(t));
+    TEST_ASSERT_EQUAL_STRING(lastName, ereol_Contributor_getLastName(t));
+
+    ereol_Contributor_delete(t);
+}
+
+
 
 TEST(StructTests, LibraryProfileManipulation)
 {
@@ -201,6 +230,197 @@ TEST(StructTests, LoanIdentifierManipulation)
     ereol_LoanIdentifier_delete(loan);
 }
 
+
+Contributor* StructTests_FillContributor(const char* t, const char* cn, const char* fn, const char* ln ){
+    Contributor* c = ereol_Contributor_instantiate();
+    ereol_Contributor_setType(c,t);
+    ereol_Contributor_setComposedName(c,cn);
+    ereol_Contributor_setFirstName(c,fn);
+    ereol_Contributor_setLastName(c,ln);
+    return c;
+}
+
+void StructTests_CompareContributor(Contributor* a, Contributor* b){
+    TEST_ASSERT_EQUAL_STRING(ereol_Contributor_getType(a), ereol_Contributor_getType(b));
+    TEST_ASSERT_EQUAL_STRING(ereol_Contributor_getComposedName(a), ereol_Contributor_getComposedName(b));
+    TEST_ASSERT_EQUAL_STRING(ereol_Contributor_getFirstName(a), ereol_Contributor_getFirstName(b));
+    TEST_ASSERT_EQUAL_STRING(ereol_Contributor_getLastName(a), ereol_Contributor_getLastName(b));
+}
+
+TEST(StructTests, ProductManipulation)
+{
+
+    //Init
+    const char* title = "title string";
+    const char* publisher = "publisher string";
+    const char* description = "description string";
+    const char* language = "language string";
+    const char* mediaType = "mediaType string";
+
+    int createdDate = unixSample + 84642;
+    int updatedDate = unixSample + 2462;
+    int firstPublished = unixSample + 14962;
+    int duration = unixSample + 45462;
+
+    const char* productType = "productType string";
+    const char* cover = "cover string";
+    const char* phid = "phid string";
+    const char* format = "format string";
+    const char* thumbnail = "thumbnail string";
+    const char* abstract = "abstract string";
+    const char* year = "year string";
+    const char* edition = "edition string";
+    const char* shelfmark = "shelfmark string";
+    const char* seriesPart = "seriesPart string";
+    const char* subscription = "subscription string";
+    const char* eReolenGlobalUrl = "eReolenGlobalUrl string";
+
+    Contributor* cAdd1 = StructTests_FillContributor("t1","cn1","fn1","ln1"); 
+    Contributor* cAdd2 = StructTests_FillContributor("t2","cn2","fn2","ln2"); 
+    Contributor* cAdd3 = StructTests_FillContributor("t3","cn3","fn3","ln3");
+    Contributor* c1a[2];
+    c1a[0] = cAdd1;
+    c1a[1] = cAdd2;
+    Contributor* c2a[3];
+    c2a[0] = cAdd1;
+    c2a[1] = cAdd2;
+    c2a[2] = cAdd3;
+    Contributor** c1 = c1a;
+    Contributor** c2 = c2a;
+
+
+    char **m1 = StructTests_CreateFilled_Array(3);
+    const char* mAdd = "abc 4";
+    char **m2 = StructTests_CreateFilled_Array(4);
+
+    LoanIdentifier* loan = StructTests_CreateLoanIdentifier();
+    Product* t = ereol_Product_instantiate();
+    StructTests_VerifyLoanIdentifier(loan, StructTests_LoanIdentifier_identifier, StructTests_LoanIdentifier_isbn);
+
+    //Manipulate
+    ereol_Product_setLoanIdentifier(t, loan);
+    ereol_LoanIdentifier_delete(loan);
+    ereol_Product_setTitle(t, title);
+    ereol_Product_setPublisher(t, publisher);
+    ereol_Product_setDescription(t, description);
+    ereol_Product_setLanguage(t, language);
+    ereol_Product_setMediaType(t, mediaType);
+    ereol_Product_setCreatedDate(t, createdDate);
+    ereol_Product_setUpdatedDate(t, updatedDate);
+    ereol_Product_setFirstPublished(t, firstPublished);
+    ereol_Product_setDuration(t, duration);
+    ereol_Product_setProductType(t, productType);
+    ereol_Product_setCover(t, cover);
+    ereol_Product_setPhid(t, phid);
+    ereol_Product_setFormat(t, format);
+    ereol_Product_setThumbnail(t, thumbnail);
+    ereol_Product_setAbstract(t, abstract);
+    ereol_Product_setYear(t, year);
+    ereol_Product_setEdition(t, edition);
+    ereol_Product_setShelfmark(t, shelfmark);
+    ereol_Product_setSeriesPart(t, seriesPart);
+    ereol_Product_setSubscription(t, subscription);
+    ereol_Product_setEReolenGlobalUrl(t, eReolenGlobalUrl);
+    ereol_Product_setContributors(t, c1, 2);
+    ereol_Product_setCreators(t, m1, 3);
+    ereol_Product_setSeries(t, m1, 3);
+    ereol_Product_setSubjects(t, m1, 3);
+    ereol_Product_setTypes(t, m1, 3);
+
+
+    //Verify
+    StructTests_VerifyLoanIdentifier(ereol_LoanHistorical_getLoanIdentifier(t), StructTests_LoanIdentifier_identifier, StructTests_LoanIdentifier_isbn);
+    TEST_ASSERT_EQUAL_STRING(title, ereol_Product_getTitle(t));
+    TEST_ASSERT_EQUAL_STRING(publisher, ereol_Product_getPublisher(t));
+    TEST_ASSERT_EQUAL_STRING(description, ereol_Product_getDescription(t));
+    TEST_ASSERT_EQUAL_STRING(language, ereol_Product_getLanguage(t));
+    TEST_ASSERT_EQUAL_STRING(mediaType, ereol_Product_getMediaType(t));
+    TEST_ASSERT_EQUAL_INT(createdDate, ereol_Product_getCreatedDate(t));
+    TEST_ASSERT_EQUAL_INT(updatedDate, ereol_Product_getUpdatedDate(t));
+    TEST_ASSERT_EQUAL_INT(firstPublished, ereol_Product_getFirstPublished(t));
+    TEST_ASSERT_EQUAL_INT(duration, ereol_Product_getDuration(t));
+    TEST_ASSERT_EQUAL_STRING(productType, ereol_Product_getProductType(t));
+    TEST_ASSERT_EQUAL_STRING(cover, ereol_Product_getCover(t));
+    TEST_ASSERT_EQUAL_STRING(phid, ereol_Product_getPhid(t));
+    TEST_ASSERT_EQUAL_STRING(format, ereol_Product_getFormat(t));
+    TEST_ASSERT_EQUAL_STRING(thumbnail, ereol_Product_getThumbnail(t));
+    TEST_ASSERT_EQUAL_STRING(abstract, ereol_Product_getAbstract(t));
+    TEST_ASSERT_EQUAL_STRING(year, ereol_Product_getYear(t));
+    TEST_ASSERT_EQUAL_STRING(edition, ereol_Product_getEdition(t));
+    TEST_ASSERT_EQUAL_STRING(shelfmark, ereol_Product_getShelfmark(t));
+    TEST_ASSERT_EQUAL_STRING(seriesPart, ereol_Product_getSeriesPart(t));
+    TEST_ASSERT_EQUAL_STRING(subscription, ereol_Product_getSubscription(t));
+    TEST_ASSERT_EQUAL_STRING(eReolenGlobalUrl, ereol_Product_getEReolenGlobalUrl(t));
+
+    TEST_ASSERT_EQUAL_INT(2, ereol_Product_getContributors_size(t));
+    VectorVoid* vectVoid1 = ereol_Product_getContributors(t);
+    Contributor** cr1 = (Contributor**)ereol_VectorVoid_getData(vectVoid1);
+    for(int i = 0; i < 2; i++){
+        StructTests_CompareContributor(c1[i], cr1[i]);
+    }
+    ereol_VectorVoid_delete(vectVoid1);
+    ereol_Product_getContributors_insert(t, cAdd3);
+    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getContributors_size(t));
+    VectorVoid* vectVoid2 = ereol_Product_getContributors(t);
+    Contributor** cr2 = (Contributor**)ereol_VectorVoid_getData(vectVoid2);
+    for(int i = 0; i < 3; i++){
+        StructTests_CompareContributor(c2[i], cr2[i]);
+    }
+    ereol_VectorVoid_delete(vectVoid2);
+    ereol_Contributor_delete(cAdd1);
+    ereol_Contributor_delete(cAdd2);
+    ereol_Contributor_delete(cAdd3);
+
+
+    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getCreators_size(t));
+    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getSeries_size(t));
+    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getSubjects_size(t));
+    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getTypes_size(t));
+    
+    //Verify & Manipulate string vector 1
+    VectorStrC* m1r = ereol_Product_getCreators(t);
+    StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
+    ereol_VectorStrC_delete(m1r);
+    m1r = ereol_Product_getSeries(t);
+    StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
+    ereol_VectorStrC_delete(m1r);
+    m1r = ereol_Product_getSubjects(t);
+    StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
+    ereol_VectorStrC_delete(m1r);
+    m1r = ereol_Product_getTypes(t);
+    StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
+    ereol_VectorStrC_delete(m1r);
+
+    //Verify & Manipulate string vector 2
+    ereol_Product_getCreators_insert(t, mAdd);
+    ereol_Product_getSeries_insert(t, mAdd);
+    ereol_Product_getSubjects_insert(t, mAdd);
+    ereol_Product_getTypes_insert(t, mAdd);
+    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getCreators_size(t));
+    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getSeries_size(t));
+    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getSubjects_size(t));
+    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getTypes_size(t));
+    VectorStrC* m2r = ereol_Product_getCreators(t);
+    StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
+    ereol_VectorStrC_delete(m2r);
+    m2r = ereol_Product_getSeries(t);
+    StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
+    ereol_VectorStrC_delete(m2r);
+    m2r = ereol_Product_getSubjects(t);
+    StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
+    ereol_VectorStrC_delete(m2r);
+    m2r = ereol_Product_getTypes(t);
+    StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
+    ereol_VectorStrC_delete(m2r);
+    StructTests_Free_Array(m1, 3);
+    StructTests_Free_Array(m2, 4);
+
+    ereol_Product_delete(t);
+}
+
+
+
+
 TEST(StructTests, ReservationManipulation)
 {
     //Init
@@ -231,6 +451,9 @@ TEST(StructTests, ReservationManipulation)
 
     ereol_Reservation_delete(t);
 }
+
+
+
 
 
 TEST(StructTests, RpcPayloadManipulation)

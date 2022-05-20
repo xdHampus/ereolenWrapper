@@ -2,7 +2,6 @@
 
 static void runAllTests(void)
 {
-  RUN_TEST_GROUP(ProductionCode);
   RUN_TEST_GROUP(StructTests);
 }
 
