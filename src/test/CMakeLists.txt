@@ -1,5 +1,3 @@
-
-
 if(ENABLE_TESTING)
     add_executable(ereolenwrappertests ereolenWrapperTests.cpp)
     target_sources(ereolenwrappertests PRIVATE

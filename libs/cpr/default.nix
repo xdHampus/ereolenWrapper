@@ -26,6 +26,6 @@ stdenv.mkDerivation rec {
     description = "C++ Requests: Curl for People, a spiritual port of Python Requests.";
     platforms = platforms.unix;
     license = licenses.mit;
-    maintainers = with maintainers; [ rszibele ];
+    maintainers = with maintainers; [ xdHampus ];
   };
 }

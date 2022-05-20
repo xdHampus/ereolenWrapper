@@ -4,13 +4,17 @@
 
 #include "Auth.h"
 #include "ApiEnv.h"
-#include "src/main/structs/Library.h"
-#include "src/main/structs/RpcPayload.h"
-#include "src/main/structs/Token.h"
+#include "src/main/model/Library.h"
+#include "src/main/model/RpcPayload.h"
+#include "src/main/model/Token.h"
+#ifdef __cplusplus 
 #include <cpr/cpr.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+const std::string ereol::Auth::authMethod   = "authenticate";
+const std::string ereol::Auth::isAuthMethod = "isAuthenticated";
+const std::string ereol::Auth::deAuthMethod = "deauthenticate";
 
 std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std::string password, ereol::Library library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
@@ -115,3 +119,27 @@ bool ereol::Auth::isAuthenticated(ereol::Token token) {
 }
 
 
+extern "C" { 
+    namespace ereol {
+#endif
+        Token*  ereol_Auth_authenticate(char* username, char* password, Library* library) {
+            std::string sU(username);
+            std::string sP(password);
+            std::optional<Token> optToken = ereol::Auth::authenticate(sU, sP, *library);
+            if(optToken.has_value()){
+                return &optToken.value();
+            } else {
+                return nullptr;
+            }
+        }
+        bool  ereol_Auth_deauthenticate(Token* token) {
+            return ereol::Auth::deauthenticate(*token);
+
+        }
+        bool  ereol_Auth_isAuthenticated(Token* token) {
+            return ereol::Auth::isAuthenticated(*token);
+        }
+#ifdef __cplusplus 
+    };
+}
+#endif  // __cplusplus 

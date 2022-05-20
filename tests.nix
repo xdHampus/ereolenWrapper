@@ -23,6 +23,8 @@ llvmPackages_11.stdenv.mkDerivation rec {
       "-DENABLE_INSTALL=ON"
       "-DENABLE_TESTING=${if enableTests then "ON" else "OFF"}"
     ];
+  #run test binary
+  #postFixup = ''$out/bin/ereolenwrappertests'';
 
   meta = with lib; {
     homepage = "https://github.com/xdHampus/ereolenWrapper";
