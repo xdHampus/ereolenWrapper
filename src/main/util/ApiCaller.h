@@ -1,7 +1,3 @@
-//
-// Created by work on 7/3/22.
-//
-
 #ifndef EREOLENWRAPPER_APICALLER_H
 #define EREOLENWRAPPER_APICALLER_H
 

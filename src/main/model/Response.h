@@ -1,8 +1,6 @@
-
 #ifndef EREOLENWRAPPER_RESPONSE_H
 #define EREOLENWRAPPER_RESPONSE_H
 
-#ifdef __cplusplus
 #include <vector>
 #include <string>
 namespace ereol {
@@ -13,13 +11,5 @@ namespace ereol {
         //error
         T data;
     };
-#else
-
-#endif
-#ifdef __cplusplus
 }
-#endif
-
 #endif //EREOLENWRAPPER_RESPONSE_H
-
-//
