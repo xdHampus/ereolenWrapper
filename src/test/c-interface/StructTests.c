@@ -10,7 +10,7 @@
 #include "src/main/model/RpcPayload.h"
 #include "src/main/model/Token.h"
 #include "src/main/model/Contributor.h"
-#include "src/main/model/Product.h"
+#include "src/main/model/Record.h"
 
 
 TEST_GROUP(StructTests);
@@ -247,7 +247,7 @@ void StructTests_CompareContributor(Contributor* a, Contributor* b){
     TEST_ASSERT_EQUAL_STRING(ereol_Contributor_getLastName(a), ereol_Contributor_getLastName(b));
 }
 
-TEST(StructTests, ProductManipulation)
+TEST(StructTests, RecordManipulation)
 {
 
     //Init
@@ -262,7 +262,7 @@ TEST(StructTests, ProductManipulation)
     int firstPublished = unixSample + 14962;
     int duration = unixSample + 45462;
 
-    const char* productType = "productType string";
+    const char* recordType = "recordType string";
     const char* cover = "cover string";
     const char* phid = "phid string";
     const char* format = "format string";
@@ -294,74 +294,74 @@ TEST(StructTests, ProductManipulation)
     char **m2 = StructTests_CreateFilled_Array(4);
 
     LoanIdentifier* loan = StructTests_CreateLoanIdentifier();
-    Product* t = ereol_Product_instantiate();
+    Record* t = ereol_Record_instantiate();
     StructTests_VerifyLoanIdentifier(loan, StructTests_LoanIdentifier_identifier, StructTests_LoanIdentifier_isbn);
 
     //Manipulate
-    ereol_Product_setLoanIdentifier(t, loan);
+    ereol_Record_setLoanIdentifier(t, loan);
     ereol_LoanIdentifier_delete(loan);
-    ereol_Product_setTitle(t, title);
-    ereol_Product_setPublisher(t, publisher);
-    ereol_Product_setDescription(t, description);
-    ereol_Product_setLanguage(t, language);
-    ereol_Product_setMediaType(t, mediaType);
-    ereol_Product_setCreatedDate(t, createdDate);
-    ereol_Product_setUpdatedDate(t, updatedDate);
-    ereol_Product_setFirstPublished(t, firstPublished);
-    ereol_Product_setDuration(t, duration);
-    ereol_Product_setProductType(t, productType);
-    ereol_Product_setCover(t, cover);
-    ereol_Product_setPhid(t, phid);
-    ereol_Product_setFormat(t, format);
-    ereol_Product_setThumbnail(t, thumbnail);
-    ereol_Product_setAbstract(t, abstract);
-    ereol_Product_setYear(t, year);
-    ereol_Product_setEdition(t, edition);
-    ereol_Product_setShelfmark(t, shelfmark);
-    ereol_Product_setSeriesPart(t, seriesPart);
-    ereol_Product_setSubscription(t, subscription);
-    ereol_Product_setEReolenGlobalUrl(t, eReolenGlobalUrl);
-    ereol_Product_setContributors(t, c1, 2);
-    ereol_Product_setCreators(t, m1, 3);
-    ereol_Product_setSeries(t, m1, 3);
-    ereol_Product_setSubjects(t, m1, 3);
-    ereol_Product_setTypes(t, m1, 3);
+    ereol_Record_setTitle(t, title);
+    ereol_Record_setPublisher(t, publisher);
+    ereol_Record_setDescription(t, description);
+    ereol_Record_setLanguage(t, language);
+    ereol_Record_setMediaType(t, mediaType);
+    ereol_Record_setCreatedDate(t, createdDate);
+    ereol_Record_setUpdatedDate(t, updatedDate);
+    ereol_Record_setFirstPublished(t, firstPublished);
+    ereol_Record_setDuration(t, duration);
+    ereol_Record_setRecordType(t, recordType);
+    ereol_Record_setCover(t, cover);
+    ereol_Record_setPhid(t, phid);
+    ereol_Record_setFormat(t, format);
+    ereol_Record_setThumbnail(t, thumbnail);
+    ereol_Record_setAbstract(t, abstract);
+    ereol_Record_setYear(t, year);
+    ereol_Record_setEdition(t, edition);
+    ereol_Record_setShelfmark(t, shelfmark);
+    ereol_Record_setSeriesPart(t, seriesPart);
+    ereol_Record_setSubscription(t, subscription);
+    ereol_Record_setEReolenGlobalUrl(t, eReolenGlobalUrl);
+    ereol_Record_setContributors(t, c1, 2);
+    ereol_Record_setCreators(t, m1, 3);
+    ereol_Record_setSeries(t, m1, 3);
+    ereol_Record_setSubjects(t, m1, 3);
+    ereol_Record_setTypes(t, m1, 3);
 
 
     //Verify
     StructTests_VerifyLoanIdentifier(ereol_LoanHistorical_getLoanIdentifier(t), StructTests_LoanIdentifier_identifier, StructTests_LoanIdentifier_isbn);
-    TEST_ASSERT_EQUAL_STRING(title, ereol_Product_getTitle(t));
-    TEST_ASSERT_EQUAL_STRING(publisher, ereol_Product_getPublisher(t));
-    TEST_ASSERT_EQUAL_STRING(description, ereol_Product_getDescription(t));
-    TEST_ASSERT_EQUAL_STRING(language, ereol_Product_getLanguage(t));
-    TEST_ASSERT_EQUAL_STRING(mediaType, ereol_Product_getMediaType(t));
-    TEST_ASSERT_EQUAL_INT(createdDate, ereol_Product_getCreatedDate(t));
-    TEST_ASSERT_EQUAL_INT(updatedDate, ereol_Product_getUpdatedDate(t));
-    TEST_ASSERT_EQUAL_INT(firstPublished, ereol_Product_getFirstPublished(t));
-    TEST_ASSERT_EQUAL_INT(duration, ereol_Product_getDuration(t));
-    TEST_ASSERT_EQUAL_STRING(productType, ereol_Product_getProductType(t));
-    TEST_ASSERT_EQUAL_STRING(cover, ereol_Product_getCover(t));
-    TEST_ASSERT_EQUAL_STRING(phid, ereol_Product_getPhid(t));
-    TEST_ASSERT_EQUAL_STRING(format, ereol_Product_getFormat(t));
-    TEST_ASSERT_EQUAL_STRING(thumbnail, ereol_Product_getThumbnail(t));
-    TEST_ASSERT_EQUAL_STRING(abstract, ereol_Product_getAbstract(t));
-    TEST_ASSERT_EQUAL_STRING(year, ereol_Product_getYear(t));
-    TEST_ASSERT_EQUAL_STRING(edition, ereol_Product_getEdition(t));
-    TEST_ASSERT_EQUAL_STRING(shelfmark, ereol_Product_getShelfmark(t));
-    TEST_ASSERT_EQUAL_STRING(seriesPart, ereol_Product_getSeriesPart(t));
-    TEST_ASSERT_EQUAL_STRING(subscription, ereol_Product_getSubscription(t));
-    TEST_ASSERT_EQUAL_STRING(eReolenGlobalUrl, ereol_Product_getEReolenGlobalUrl(t));
+    TEST_ASSERT_EQUAL_STRING(title, ereol_Record_getTitle(t));
+    TEST_ASSERT_EQUAL_STRING(publisher, ereol_Record_getPublisher(t));
+    TEST_ASSERT_EQUAL_STRING(description, ereol_Record_getDescription(t));
+    TEST_ASSERT_EQUAL_STRING(language, ereol_Record_getLanguage(t));
+    TEST_ASSERT_EQUAL_STRING(mediaType, ereol_Record_getMediaType(t));
+    TEST_ASSERT_EQUAL_INT(createdDate, ereol_Record_getCreatedDate(t));
+    TEST_ASSERT_EQUAL_INT(updatedDate, ereol_Record_getUpdatedDate(t));
+    TEST_ASSERT_EQUAL_INT(firstPublished, ereol_Record_getFirstPublished(t));
+    TEST_ASSERT_EQUAL_INT(duration, ereol_Record_getDuration(t));
+    TEST_ASSERT_EQUAL_STRING(recordType, ereol_Record_getRecordType(t));
+    TEST_ASSERT_EQUAL_STRING(cover, ereol_Record_getCover(t));
+    TEST_ASSERT_EQUAL_STRING(phid, ereol_Record_getPhid(t));
+    TEST_ASSERT_EQUAL_STRING(format, ereol_Record_getFormat(t));
+    TEST_ASSERT_EQUAL_STRING(thumbnail, ereol_Record_getThumbnail(t));
+    TEST_ASSERT_EQUAL_STRING(abstract, ereol_Record_getAbstract(t));
+    TEST_ASSERT_EQUAL_STRING(year, ereol_Record_getYear(t));
+    TEST_ASSERT_EQUAL_STRING(edition, ereol_Record_getEdition(t));
+    TEST_ASSERT_EQUAL_STRING(shelfmark, ereol_Record_getShelfmark(t));
+    TEST_ASSERT_EQUAL_STRING(seriesPart, ereol_Record_getSeriesPart(t));
+    TEST_ASSERT_EQUAL_STRING(subscription, ereol_Record_getSubscription(t));
+    TEST_ASSERT_EQUAL_STRING(eReolenGlobalUrl, ereol_Record_getEReolenGlobalUrl(t));
 
-    TEST_ASSERT_EQUAL_INT(2, ereol_Product_getContributors_size(t));
-    VectorVoid* vectVoid1 = ereol_Product_getContributors(t);
+    TEST_ASSERT_EQUAL_INT(2, ereol_Record_getContributors_size(t));
+    VectorVoid* vectVoid1 = ereol_Record_getContributors(t);
     Contributor** cr1 = (Contributor**)ereol_VectorVoid_getData(vectVoid1);
     for(int i = 0; i < 2; i++){
         StructTests_CompareContributor(c1[i], cr1[i]);
     }
     ereol_VectorVoid_delete(vectVoid1);
-    ereol_Product_getContributors_insert(t, cAdd3);
-    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getContributors_size(t));
-    VectorVoid* vectVoid2 = ereol_Product_getContributors(t);
+    ereol_Record_getContributors_insert(t, cAdd3);
+    TEST_ASSERT_EQUAL_INT(3, ereol_Record_getContributors_size(t));
+    VectorVoid* vectVoid2 = ereol_Record_getContributors(t);
     Contributor** cr2 = (Contributor**)ereol_VectorVoid_getData(vectVoid2);
     for(int i = 0; i < 3; i++){
         StructTests_CompareContributor(c2[i], cr2[i]);
@@ -372,50 +372,50 @@ TEST(StructTests, ProductManipulation)
     ereol_Contributor_delete(cAdd3);
 
 
-    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getCreators_size(t));
-    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getSeries_size(t));
-    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getSubjects_size(t));
-    TEST_ASSERT_EQUAL_INT(3, ereol_Product_getTypes_size(t));
+    TEST_ASSERT_EQUAL_INT(3, ereol_Record_getCreators_size(t));
+    TEST_ASSERT_EQUAL_INT(3, ereol_Record_getSeries_size(t));
+    TEST_ASSERT_EQUAL_INT(3, ereol_Record_getSubjects_size(t));
+    TEST_ASSERT_EQUAL_INT(3, ereol_Record_getTypes_size(t));
     
     //Verify & Manipulate string vector 1
-    VectorStrC* m1r = ereol_Product_getCreators(t);
+    VectorStrC* m1r = ereol_Record_getCreators(t);
     StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
     ereol_VectorStrC_delete(m1r);
-    m1r = ereol_Product_getSeries(t);
+    m1r = ereol_Record_getSeries(t);
     StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
     ereol_VectorStrC_delete(m1r);
-    m1r = ereol_Product_getSubjects(t);
+    m1r = ereol_Record_getSubjects(t);
     StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
     ereol_VectorStrC_delete(m1r);
-    m1r = ereol_Product_getTypes(t);
+    m1r = ereol_Record_getTypes(t);
     StructTests_Compare_Array(m1, ereol_VectorStrC_getData(m1r), 3);
     ereol_VectorStrC_delete(m1r);
 
     //Verify & Manipulate string vector 2
-    ereol_Product_getCreators_insert(t, mAdd);
-    ereol_Product_getSeries_insert(t, mAdd);
-    ereol_Product_getSubjects_insert(t, mAdd);
-    ereol_Product_getTypes_insert(t, mAdd);
-    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getCreators_size(t));
-    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getSeries_size(t));
-    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getSubjects_size(t));
-    TEST_ASSERT_EQUAL_INT(4, ereol_Product_getTypes_size(t));
-    VectorStrC* m2r = ereol_Product_getCreators(t);
+    ereol_Record_getCreators_insert(t, mAdd);
+    ereol_Record_getSeries_insert(t, mAdd);
+    ereol_Record_getSubjects_insert(t, mAdd);
+    ereol_Record_getTypes_insert(t, mAdd);
+    TEST_ASSERT_EQUAL_INT(4, ereol_Record_getCreators_size(t));
+    TEST_ASSERT_EQUAL_INT(4, ereol_Record_getSeries_size(t));
+    TEST_ASSERT_EQUAL_INT(4, ereol_Record_getSubjects_size(t));
+    TEST_ASSERT_EQUAL_INT(4, ereol_Record_getTypes_size(t));
+    VectorStrC* m2r = ereol_Record_getCreators(t);
     StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
     ereol_VectorStrC_delete(m2r);
-    m2r = ereol_Product_getSeries(t);
+    m2r = ereol_Record_getSeries(t);
     StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
     ereol_VectorStrC_delete(m2r);
-    m2r = ereol_Product_getSubjects(t);
+    m2r = ereol_Record_getSubjects(t);
     StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
     ereol_VectorStrC_delete(m2r);
-    m2r = ereol_Product_getTypes(t);
+    m2r = ereol_Record_getTypes(t);
     StructTests_Compare_Array(m2, ereol_VectorStrC_getData(m2r), 4);
     ereol_VectorStrC_delete(m2r);
     StructTests_Free_Array(m1, 3);
     StructTests_Free_Array(m2, 4);
 
-    ereol_Product_delete(t);
+    ereol_Record_delete(t);
 }
 
 

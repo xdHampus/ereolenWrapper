@@ -1,4 +1,4 @@
-#include "Product.h"
+#include "Record.h"
 #include "../util/InterfaceUtilC.h"
 #ifdef __cplusplus 
 #include <functional>
@@ -8,18 +8,18 @@
 #include <cstdlib>
 #include "../util/JSONHelper.h"
 
-void ereol::from_json(const std::string  &s, ereol::Product& x){
+void ereol::from_json(const std::string  &s, ereol::Record& x){
     nlohmann::json j = nlohmann::json::parse(s);
     x = j;
 }
-void ereol::to_json(std::string & s, const ereol::Product & x){
+void ereol::to_json(std::string & s, const ereol::Record & x){
     nlohmann::json j = x;
     s = j.dump();
 }
 
 namespace nlohmann {
 
-    void from_json(const json & j, ereol::Product& x) {
+    void from_json(const json & j, ereol::Record& x) {
         x.loanIdentifier.identifier = j.at("identifier").get<std::string>();
         x.loanIdentifier.isbn = j.at("isbn").get<std::string>();        
         x.title = j.at("title").get<std::string>();
@@ -33,7 +33,7 @@ namespace nlohmann {
         x.firstPublished = ereol::get_optional<int64_t>(j, "firstPublished");
         x.duration = ereol::get_optional<int64_t>(j, "duration");
 
-        x.productType = ereol::get_optional<std::string>(j, "icon");
+        x.recordType = ereol::get_optional<std::string>(j, "icon");
         x.cover = ereol::get_optional<std::string>(j, "cover");
         x.phid = ereol::get_optional<std::string>(j, "phid");
         x.format = ereol::get_optional<std::string>(j, "format");
@@ -52,10 +52,9 @@ namespace nlohmann {
         x.series = ereol::get_optional<std::vector<std::string>>(j, "series");
         x.subjects = ereol::get_optional<std::vector<std::string>>(j, "subjects");
         x.types = ereol::get_optional<std::vector<std::string>>(j, "types");
-
     }
 
-    void to_json(json & j, const ereol::Product & x) {
+    void to_json(json & j, const ereol::Record & x) {
         j = json::object();
         j["identifier"] = x.loanIdentifier.identifier;
         j["isbn"] = x.loanIdentifier.isbn;
@@ -70,7 +69,7 @@ namespace nlohmann {
         j["firstPublished"] = x.firstPublished.value();
         j["duration"] = x.duration.value();
 
-        j["icon"] = x.productType.value();
+        j["icon"] = x.recordType.value();
         j["cover"] = x.cover.value();
         j["phid"] = x.phid.value();
         j["format"] = x.format.value();
@@ -100,140 +99,140 @@ namespace nlohmann {
         namespace ereol {
 #endif
 
-            Product*  ereol_Product_instantiate()
+            Record*  ereol_Record_instantiate()
             {
-                return new Product();
+                return new Record();
             }
-            void ereol_Product_delete(Product* m)      
+            void ereol_Record_delete(Record* m)      
             { 
                 delete m; 
             } 
-            LoanIdentifier*  ereol_Product_getLoanIdentifier(Product* m) 
+            LoanIdentifier*  ereol_Record_getLoanIdentifier(Record* m) 
             { return &m->loanIdentifier; }
-            void   ereol_Product_setLoanIdentifier(Product* m,  LoanIdentifier* identifier) 
+            void   ereol_Record_setLoanIdentifier(Record* m,  LoanIdentifier* identifier) 
             { m->loanIdentifier = *identifier; } 
 
-            const char*  ereol_Product_getTitle(Product* m) 
+            const char*  ereol_Record_getTitle(Record* m) 
             { return m->title.c_str(); } 
-            void   ereol_Product_setTitle(Product* m,  const char* cp) 
+            void   ereol_Record_setTitle(Record* m,  const char* cp) 
             { m->title.assign(cp); }    
             
-            const char*  ereol_Product_getPublisher(Product* m) 
+            const char*  ereol_Record_getPublisher(Record* m) 
             { return m->publisher.c_str(); } 
-            void   ereol_Product_setPublisher(Product* m,  const char* cp) 
+            void   ereol_Record_setPublisher(Record* m,  const char* cp) 
             { m->publisher.assign(cp); }    
             
-            const char*  ereol_Product_getDescription(Product* m) 
+            const char*  ereol_Record_getDescription(Record* m) 
             { return m->description.c_str(); } 
-            void   ereol_Product_setDescription(Product* m,  const char* cp) 
+            void   ereol_Record_setDescription(Record* m,  const char* cp) 
             { m->description.assign(cp); }    
             
-            const char*  ereol_Product_getLanguage(Product* m) 
+            const char*  ereol_Record_getLanguage(Record* m) 
             { return m->language.c_str(); } 
-            void   ereol_Product_setLanguage(Product* m,  const char* cp) 
+            void   ereol_Record_setLanguage(Record* m,  const char* cp) 
             { m->language.assign(cp); }    
             
-            const char*  ereol_Product_getMediaType(Product* m) 
+            const char*  ereol_Record_getMediaType(Record* m) 
             { return m->mediaType.c_str(); } 
-            void   ereol_Product_setMediaType(Product* m,  const char* cp) 
+            void   ereol_Record_setMediaType(Record* m,  const char* cp) 
             { m->mediaType.assign(cp); }    
 
 
 
-            int64_t ereol_Product_getCreatedDate(Product* m) 
+            int64_t ereol_Record_getCreatedDate(Record* m) 
             { if(!m->createdDate.has_value()){ return 0; } return m->createdDate.value(); } 
-            void   ereol_Product_setCreatedDate(Product* m,  int64_t unixTime)
+            void   ereol_Record_setCreatedDate(Record* m,  int64_t unixTime)
             { m->createdDate = std::optional<int64_t>(unixTime); }            
 
-            int64_t  ereol_Product_getUpdatedDate(Product* m) 
+            int64_t  ereol_Record_getUpdatedDate(Record* m) 
             { if(!m->updatedDate.has_value()){ return 0; } return m->updatedDate.value(); } 
-            void   ereol_Product_setUpdatedDate(Product* m,  int64_t unixTime)
+            void   ereol_Record_setUpdatedDate(Record* m,  int64_t unixTime)
             { m->updatedDate = std::optional<int64_t>(unixTime); }             
             
-            int64_t  ereol_Product_getFirstPublished(Product* m) 
+            int64_t  ereol_Record_getFirstPublished(Record* m) 
             { if(!m->firstPublished.has_value()){ return 0; } return m->firstPublished.value(); } 
-            void   ereol_Product_setFirstPublished(Product* m,  int64_t unixTime)
+            void   ereol_Record_setFirstPublished(Record* m,  int64_t unixTime)
             { m->firstPublished = std::optional<int64_t>(unixTime); }             
             
-            int64_t  ereol_Product_getDuration(Product* m) 
+            int64_t  ereol_Record_getDuration(Record* m) 
             { if(!m->duration.has_value()){ return 0; } return m->duration.value(); } 
-            void   ereol_Product_setDuration(Product* m, int64_t unixTime)
+            void   ereol_Record_setDuration(Record* m, int64_t unixTime)
             { m->duration = std::optional<int64_t>(unixTime); }             
 
 
 
-            const char*  ereol_Product_getProductType(Product* m) 
-            { if(!m->productType.has_value()){ return nullptr; } return m->productType.value().c_str(); } 
-            void   ereol_Product_setProductType(Product* m,  const char* cp) 
-            {if(!m->productType.has_value()){ std::string str(cp); m->productType = std::optional<std::string>(str); } else { m->productType.value().assign(cp); } }   
+            const char*  ereol_Record_getRecordType(Record* m) 
+            { if(!m->recordType.has_value()){ return nullptr; } return m->recordType.value().c_str(); } 
+            void   ereol_Record_setRecordType(Record* m,  const char* cp) 
+            {if(!m->recordType.has_value()){ std::string str(cp); m->recordType = std::optional<std::string>(str); } else { m->recordType.value().assign(cp); } }   
             
-            const char*  ereol_Product_getCover(Product* m) 
+            const char*  ereol_Record_getCover(Record* m) 
             { if(!m->cover.has_value()){ return nullptr; } return m->cover.value().c_str(); } 
-            void   ereol_Product_setCover(Product* m,  const char* cp) 
+            void   ereol_Record_setCover(Record* m,  const char* cp) 
             {if(!m->cover.has_value()){ std::string str(cp); m->cover = std::optional<std::string>(str); } else { m->cover.value().assign(cp); } }   
             
-            const char*  ereol_Product_getPhid(Product* m) 
+            const char*  ereol_Record_getPhid(Record* m) 
             { if(!m->phid.has_value()){ return nullptr; } return m->phid.value().c_str(); } 
-            void   ereol_Product_setPhid(Product* m,  const char* cp) 
+            void   ereol_Record_setPhid(Record* m,  const char* cp) 
             {if(!m->phid.has_value()){ std::string str(cp); m->phid = std::optional<std::string>(str); } else { m->phid.value().assign(cp); } }   
             
-            const char*  ereol_Product_getFormat(Product* m) 
+            const char*  ereol_Record_getFormat(Record* m) 
             { if(!m->format.has_value()){ return nullptr; } return m->format.value().c_str(); } 
-            void   ereol_Product_setFormat(Product* m,  const char* cp) 
+            void   ereol_Record_setFormat(Record* m,  const char* cp) 
             {if(!m->format.has_value()){ std::string str(cp); m->format = std::optional<std::string>(str); } else { m->format.value().assign(cp); } }   
             
 
-            const char*  ereol_Product_getThumbnail(Product* m) 
+            const char*  ereol_Record_getThumbnail(Record* m) 
             { if(!m->thumbnail.has_value()){ return nullptr; } return m->thumbnail.value().c_str(); } 
-            void   ereol_Product_setThumbnail(Product* m,  const char* cp) 
+            void   ereol_Record_setThumbnail(Record* m,  const char* cp) 
             {if(!m->thumbnail.has_value()){ std::string str(cp); m->thumbnail = std::optional<std::string>(str); } else { m->thumbnail.value().assign(cp); } }   
             
-            const char*  ereol_Product_getAbstract(Product* m) 
+            const char*  ereol_Record_getAbstract(Record* m) 
             { if(!m->abstract.has_value()){ return nullptr; } return m->abstract.value().c_str(); } 
-            void   ereol_Product_setAbstract(Product* m,  const char* cp) 
+            void   ereol_Record_setAbstract(Record* m,  const char* cp) 
             {if(!m->abstract.has_value()){ std::string str(cp); m->abstract = std::optional<std::string>(str); } else { m->abstract.value().assign(cp); } }   
             
-            const char*  ereol_Product_getYear(Product* m) 
+            const char*  ereol_Record_getYear(Record* m) 
             { if(!m->year.has_value()){ return nullptr; } return m->year.value().c_str(); } 
-            void   ereol_Product_setYear(Product* m,  const char* cp) 
+            void   ereol_Record_setYear(Record* m,  const char* cp) 
             {if(!m->year.has_value()){ std::string str(cp); m->year = std::optional<std::string>(str); } else { m->year.value().assign(cp); } }   
             
-            const char*  ereol_Product_getEdition(Product* m) 
+            const char*  ereol_Record_getEdition(Record* m) 
             { if(!m->edition.has_value()){ return nullptr; } return m->edition.value().c_str(); } 
-            void   ereol_Product_setEdition(Product* m,  const char* cp) 
+            void   ereol_Record_setEdition(Record* m,  const char* cp) 
             {if(!m->edition.has_value()){ std::string str(cp); m->edition = std::optional<std::string>(str); } else { m->edition.value().assign(cp); } }   
             
-            const char*  ereol_Product_getShelfmark(Product* m) 
+            const char*  ereol_Record_getShelfmark(Record* m) 
             { if(!m->shelfmark.has_value()){ return nullptr; } return m->shelfmark.value().c_str(); } 
-            void   ereol_Product_setShelfmark(Product* m,  const char* cp) 
+            void   ereol_Record_setShelfmark(Record* m,  const char* cp) 
             {if(!m->shelfmark.has_value()){ std::string str(cp); m->shelfmark = std::optional<std::string>(str); } else { m->shelfmark.value().assign(cp); } }   
             
-            const char*  ereol_Product_getSeriesPart(Product* m) 
+            const char*  ereol_Record_getSeriesPart(Record* m) 
             { if(!m->seriesPart.has_value()){ return nullptr; } return m->seriesPart.value().c_str(); } 
-            void   ereol_Product_setSeriesPart(Product* m,  const char* cp) 
+            void   ereol_Record_setSeriesPart(Record* m,  const char* cp) 
             {if(!m->seriesPart.has_value()){ std::string str(cp); m->seriesPart = std::optional<std::string>(str); } else { m->seriesPart.value().assign(cp); } }   
             
-            const char*  ereol_Product_getSubscription(Product* m) 
+            const char*  ereol_Record_getSubscription(Record* m) 
             { if(!m->subscription.has_value()){ return nullptr; } return m->subscription.value().c_str(); } 
-            void   ereol_Product_setSubscription(Product* m,  const char* cp) 
+            void   ereol_Record_setSubscription(Record* m,  const char* cp) 
             {if(!m->subscription.has_value()){ std::string str(cp); m->subscription = std::optional<std::string>(str); } else { m->subscription.value().assign(cp); } }   
             
-            const char*  ereol_Product_getEReolenGlobalUrl(Product* m) 
+            const char*  ereol_Record_getEReolenGlobalUrl(Record* m) 
             { if(!m->eReolenGlobalUrl.has_value()){ return nullptr; } return m->eReolenGlobalUrl.value().c_str(); } 
-            void   ereol_Product_setEReolenGlobalUrl(Product* m,  const char* cp) 
+            void   ereol_Record_setEReolenGlobalUrl(Record* m,  const char* cp) 
             {if(!m->eReolenGlobalUrl.has_value()){ std::string str(cp); m->eReolenGlobalUrl = std::optional<std::string>(str); } else { m->eReolenGlobalUrl.value().assign(cp); } }   
 
 
-            VectorVoid* ereol_Product_getContributors(Product* m) 
+            VectorVoid* ereol_Record_getContributors(Record* m) 
             { 
                 if(!m->contributors.has_value()){return nullptr;} 
                 return new ereol::VectorVoid(m->contributors.value());
             } 
-            size_t ereol_Product_getContributors_size(Product* m) 
+            size_t ereol_Record_getContributors_size(Record* m) 
             { if(!m->contributors.has_value()){return 0;} return m->contributors.value().size();} 
-            void ereol_Product_getContributors_insert(Product* m, const Contributor* x)
+            void ereol_Record_getContributors_insert(Record* m, const Contributor* x)
             { if(!m->contributors.has_value()){ m->contributors = std::optional<std::vector<Contributor>>(std::vector<Contributor>()); } m->contributors.value().push_back(*x); } 
-            void   ereol_Product_setContributors(Product* m, const  Contributor** arr, size_t n)
+            void   ereol_Record_setContributors(Record* m, const  Contributor** arr, size_t n)
             { 
                 std::vector<Contributor> v;
                 v.reserve(n);
@@ -247,40 +246,40 @@ namespace nlohmann {
 
 
 
-            VectorStrC* ereol_Product_getCreators(Product* m) 
+            VectorStrC* ereol_Record_getCreators(Record* m) 
             { if(!m->creators.has_value()){return nullptr;} return new VectorStrC(&m->creators.value()); } 
-            size_t ereol_Product_getCreators_size(Product* m) 
+            size_t ereol_Record_getCreators_size(Record* m) 
             { if(!m->creators.has_value()){return 0;} return m->creators.value().size();} 
-            void ereol_Product_getCreators_insert(Product* m, const char* x) 
+            void ereol_Record_getCreators_insert(Record* m, const char* x) 
             { if(!m->creators.has_value()){ m->creators = std::optional<std::vector<std::string>>(std::vector<std::string>()); } std::string str(x);  m->creators.value().push_back(str); } 
-            void   ereol_Product_setCreators(Product* m, const char** arr, size_t n) 
+            void   ereol_Record_setCreators(Record* m, const char** arr, size_t n) 
             
             { m->creators = std::optional<std::vector<std::string>>(std::vector<std::string>(arr, arr + n));}   
-            VectorStrC* ereol_Product_getSeries(Product* m) 
+            VectorStrC* ereol_Record_getSeries(Record* m) 
             { if(!m->series.has_value()){return nullptr;} return new VectorStrC(&m->series.value()); } 
-            size_t ereol_Product_getSeries_size(Product* m) 
+            size_t ereol_Record_getSeries_size(Record* m) 
             { if(!m->series.has_value()){return 0;} return m->series.value().size();} 
-            void ereol_Product_getSeries_insert(Product* m, const char* x) 
+            void ereol_Record_getSeries_insert(Record* m, const char* x) 
             { if(!m->series.has_value()){ m->series = std::optional<std::vector<std::string>>(std::vector<std::string>()); } std::string str(x);  m->series.value().push_back(str); } 
-            void   ereol_Product_setSeries(Product* m, const char** arr, size_t n) 
+            void   ereol_Record_setSeries(Record* m, const char** arr, size_t n) 
             { m->series = std::optional<std::vector<std::string>>(std::vector<std::string>(arr, arr + n));}   
             
-            VectorStrC* ereol_Product_getSubjects(Product* m) 
+            VectorStrC* ereol_Record_getSubjects(Record* m) 
             { if(!m->subjects.has_value()){return nullptr;} return new VectorStrC(&m->subjects.value()); } 
-            size_t ereol_Product_getSubjects_size(Product* m) 
+            size_t ereol_Record_getSubjects_size(Record* m) 
             { if(!m->subjects.has_value()){return 0;} return m->subjects.value().size();} 
-            void ereol_Product_getSubjects_insert(Product* m, const char* x) 
+            void ereol_Record_getSubjects_insert(Record* m, const char* x) 
             { if(!m->subjects.has_value()){ m->subjects = std::optional<std::vector<std::string>>(std::vector<std::string>()); } std::string str(x);  m->subjects.value().push_back(str); } 
-            void   ereol_Product_setSubjects(Product* m, const char** arr, size_t n) 
+            void   ereol_Record_setSubjects(Record* m, const char** arr, size_t n) 
             { m->subjects = std::optional<std::vector<std::string>>(std::vector<std::string>(arr, arr + n));}   
 
-            VectorStrC* ereol_Product_getTypes(Product* m) 
+            VectorStrC* ereol_Record_getTypes(Record* m) 
             { if(!m->types.has_value()){return nullptr;} return new VectorStrC(&m->types.value()); } 
-            size_t ereol_Product_getTypes_size(Product* m) 
+            size_t ereol_Record_getTypes_size(Record* m) 
             { if(!m->types.has_value()){return 0;} return m->types.value().size();} 
-            void ereol_Product_getTypes_insert(Product* m, const char* x) 
+            void ereol_Record_getTypes_insert(Record* m, const char* x) 
             { if(!m->types.has_value()){ m->types = std::optional<std::vector<std::string>>(std::vector<std::string>()); } std::string str(x);  m->types.value().push_back(str); } 
-            void   ereol_Product_setTypes(Product* m, const char** arr, size_t n) 
+            void   ereol_Record_setTypes(Record* m, const char** arr, size_t n) 
             { m->types = std::optional<std::vector<std::string>>(std::vector<std::string>(arr, arr + n));}   
 
 

@@ -19,8 +19,10 @@
 #include "../model/LoanActive.h"
 #include "../model/LoanHistorical.h"
 #include "../model/LoanIdentifier.h"
-#include "../model/Product.h"
+#include "../model/Record.h"
 #include "../model/Reservation.h"
+#include "src/main/model/PageResult.h"
+#include "src/main/model/Review.h"
 
 
 namespace ereol {
@@ -54,13 +56,24 @@ namespace nlohmann {
     void from_json(const json & j, ereol::LoanIdentifier & x);
     void to_json(json & j, const ereol::LoanIdentifier & x);
 
-    void from_json(const json & j, ereol::Product & x);
-    void to_json(json & j, const ereol::Product & x);
+    void from_json(const json & j, ereol::Record & x);
+    void to_json(json & j, const ereol::Record & x);
+
+    void from_json(const json & j, ereol::PageResult & x);
+    void to_json(json & j, const ereol::PageResult & x);
+
 
     void from_json(const json & j, ereol::Reservation & x);
     void to_json(json & j, const ereol::Reservation & x);
 
+    void from_json(const json & j, ereol::Facet & x);
+    void to_json(json & j, const ereol::Facet & x);
 
+    void from_json(const json & j, ereol::Term & x);
+    void to_json(json & j, const ereol::Term & x);
+
+    void from_json(const json & j, ereol::Review& x);
+    void to_json(json & j, const ereol::Review & x);
 
 /*
 
@@ -71,8 +84,8 @@ namespace nlohmann {
     void from_json(const json & j, ereol::MediaType & x);
     void to_json(json & j, const ereol::MediaType & x);
 
-    void from_json(const json & j, ereol::ProductType & x);
-    void to_json(json & j, const ereol::ProductType & x);
+    void from_json(const json & j, ereol::RecordType & x);
+    void to_json(json & j, const ereol::RecordType & x);
 
 
 
@@ -98,18 +111,18 @@ namespace nlohmann {
 
 
 
-    inline void from_json(const json & j, ereol::ProductType & x) {
-        if (j == "audiobook"    || j == "Lydbog") x = ereol::ProductType::AUDIOBOOK;
-        else if (j == "ebook"   || j == "E-bog" ) x = ereol::ProductType::EBOOK;
-        else if (j == "podcast" || j == "Podcast") x = ereol::ProductType::PODCAST;
+    inline void from_json(const json & j, ereol::RecordType & x) {
+        if (j == "audiobook"    || j == "Lydbog") x = ereol::RecordType::AUDIOBOOK;
+        else if (j == "ebook"   || j == "E-bog" ) x = ereol::RecordType::EBOOK;
+        else if (j == "podcast" || j == "Podcast") x = ereol::RecordType::PODCAST;
         else throw "Input JSON does not conform to schema";
     }
 
-    inline void to_json(json & j, const ereol::ProductType & x, bool icon) {
+    inline void to_json(json & j, const ereol::RecordType & x, bool icon) {
         switch (x) {
-            case ereol::ProductType::AUDIOBOOK: j = icon ? "Lydbog"  : "audiobook"; break;
-            case ereol::ProductType::EBOOK:     j = icon ? "E-bog"   : "ebook"; break;
-            case ereol::ProductType::PODCAST:   j = icon ? "Podcast" : "podcast"; break;
+            case ereol::RecordType::AUDIOBOOK: j = icon ? "Lydbog"  : "audiobook"; break;
+            case ereol::RecordType::EBOOK:     j = icon ? "E-bog"   : "ebook"; break;
+            case ereol::RecordType::PODCAST:   j = icon ? "Podcast" : "podcast"; break;
             default: throw "This should not happen";
         }
     }

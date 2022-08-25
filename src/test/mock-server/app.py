@@ -4,8 +4,7 @@ from common import env_api_key, env_library, wrap_response, invalid_call_data, i
 
 from AuthAPI import m_auth, m_deauth, m_isauth
 from ProfileAPI import m_library_profile, m_loans, m_reservations, m_checklist, m_loan_history
-from ItemAPI import m_product, m_covers, m_reviews, m_same_creator, m_about_creator, m_same_series, m_same_genre, m_same_title, m_loan_statuses, m_something_similar, m_personal_recommendations
-
+from ItemAPI import m_search_string, m_record, m_covers, m_reviews, m_same_creator, m_about_creator, m_same_series, m_same_genre, m_same_title, m_loan_statuses, m_something_similar, m_personal_recommendations
 
 active_tokens = set()
 app = Flask(__name__)
@@ -110,8 +109,9 @@ def handle_method(data):
     elif method == "getProduct":
         if not active_auth:
             return unauthorized_access_wrapped(data, app)
-        return m_product(data, app)
-
+        return m_record(data, app)
+    elif method == "search":
+        return m_search_string(data, app)
 
 
 

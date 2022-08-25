@@ -2,7 +2,9 @@
 add_library(${PROJECT_NAME} SHARED 
 	ApiEnv.h ApiEnv.cpp 
 	Auth.h Auth.cpp
-	Profile.h Profile.cpp 
+	Profile.h Profile.cpp
+	Item.h Item.cpp
+
 	model/ChecklistItem.h model/ChecklistItem.cpp 
 	model/Library.h 
 	model/LibraryProfile.h 
@@ -13,12 +15,14 @@ add_library(${PROJECT_NAME} SHARED
 	model/RpcPayload.h model/RpcPayload.cpp 
 	model/Token.h model/Token.cpp 
 	model/Contributor.h model/Contributor.cpp               				
-	model/Product.h 	model/Product.cpp                				
-	          				
-	model/Language.h model/MediaType.h model/ProductType.h               				
+	model/Record.h 	model/Record.cpp
+
+	model/Facet.h model/QuerySettings.h model/Term.h
+	model/Language.h model/MediaType.h model/RecordType.h
+
 	util/InterfaceUtilC.h util/InterfaceUtilC.cpp
 	util/JSONHelper.h
-)
+        model/PageResult.cpp model/Facet.cpp model/Term.cpp util/ApiCaller.h model/Response.cpp model/Response.h model/Review.cpp model/Review.h)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
