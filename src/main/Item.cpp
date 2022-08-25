@@ -1,6 +1,4 @@
 #include "Item.h"
-#include "util/InterfaceUtilC.h"
-#ifdef __cplusplus 
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
 #include "ApiEnv.h"
@@ -301,15 +299,3 @@ std::map<std::string, ereol::Record> ereol::Item::getRecords(std::vector<std::st
     }
     return result;
 }
-
-
-extern "C" { 
-    namespace ereol {
-#endif
-
-
-
-#ifdef __cplusplus 
-    };
-}
-#endif  // __cplusplus 

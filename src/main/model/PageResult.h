@@ -4,7 +4,6 @@
 
 #include "Record.h"
 #include "Facet.h"
-#ifdef __cplusplus
 #include <vector>
 
 namespace ereol {
@@ -14,15 +13,9 @@ namespace ereol {
         bool more;
         std::vector<ereol::Facet> facets;
     };
-#else
-
-#endif
-#ifdef __cplusplus
     void from_json(const std::string  &s, ereol::PageResult& x);
     void to_json(std::string & s, const ereol::PageResult & x);
 }
-#endif
-
 #endif //EREOLENWRAPPER_PAGERESULT_H
 
 /*

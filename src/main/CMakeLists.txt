@@ -20,8 +20,7 @@ add_library(${PROJECT_NAME} SHARED
 	model/Facet.h model/QuerySettings.h model/Term.h
 	model/Language.h model/MediaType.h model/RecordType.h
 
-	util/InterfaceUtilC.h util/InterfaceUtilC.cpp
-	util/JSONHelper.h
+		util/JSONHelper.h
         model/PageResult.cpp model/Facet.cpp model/Term.cpp util/ApiCaller.h model/Response.cpp model/Response.h model/Review.cpp model/Review.h)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)

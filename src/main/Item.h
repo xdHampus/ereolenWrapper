@@ -1,11 +1,6 @@
-//
-// Created by root on 1/30/22.
-//
-
 #ifndef EREOLENWRAPPER_ITEM_H
 #define EREOLENWRAPPER_ITEM_H
 #include "model/Token.h"
-#ifdef __cplusplus
 #include "model/Response.h"
 #include "model/Record.h"
 #include "model/PageResult.h"
@@ -53,11 +48,5 @@ namespace ereol {
         static ereol::PageResult search(std::string queryString, ereol::Token token, ereol::QuerySettings settings = {});
 
     };
-#else
-#endif
-#ifdef __cplusplus 
 }
-#endif
-
-
 #endif //EREOLENWRAPPER_ITEM_H

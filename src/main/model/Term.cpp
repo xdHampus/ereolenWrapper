@@ -1,14 +1,6 @@
 #include "Term.h"
-#include "../util/InterfaceUtilC.h"
-#ifdef __cplusplus
-#include <functional>
-#include <vector>
-
-#include <cstring>
 #include <cstdlib>
 #include "../util/JSONHelper.h"
-
-
 
 void ereol::from_json(const std::string  &s, ereol::Term& x){
     nlohmann::json j = nlohmann::json::parse(s);
@@ -35,12 +27,3 @@ namespace nlohmann {
     }
 
 }
-
-extern "C" {
-namespace ereol {
-#endif
-
-#ifdef __cplusplus
-};
-}
-#endif  // __cplusplus 

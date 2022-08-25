@@ -1,5 +1,4 @@
 #include "ApiEnv.h"
-#ifdef __cplusplus 
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
 #include <string>
@@ -285,54 +284,3 @@ std::string ereol::ApiEnv::getRpcPayloadJSON(std::string method, std::vector<std
 
     return convertRpcPayloadToJSON(rpcPayload, settings);
 }
-
-extern "C" { 
-    namespace ereol {
-#endif
-        const char*  ereol_ApiEnv_getApiKey(){
-            return ereol::ApiEnv::getApiKey().c_str();
-        }
-        const char*  ereol_ApiEnv_getRPC(){
-            return ereol::ApiEnv::getRPC().c_str();
-        }
-        void  ereol_ApiEnv_setRPC(char* endpoint){
-            std::string str(endpoint);
-            ereol::ApiEnv::setRPC(str);
-        }
-        const char*  ereol_ApiEnv_getAppVersion(){
-            return ereol::ApiEnv::getAppVersion().c_str();
-        }
-        const char*  ereol_ApiEnv_getLanguage(){
-            return ereol::ApiEnv::getLanguage().c_str();
-        }
-        int  ereol_ApiEnv_getLibraryCount(){
-            return ereol::ApiEnv::getLibraryCount();
-        }
-        const char*  ereol_ApiEnv_getLibraryName(Library* library){
-            return ereol::ApiEnv::getLibraryName(*library).c_str();
-        }
-        const char*  ereol_ApiEnv_getLibraryCode(Library* library){
-            return ereol::ApiEnv::getLibraryCode(*library).c_str();
-        }
-        Library*  ereol_ApiEnv_getLibraryFromCode(char* libraryCode){
-            std::string str(libraryCode);
-            std::optional<Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(str);
-            if(optLibrary.has_value()){
-                return &optLibrary.value();
-            } else {
-                return nullptr;
-            }
-        }
-        const char*   ereol_ApiEnv_convertRpcPayloadToJSON(RpcPayload* rpcPayload){
-            return ereol::ApiEnv::convertRpcPayloadToJSON(*rpcPayload).c_str();
-        }
-        const char*   ereol_ApiEnv_getRpcPayloadJSON(char* method, char** params, size_t paramsN){
-            std::string sMethod(method);
-            std::vector<std::string> vParams(params, params + paramsN);
-            return ereol::ApiEnv::getRpcPayloadJSON(sMethod, vParams).c_str();
-        }
-
-#ifdef __cplusplus 
-    };
-}
-#endif  // __cplusplus 
