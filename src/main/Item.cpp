@@ -5,23 +5,23 @@
 #include "util/JSONHelper.h"
 #include "util/ApiCaller.h"
 
-const std::string ereol::Item::otherTypesOfSameTitleMethod = "getOtherTypesOfSameTitle";
-const std::string ereol::Item::moreOfSameGenreMethod = "getMoreOfSameGenre";
-const std::string ereol::Item::moreOfSameCreatorMethod = "getMoreOfSameCreator";
-const std::string ereol::Item::moreInSameSeriesMethod = "getMoreInSameSeries";
-const std::string ereol::Item::somethingSimilarMethod = "getSomethingSimilar";
-const std::string ereol::Item::aboutCreatorsMethod = "getAboutCreators";
-const std::string ereol::Item::reviewsMethod = "getReviews";
-const std::string ereol::Item::coversMethod = "getCovers";
-const std::string ereol::Item::personalRecommendationsMethod = "getPersonalRecommendations";
-const std::string ereol::Item::loanStatusesMethod = "ereolen.getLoanStatuses";
-const std::string ereol::Item::productMethod = "getProduct";
-const std::string ereol::Item::recordsMethod = "getRecordsByIdentifiers";
-const std::string ereol::Item::searchMethod = "search";
+const std::string otherTypesOfSameTitleMethod = "getOtherTypesOfSameTitle";
+const std::string moreOfSameGenreMethod = "getMoreOfSameGenre";
+const std::string moreOfSameCreatorMethod = "getMoreOfSameCreator";
+const std::string moreInSameSeriesMethod = "getMoreInSameSeries";
+const std::string somethingSimilarMethod = "getSomethingSimilar";
+const std::string aboutCreatorsMethod = "getAboutCreators";
+const std::string reviewsMethod = "getReviews";
+const std::string coversMethod = "getCovers";
+const std::string personalRecommendationsMethod = "getPersonalRecommendations";
+const std::string loanStatusesMethod = "ereolen.getLoanStatuses";
+const std::string productMethod = "getProduct";
+const std::string recordsMethod = "getRecordsByIdentifiers";
+const std::string searchMethod = "search";
 
 std::vector<ereol::Record> ereol::Item::getOthersOfSameTitle(std::string identifier, ereol::Token token){
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::otherTypesOfSameTitleMethod,
+            otherTypesOfSameTitleMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -63,7 +63,7 @@ std::vector<ereol::Record> ereol::Item::getOthersOfSameTitle(std::string identif
 
 ereol::PageResult ereol::Item::getMoreOfSameGenre(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::moreOfSameGenreMethod,
+            moreOfSameGenreMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -80,7 +80,7 @@ ereol::PageResult ereol::Item::getMoreOfSameGenre(std::string identifier, ereol:
 ereol::PageResult
 ereol::Item::getMoreOfSameCreator(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::moreOfSameCreatorMethod,
+            moreOfSameCreatorMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -96,7 +96,7 @@ ereol::Item::getMoreOfSameCreator(std::string identifier, ereol::Token token, er
 
 ereol::PageResult ereol::Item::getMoreInSameSeries(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::moreInSameSeriesMethod,
+            moreInSameSeriesMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -112,7 +112,7 @@ ereol::PageResult ereol::Item::getMoreInSameSeries(std::string identifier, ereol
 
 std::vector<ereol::Record> ereol::Item::getSomethingSimilar(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::somethingSimilarMethod,
+            somethingSimilarMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -130,7 +130,7 @@ std::vector<ereol::Record> ereol::Item::getPersonalRecommendations(std::string i
     return {};
     /*
      std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::personalRecommendationsMethod,
+            personalRecommendationsMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -147,7 +147,7 @@ std::vector<ereol::Record> ereol::Item::getPersonalRecommendations(std::string i
 
 std::vector<ereol::Review> ereol::Item::getReviews(std::string identifier, ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::reviewsMethod,
+            reviewsMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -163,7 +163,7 @@ std::vector<ereol::Review> ereol::Item::getReviews(std::string identifier, ereol
 
 std::map<std::string, std::string> ereol::Item::getCoverUrls(std::vector<std::string> identifiers, ereol::Token token) {
     ereol::RpcPayload rpcPayload;
-    rpcPayload.method = ereol::Item::coversMethod;
+    rpcPayload.method = coversMethod;
     rpcPayload.params = std::vector<std::string> {
             ereol::ApiEnv::getApiKey(),
             ereol::ApiEnv::getAppVersion(),
@@ -200,7 +200,7 @@ std::map<std::string, std::string> ereol::Item::getCoverUrls(std::vector<std::st
 std::map<std::string, std::string>
 ereol::Item::getLoanStatuses(std::vector<std::string> identifiers, ereol::Token token) {
     ereol::RpcPayload rpcPayload;
-    rpcPayload.method = ereol::Item::loanStatusesMethod;
+    rpcPayload.method = loanStatusesMethod;
     rpcPayload.params = std::vector<std::string> {
             ereol::ApiEnv::getApiKey(),
             ereol::ApiEnv::getAppVersion(),
@@ -236,7 +236,7 @@ ereol::Item::getLoanStatuses(std::vector<std::string> identifiers, ereol::Token 
 
 ereol::Record ereol::Item::getProduct(std::string identifier, ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::productMethod,
+            productMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -251,7 +251,7 @@ ereol::Record ereol::Item::getProduct(std::string identifier, ereol::Token token
 
 ereol::PageResult ereol::Item::search(std::string queryString, ereol::Token token, ereol::QuerySettings settings) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Item::searchMethod,
+            searchMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -267,7 +267,7 @@ ereol::PageResult ereol::Item::search(std::string queryString, ereol::Token toke
 
 std::map<std::string, ereol::Record> ereol::Item::getRecords(std::vector<std::string> identifiers, ereol::Token token) {
     ereol::RpcPayload rpcPayload;
-    rpcPayload.method = ereol::Item::recordsMethod;
+    rpcPayload.method = recordsMethod;
     rpcPayload.params = std::vector<std::string> {
             ereol::ApiEnv::getApiKey(),
             ereol::ApiEnv::getAppVersion(),

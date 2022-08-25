@@ -14,20 +14,6 @@ namespace ereol {
 
 
     class Item {
-    private:
-        static const std::string otherTypesOfSameTitleMethod;
-        static const std::string moreOfSameGenreMethod;
-        static const std::string moreOfSameCreatorMethod;
-        static const std::string moreInSameSeriesMethod;
-        static const std::string somethingSimilarMethod;
-        static const std::string aboutCreatorsMethod;
-        static const std::string reviewsMethod;
-        static const std::string coversMethod;
-        static const std::string personalRecommendationsMethod;
-        static const std::string loanStatusesMethod;
-        static const std::string productMethod;
-        static const std::string recordsMethod;
-        static const std::string searchMethod;
     public:
 
 

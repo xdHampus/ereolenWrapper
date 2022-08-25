@@ -12,12 +12,6 @@
 #include <vector>
 namespace ereol {
     class Profile {
-    private:
-        static const std::string libraryProfileMethod;
-        static const std::string loansMethod;
-        static const std::string checklistMethod;
-        static const std::string reservationsMethod;
-        static const std::string loanHistoryMethod;
     public:
         static std::optional<ereol::LibraryProfile> getLibraryProfile(ereol::Library library);
         static std::optional<std::vector<ereol::LoanActive>> getLoans(ereol::Token token);

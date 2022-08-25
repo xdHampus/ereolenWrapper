@@ -5,10 +5,26 @@
 #include <map>
 
 
-const std::string ereol::ApiEnv::apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
-std::string ereol::ApiEnv::rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
-const std::string ereol::ApiEnv::appVersion = "android_3.5.3";
-const std::string ereol::ApiEnv::language = "da";
+const std::string apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
+static std::string rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
+const std::string appVersion = "android_3.5.3";
+const std::string language = "da";
+
+std::string ereol::ApiEnv::getApiKey(){
+    return apiKey;
+}
+std::string ereol::ApiEnv::getRPC(){
+    return rpcEndpoint;
+}
+void ereol::ApiEnv::setRPC(std::string endpoint){
+    rpcEndpoint = std::move(endpoint);
+}
+std::string ereol::ApiEnv::getAppVersion(){
+    return appVersion;
+}
+std::string ereol::ApiEnv::getLanguage(){
+    return language;
+}
 
 
 const int libCount = 100;
