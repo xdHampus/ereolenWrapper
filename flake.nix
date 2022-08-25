@@ -19,15 +19,8 @@
     testsDrv = pkgs.callPackage ./tests.nix {customLibs=clibs;};
 
     libcprDrv = pkgs.callPackage ./libs/cpr/default.nix {};
-    libunityDrv = pkgs.callPackage ./libs/unity/default.nix {};
     libluabridgeDrv = pkgs.callPackage ./libs/luabridge/default.nix {};
 
-    ctestsDrv = pkgs.callPackage ./src/test/c-interface/tests.nix {
-      customLibs=[
-        ereolenWrapperDrv
-        (pkgs.callPackage ./libs/unity/default.nix {unityExtensionFixture = true;})
-      ];
-    };
     pkgs = import nixpkgs { inherit system; overlays = []; config.allowUnfree = true; };
   in {
     devShell = pkgs.mkShell rec {
@@ -35,7 +28,6 @@
       packages = with pkgs; [
         # Development Tools
         gitFull gdb valgrind
-        jetbrains.clion
         # Dependencies
         llvmPackages_11.clang cmake zlib openssl gtest # cmake FetchContent #cmakeCurses
         nlohmann_json curl
@@ -47,12 +39,10 @@
     packages = {
       ereolenWrapper = ereolenWrapperDrv;
       libcpr = libcprDrv;
-      libunity = libunityDrv;
       libluabridge = libluabridgeDrv;
     };
     checks = {
       tests = testsDrv;
-      ctests = ctestsDrv;
     };
   });
 }

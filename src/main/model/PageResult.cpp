@@ -1,10 +1,5 @@
 #include "PageResult.h"
-#include "../util/InterfaceUtilC.h"
-#ifdef __cplusplus
-#include <functional>
 #include <vector>
-
-#include <cstring>
 #include <cstdlib>
 #include "../util/JSONHelper.h"
 
@@ -64,12 +59,3 @@ namespace nlohmann {
 
 
 }
-
-extern "C" {
-namespace ereol {
-#endif
-    
-#ifdef __cplusplus
-};
-}
-#endif  // __cplusplus 

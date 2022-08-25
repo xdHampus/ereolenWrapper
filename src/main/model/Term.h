@@ -1,7 +1,6 @@
 #ifndef EREOLENWRAPPER_TERM_H
 #define EREOLENWRAPPER_TERM_H
 
-#ifdef __cplusplus
 #include <string>
 namespace ereol {
     struct Term {
@@ -9,15 +8,9 @@ namespace ereol {
         std::string value;
         int64_t quantity;
     };
-#else
-
-#endif
-#ifdef __cplusplus
     void from_json(const std::string  &s, ereol::Term& x);
     void to_json(std::string & s, const ereol::Term & x);
 }
-#endif
-
 #endif //EREOLENWRAPPER_TERM_H
 /*
 

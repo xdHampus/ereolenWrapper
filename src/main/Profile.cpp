@@ -1,10 +1,4 @@
-//
-// Created by root on 1/30/22.
-//
-
 #include "Profile.h"
-#include "util/InterfaceUtilC.h"
-#ifdef __cplusplus 
 #include <cpr/cpr.h>
 #include "util/JSONHelper.h"
 
@@ -214,49 +208,3 @@ std::optional<std::vector<ereol::LoanHistorical>> ereol::Profile::getLoanHistory
     }
     return {};
 }
-
-extern "C" { 
-    namespace ereol {
-#endif
-
-        LibraryProfile*  ereol_Profile_getLibraryProfile(Library* library) {
-            std::optional<LibraryProfile> optLibraryProfile = ereol::Profile::getLibraryProfile(*library);
-            if(optLibraryProfile.has_value()){
-                return &optLibraryProfile.value();
-            } else {
-                return nullptr;
-            }
-        }
-        VectorVoid*  ereol_Profile_getLoans(Token* token) {
-            std::optional<std::vector<LoanActive>> optLoans = ereol::Profile::getLoans(*token);
-            if(optLoans.has_value()){
-                return new ereol::VectorVoid(optLoans.value());
-            } 
-            return nullptr;
-        }
-        VectorVoid*  ereol_Profile_getChecklist(Token* token) {
-            std::optional<std::vector<ChecklistItem>> optChecklist = ereol::Profile::getCheckList(*token);
-            if(optChecklist.has_value()){
-                return new ereol::VectorVoid(optChecklist.value());
-            }
-            return nullptr;
-        }        
-        VectorVoid*  ereol_Profile_getReservations(Token* token) {
-            std::optional<std::vector<Reservation>> optReservations = ereol::Profile::getReservations(*token);
-            if(optReservations.has_value()){
-                return new ereol::VectorVoid(optReservations.value());
-            }
-            return nullptr;
-        }
-        VectorVoid*  ereol_Profile_getLoanHistory(Token* token) {
-            std::optional<std::vector<LoanHistorical>> optLoanHistory = ereol::Profile::getLoanHistory(*token);
-            if(optLoanHistory.has_value()){
-                return new ereol::VectorVoid(optLoanHistory.value());
-            }
-            return nullptr;
-        }                
-
-#ifdef __cplusplus 
-    };
-}
-#endif  // __cplusplus 

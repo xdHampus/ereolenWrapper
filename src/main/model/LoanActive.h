@@ -1,7 +1,3 @@
-//
-// Created by root on 1/30/22.
-//
-
 #ifndef EREOLENWRAPPER_LOANACTIVE_H
 #define EREOLENWRAPPER_LOANACTIVE_H
 

@@ -1,7 +1,3 @@
-//
-// Created by root on 1/29/22.
-//
-
 #ifndef EREOLENWRAPPER_APIENV_H
 #define EREOLENWRAPPER_APIENV_H
 
@@ -9,7 +5,6 @@
 #include "src/main/model/RpcPayload.h"
 #include "src/main/model/QuerySettings.h"
 
-#ifdef __cplusplus 
 #include <string>
 #include <utility>
 #include <vector>
@@ -43,20 +38,5 @@ namespace ereol {
         static std::string getRpcPayloadJSON(std::string method, std::vector<std::string> params, ereol::QuerySettings settings);
 
     };
-#else
-const char*  ereol_ApiEnv_getApiKey(); 
-const char*  ereol_ApiEnv_getRPC(); 
-void  ereol_ApiEnv_setRPC(char* endpoint); 
-const char*  ereol_ApiEnv_getAppVersion(); 
-const char*  ereol_ApiEnv_getLanguage(); 
-int  ereol_ApiEnv_getLibraryCount(); 
-const char*  ereol_ApiEnv_getLibraryName(Library* library); 
-const char*  ereol_ApiEnv_getLibraryCode(Library* library); 
-Library*  ereol_ApiEnv_getLibraryFromCode(char* libraryCode); 
-const char*   ereol_ApiEnv_convertRpcPayloadToJSON(RpcPayload* rpcPayload); 
-const char*   ereol_ApiEnv_getRpcPayloadJSON(char* method, char** params, size_t paramsN); 
-#endif
-#ifdef __cplusplus 
 }
-#endif
 #endif //EREOLENWRAPPER_APIENV_H
