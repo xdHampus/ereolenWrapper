@@ -2,15 +2,15 @@
 #include <cpr/cpr.h>
 #include "util/JSONHelper.h"
 
-const std::string ereol::Profile::libraryProfileMethod = "ereolen.getLibraryProfile";
-const std::string ereol::Profile::loansMethod = "getLoans";
-const std::string ereol::Profile::checklistMethod = "ereolen.getCheckList";
-const std::string ereol::Profile::reservationsMethod = "getReservations";
-const std::string ereol::Profile::loanHistoryMethod = "getLoanHistory";
+const std::string libraryProfileMethod = "ereolen.getLibraryProfile";
+const std::string loansMethod = "getLoans";
+const std::string checklistMethod = "ereolen.getCheckList";
+const std::string reservationsMethod = "getReservations";
+const std::string loanHistoryMethod = "getLoanHistory";
 
 std::optional<ereol::LibraryProfile> ereol::Profile::getLibraryProfile(ereol::Library library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Profile::libraryProfileMethod,
+            libraryProfileMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -52,7 +52,7 @@ std::optional<ereol::LibraryProfile> ereol::Profile::getLibraryProfile(ereol::Li
 
 std::optional<std::vector<ereol::LoanActive>> ereol::Profile::getLoans(ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Profile::loansMethod,
+            loansMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -92,7 +92,7 @@ std::optional<std::vector<ereol::LoanActive>> ereol::Profile::getLoans(ereol::To
 
 std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Profile::checklistMethod,
+            checklistMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -133,7 +133,7 @@ std::optional<std::vector<ereol::ChecklistItem>> ereol::Profile::getCheckList(er
 
 std::optional<std::vector<ereol::Reservation>> ereol::Profile::getReservations(ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Profile::reservationsMethod,
+            reservationsMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -172,7 +172,7 @@ std::optional<std::vector<ereol::Reservation>> ereol::Profile::getReservations(e
 
 std::optional<std::vector<ereol::LoanHistorical>> ereol::Profile::getLoanHistory(ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Profile::loanHistoryMethod,
+            loanHistoryMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),

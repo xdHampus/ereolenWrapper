@@ -12,20 +12,13 @@
 namespace ereol {
 
     class ApiEnv {
-    private:
-        static const std::string apiKey;
-        static std::string rpcEndpoint;
-        static const std::string appVersion;
-        static const std::string language;
     public:
-        static std::string getApiKey() { return apiKey; }
-        static std::string getRPC() { return rpcEndpoint; }
+        static std::string getApiKey();
+        static std::string getRPC();
         //TODO: Remove setRPC and find another way to test mock endpoint
-        static void setRPC(std::string endpoint){
-            rpcEndpoint = std::move(endpoint);
-        }
-        static std::string getAppVersion() { return appVersion; }
-        static std::string getLanguage() { return language; }
+        static void setRPC(std::string endpoint);
+        static std::string getAppVersion();
+        static std::string getLanguage();
 
         static int getLibraryCount();
         static std::string getLibraryName(ereol::Library library);
