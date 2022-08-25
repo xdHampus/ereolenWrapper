@@ -7,13 +7,13 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-const std::string ereol::Auth::authMethod   = "authenticate";
-const std::string ereol::Auth::isAuthMethod = "isAuthenticated";
-const std::string ereol::Auth::deAuthMethod = "deauthenticate";
+const std::string authMethod   = "authenticate";
+const std::string isAuthMethod = "isAuthenticated";
+const std::string deAuthMethod = "deauthenticate";
 
 std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std::string password, ereol::Library library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Auth::authMethod,
+            authMethod,
             {
               ereol::ApiEnv::getApiKey(),
               ereol::ApiEnv::getAppVersion(),
@@ -50,7 +50,7 @@ std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std:
 
 bool ereol::Auth::deauthenticate(ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Auth::deAuthMethod,
+            deAuthMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
@@ -83,7 +83,7 @@ bool ereol::Auth::deauthenticate(ereol::Token token) {
 
 bool ereol::Auth::isAuthenticated(ereol::Token token) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            ereol::Auth::isAuthMethod,
+            isAuthMethod,
             {
                     ereol::ApiEnv::getApiKey(),
                     ereol::ApiEnv::getAppVersion(),
