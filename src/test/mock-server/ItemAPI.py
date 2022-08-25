@@ -4,6 +4,12 @@ from common import wrap_response, invalid_params, invalid_params_count, no_resul
 
 item_1 = "eyJpIjoiOTc4ODc5NDE5ODAyOCIsInMiOiI4NzA5NzAtYmFzaXM6MzkzOTQ3NTgiLCJjIjoibmV0bHlkYm9nIn0="
 item_2 = "eyJpIjoiOTc4ODc5MzkzNDM4MiIsInMiOiI4NzA5NzAtYmFzaXM6MzkxMTA5ODkiLCJjIjoibmV0bHlkYm9nIn0="
+item_3 = "eyJpIjoiOTc4ODcxMTY0MDA4MSIsInMiOiI4NzA5NzAtYmFzaXM6NTI5NzcwNjEiLCJjIjoiZXJlb2xlbiJ9"
+query_1 = "Krimi"
+facet_sel_1 = {
+    "facet.category": "voksenmaterialer",
+    "redia.type": "E-bog"
+}
 
 # Example
 # {
@@ -19,12 +25,11 @@ item_2 = "eyJpIjoiOTc4ODc5MzkzNDM4MiIsInMiOiI4NzA5NzAtYmFzaXM6MzkxMTA5ODkiLCJjIj
 #     "id": "078096d9-c9d1-1524-ee29-04e47b9f2b5b"
 # }
 def m_same_title(data, app):
-    if data["params"] < 4:
+    if len(data["params"]) < 4:
         return wrap_response(invalid_params_count(data), app)
     item = data["params"][4]
     if item == item_1:
         return wrap_response(resp_same_title_1(data), app)
-
     return wrap_response(invalid_params(data), app)
 
 
@@ -44,7 +49,7 @@ def m_same_title(data, app):
 #     "id": "e394f31b-d3f7-f6b1-38a6-5f01d9e8fa96"
 # }
 def m_same_genre(data, app):
-    if data["params"] < 6:
+    if len(data["params"])< 6:
         return wrap_response(invalid_params_count(data), app)
     item, start, end = data["params"][4], data["params"][5], data["params"][6]
     if item == item_1:
@@ -57,30 +62,28 @@ def m_same_genre(data, app):
 
 
 def m_same_creator(data, app):
-    if data["params"] < 6:
+    if len(data["params"]) < 6:
         return wrap_response(invalid_params_count(data), app)
     item, start, end = data["params"][4], data["params"][5], data["params"][6]
     if item == item_2:
         if start == 1 and end == 2:
             return wrap_response(resp_same_creator_1(data), app)
-
     return wrap_response(invalid_params(data), app)
 
 
 def m_same_series(data, app):
-    if data["params"] < 6:
+    if len(data["params"]) < 6:
         return wrap_response(invalid_params_count(data), app)
     item, start, end = data["params"][4], data["params"][5], data["params"][6]
     if item == item_1:
         if start == 1 and end == 2:
             return wrap_response(resp_same_series_1(data), app)
-
     return wrap_response(invalid_params(data), app)
 
 
 
 def m_something_similar(data, app):
-    if data["params"] < 6:
+    if len(data["params"]) < 6:
         return wrap_response(invalid_params_count(data), app)
     item, start, end = data["params"][4], data["params"][5], data["params"][6]
     if item == item_2:
@@ -91,7 +94,7 @@ def m_something_similar(data, app):
 
 
 def m_about_creator(data, app):
-    if data["params"] < 4:
+    if len(data["params"]) < 4:
         return wrap_response(invalid_params_count(data), app)
     item = data["params"][4]
     if item == item_1:
@@ -102,18 +105,17 @@ def m_about_creator(data, app):
     return wrap_response(invalid_params(data), app)
 
 def m_reviews(data, app):
-    if data["params"] < 4:
+    if len(data["params"]) < 4:
         return wrap_response(invalid_params_count(data), app)
     item = data["params"][4]
-    if item == item_1:
-        return wrap_response(no_results(data), app)
-    elif item == item_2:
+    if item == item_3:
         return wrap_response(resp_reviews_1(data), app)
-
+    elif item == item_2 or item == item_1:
+        return wrap_response(no_results(data), app)
     return wrap_response(invalid_params(data), app)
 
 def m_covers(data, app):
-    if data["params"] < 4:
+    if len(data["params"]) < 4:
         return wrap_response(invalid_params_count(data), app)
     items = data["params"][4]
     if item_1 in items and item_2 in items:
@@ -126,7 +128,7 @@ def m_covers(data, app):
     return wrap_response(invalid_params(data), app)
 
 def m_personal_recommendations(data, app):
-    if data["params"] < 3:
+    if len(data["params"]) < 3:
         return wrap_response(invalid_params_count(data), app)
     return wrap_response(resp_recommendations_1(data), app)
 
@@ -147,7 +149,7 @@ def m_personal_recommendations(data, app):
 #     "id": "a5cfdd98-087e-ef4b-8a28-ae14ff05187b"
 # }
 def m_loan_statuses(data, app):
-    if data["params"] < 4:
+    if len(data["params"]) < 4:
         return wrap_response(invalid_params_count(data), app)
     items = data["params"][4]
     if item_1 in items and item_2 in items:
@@ -159,14 +161,47 @@ def m_loan_statuses(data, app):
 
     return wrap_response(invalid_params(data), app)
 
-def m_product(data, app):
-    if data["params"] < 4:
+def m_record(data, app):
+    if len(data["params"]) < 4:
         return wrap_response(invalid_params_count(data), app)
     item = data["params"][4]
     if item == item_1:
-        return wrap_response(resp_product_1(data), app)
+        return wrap_response(resp_record_1(data), app)
 
     return wrap_response(invalid_params(data), app)
+
+
+# Example query
+# {
+#     "jsonrpc": "2.0",
+#     "method": "search",
+#     "params": [
+#         "{{magicId}}",
+#         "{{appVersion}}",
+#         "{{language}}",
+#         "{{library}}",
+#         "Krimi",
+#         0,
+#         10,
+#         {
+#             "redia.type": "E-bog",
+#             "facet.category": "voksenmaterialer"
+#         },
+#         ""
+#     ],
+#     "id": "43ff6c1e-a01d-5459-aa71-93cf5ff00529"
+# }
+def m_search_string(data, app):
+    if len(data["params"]) < 7:
+        return wrap_response(invalid_params_count(data), app)
+    query, start, end, facets = data["params"][4], data["params"][5], data["params"][6], data["params"][7]
+    if query == query_1:
+        if start == 0 and end == 10 and facets == facet_sel_1:
+            return wrap_response(resp_search_1(data), app)
+        else:
+            return wrap_response(no_results(data), app)
+    return wrap_response(invalid_params(data), app)
+
 
 
 
@@ -174,7 +209,27 @@ def m_product(data, app):
 def resp_about_creator_1(data):
     return no_results(data)
 def resp_reviews_1(data):
-    return no_results(data)
+    return {
+        "jsonrpc": "2.0",
+        "id": data["id"] if "id" in data else "",
+        "result": {
+            "result": True,
+            "data": [
+                {
+                    "source": "Lektørudtalelse",
+                    "subTitle": "En meget spændende og eventyrlig beretning fra en helt speciel jordomrejse, der ville have fået mindre erfarne rejsende til at give op allerede i Stockholm",
+                    "url": "https://ereolen.dk/ting/object/870976-anmeld:129415452/fulltext"
+                },
+                {
+                    "source": "Litteratursiden",
+                    "subTitle": "De to danske globetrottere, Hjalte og Nina, er på jordomrejse i en elbil. De er hele tiden på udkig efter næste opladningsmulighed, og det giver en noget anderledes rejseskildring. Det er egentlig en ...",
+                    "url": "http://litteratursiden.dk/anmeldelser/helt-elektrisk-jorden-rundt-af-nina-rasmussen-og-hjalte-tin"
+                }
+            ],
+            "code": 0,
+            "message": ""
+        }
+    }
 def resp_recommendations_1(data):
     return no_results(data)
 
@@ -249,7 +304,7 @@ def resp_covers_3(data):
     }
 
 
-def resp_product_1(data):
+def resp_record_1(data):
     return {
         "jsonrpc": "2.0",
         "id": data["id"] if "id" in data else "",
@@ -878,3 +933,132 @@ def resp_same_genre_2(data):
     }
 
 
+
+
+def resp_search_1(data):
+    return {
+        "jsonrpc": "2.0",
+        "id": data["id"] if "id" in data else "",
+        "result": {
+            "result": True,
+            "data": {
+                "count": 4395,
+                "more": True,
+                "collections": [
+                    {
+                        "size": 1,
+                        "records": [
+                            {
+                                "identifier": "eyJpIjoiOTc4ODc3MDM2MzMyNyIsInMiOiI4NzA5NzAtYmFzaXM6NDYzMzMxMjgiLCJjIjoiZXJlb2xlbiJ9",
+                                "title": "Der hvor solen aldrig skinner, skæbnehistorier fra danske fængsler, true crime",
+                                "creators": [
+                                    "Peter Grønlund (f. 1970-04-11)",
+                                    "Grønlund, Peter"
+                                ],
+                                "abstract": "Tidligere straffede personer fortæller om hvordan de oplevede at sidde indespærret, og hvorfor de overhovedet havnede bag tremmer",
+                                "description": "Downloades i EPUB-format",
+                                "series": [],
+                                "publisher": "Momenta",
+                                "year": "2019",
+                                "edition": "1. udgave",
+                                "isbn": "9788770363327",
+                                "language": "Dansk",
+                                "subjects": [
+                                    "forbrydelser",
+                                    "kriminelle",
+                                    "kriminalitet",
+                                    "fængsler",
+                                    "fanger",
+                                    "fængselsvæsen",
+                                    "fængselsophold"
+                                ],
+                                "types": [
+                                    "E-bog"
+                                ],
+                                "shelfmark": "34.35 > Grønlund",
+                                "icon": "ebook",
+                                "seriesPart": "",
+                                "subscription": "",
+                                "eReolenGlobalUrl": "",
+                                "mediaType": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "size": 1,
+                        "records": [
+                            {
+                                "identifier": "eyJpIjoiOTc4ODc3MTc0NTE5MSIsInMiOiI4NzA5NzAtYmFzaXM6NTIwNzkyMTciLCJjIjoiZXJlb2xlbiJ9",
+                                "title": "Stormagasinets hemmelighed, krimi noir",
+                                "creators": [
+                                    "Ellery Queen",
+                                    "Queen, Ellery"
+                                ],
+                                "abstract": "Krimi. Stormagasinet French er berømt for sit udbud af sjældne varer, men ingen havde dog regnet med noget så sjældent som det syn, der møder folk, da den nye vinduesudstilling bliver afsløret",
+                                "description": "Downloades i EPUB-format",
+                                "series": [],
+                                "publisher": "Rosenkilde & Bahnhof",
+                                "year": "2015",
+                                "edition": "1. RB-udgave (1. ebogsudgave)",
+                                "isbn": "9788771745191",
+                                "language": "Dansk",
+                                "subjects": [],
+                                "types": [
+                                    "E-bog"
+                                ],
+                                "shelfmark": "Queen",
+                                "icon": "ebook",
+                                "seriesPart": "",
+                                "subscription": "ERA201603",
+                                "eReolenGlobalUrl": "",
+                                "mediaType": "text"
+                            }
+                        ]
+                    }
+                ],
+                "facets": [
+                    {
+                        "name": "redia.type",
+                        "terms": [
+                            {
+                                "term": "E-bog",
+                                "value": "ebog",
+                                "quantity": 4395
+                            },
+                            {
+                                "term": "tegneserie (net)",
+                                "value": "tegneserie (net)",
+                                "quantity": 2
+                            }
+                        ],
+                        "type": "buttons",
+                        "translationKey": "key__filter_facet__type"
+                    },
+                    {
+                        "name": "facet.subject",
+                        "terms": [
+                            {
+                                "term": "krimi",
+                                "value": "krimi",
+                                "quantity": 2386
+                            },
+                            {
+                                "term": "electronic books",
+                                "value": "electronic books",
+                                "quantity": 1750
+                            },
+                            {
+                                "term": "fiction",
+                                "value": "fiction",
+                                "quantity": 1634
+                            }
+                        ],
+                        "type": "list",
+                        "translationKey": "key__filter_facet__subject"
+                    }
+                ]
+            },
+            "code": 0,
+            "message": ""
+        }
+    }

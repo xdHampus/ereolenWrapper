@@ -2,29 +2,26 @@
 // Created by work on 1/29/22.
 //
 #include <gtest/gtest.h>
-#include "Secrets.h"
+#include "BaseTestHelper.h"
 #include "../main/Auth.h"
 #include "../main/ApiEnv.h"
 #include <optional>
 
-class AuthTestHelper {
+class AuthTestHelper : public BaseTestHelper {
 public:
-    Secrets secrets;
-    AuthTestHelper() {
-        secrets = Secrets();
-    }
+    AuthTestHelper() = default;
 };
 AuthTestHelper authTH = AuthTestHelper();
 
 TEST(AuthTest, AuthSucceeds) {
-    ereol::ApiEnv::setRPC("http://localhost:5000/mock-rpc");
+    authTH.ensureLoaded();
 
-    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(authTH.secrets.getLibrary());
+    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(authTH.getLibrary());
     EXPECT_TRUE(optLibrary.has_value());
 
     std::optional<ereol::Token> optToken = ereol::Auth::authenticate(
-            authTH.secrets.getUsername(),
-            authTH.secrets.getPassword(),
+            authTH.getUsername(),
+            authTH.getPassword(),
             optLibrary.value());
 
     EXPECT_TRUE(optToken.has_value());
@@ -40,12 +37,12 @@ TEST(AuthTest, AuthFails) {
 }
 
 TEST(AuthTest, DeAuthSucceeds) {
-    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(authTH.secrets.getLibrary());
+    std::optional<ereol::Library> optLibrary = ereol::ApiEnv::getLibraryFromCode(authTH.getLibrary());
     EXPECT_TRUE(optLibrary.has_value());
 
     std::optional<ereol::Token> optToken = ereol::Auth::authenticate(
-            authTH.secrets.getUsername(),
-            authTH.secrets.getPassword(),
+            authTH.getUsername(),
+            authTH.getPassword(),
             optLibrary.value());
 
     EXPECT_TRUE(optToken.has_value());

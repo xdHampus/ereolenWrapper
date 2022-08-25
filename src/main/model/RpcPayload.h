@@ -1,7 +1,7 @@
 #ifndef EREOLENWRAPPER_RPCPAYLOAD_H
 #define EREOLENWRAPPER_RPCPAYLOAD_H
 #include "../util/InterfaceUtilC.h"
-#ifdef __cplusplus 
+#ifdef __cplusplus
 #include <vector>
 #include <string>
 namespace ereol {

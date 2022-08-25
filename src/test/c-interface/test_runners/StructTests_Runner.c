@@ -9,7 +9,7 @@ TEST_GROUP_RUNNER(StructTests)
   RUN_TEST_CASE(StructTests, LoanActiveManipulation);
   RUN_TEST_CASE(StructTests, LoanHistoricalManipulation);
   RUN_TEST_CASE(StructTests, LoanIdentifierManipulation);
-  RUN_TEST_CASE(StructTests, ProductManipulation);
+  RUN_TEST_CASE(StructTests, RecordManipulation);
   RUN_TEST_CASE(StructTests, ReservationManipulation);
   RUN_TEST_CASE(StructTests, RpcPayloadManipulation);
   RUN_TEST_CASE(StructTests, TokenManipulation);

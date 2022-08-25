@@ -7,6 +7,7 @@
 
 #include "src/main/model/Library.h"
 #include "src/main/model/RpcPayload.h"
+#include "src/main/model/QuerySettings.h"
 
 #ifdef __cplusplus 
 #include <string>
@@ -37,7 +38,9 @@ namespace ereol {
 
         static std::optional<ereol::Library> getLibraryFromCode(std::string libraryCode);
         static std::string convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload);
+        static std::string convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload, ereol::QuerySettings settings);
         static std::string getRpcPayloadJSON(std::string method, std::vector<std::string> params);
+        static std::string getRpcPayloadJSON(std::string method, std::vector<std::string> params, ereol::QuerySettings settings);
 
     };
 #else
