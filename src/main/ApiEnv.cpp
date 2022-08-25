@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
 #include <string>
+#include <map>
 
 
 const std::string ereol::ApiEnv::apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
@@ -256,8 +257,33 @@ std::string ereol::ApiEnv::getRpcPayloadJSON(std::string method, std::vector<std
     ereol::RpcPayload rpcPayload;
     rpcPayload.method = method;
     rpcPayload.params = params;
-
     return convertRpcPayloadToJSON(rpcPayload);
+}
+
+std::string ereol::ApiEnv::convertRpcPayloadToJSON(ereol::RpcPayload rpcPayload, ereol::QuerySettings settings){
+    nlohmann::json j;
+
+    j["jsonrpc"] = rpcPayload.jsonrpc;
+    j["method"] = rpcPayload.method;
+    j["params"] = rpcPayload.params;
+    j["id"] = rpcPayload.id;
+
+    j["params"][5] = settings.startIndex;
+    j["params"][6] = settings.endIndex;
+    if(settings.facets.has_value()){
+        j["params"][7] = settings.facets.value();
+    }
+    std::string wtf = j.dump();
+    std::string lmao = wtf;
+
+    return lmao;
+}
+std::string ereol::ApiEnv::getRpcPayloadJSON(std::string method, std::vector<std::string> params, ereol::QuerySettings settings){
+    ereol::RpcPayload rpcPayload;
+    rpcPayload.method = method;
+    rpcPayload.params = params;
+
+    return convertRpcPayloadToJSON(rpcPayload, settings);
 }
 
 extern "C" { 
