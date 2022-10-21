@@ -1,7 +1,10 @@
 #include "Facet.h"
 #include <vector>
 #include "../util/JSONHelper.h"
-
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#include <LuaBridge/Vector.h>
+#endif
 
 
 void ereol::from_json(const std::string  &s, ereol::Facet& x){
@@ -31,3 +34,23 @@ namespace nlohmann {
     }
 
 }
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterFacet(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::Facet>("Facet")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("name", &ereol::Facet::name)
+            .addProperty("terms", &ereol::Facet::terms)
+            .addProperty("type", &ereol::Facet::type)
+            .addProperty("translationKey", &ereol::Facet::translationKey)
+            .addFunction("toJson", std::function <std::string (const ereol::Facet*)> (
+                [] (const ereol::Facet* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif

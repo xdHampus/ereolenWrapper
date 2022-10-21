@@ -1,5 +1,5 @@
 #pragma once
 
 namespace ereol {
-    enum class MediaType : int { AUDIO, TEXT };
+    enum MediaType { AUDIO, TEXT };
 }

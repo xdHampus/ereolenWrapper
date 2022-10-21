@@ -1,5 +1,5 @@
 #pragma once
 
 namespace ereol {
-    enum class RecordType : int { AUDIOBOOK, EBOOK, PODCAST };
+    enum RecordType { AUDIOBOOK, EBOOK, PODCAST };
 }

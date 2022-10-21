@@ -1,5 +1,8 @@
 #include "Contributor.h"
 #include "../util/JSONHelper.h"
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#endif
 
 void ereol::from_json(const std::string  &s, ereol::Contributor& x){
     nlohmann::json j = nlohmann::json::parse(s);
@@ -26,7 +29,25 @@ namespace nlohmann {
     }
 }
 
-
+#ifdef COMPILE_LUA
+void ereol::luaRegisterContributor(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::Contributor>("Contributor")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("type", &ereol::Contributor::type)
+            .addProperty("composedName", &ereol::Contributor::composedName)
+            .addProperty("firstName", &ereol::Contributor::firstName)
+            .addProperty("lastName", &ereol::Contributor::lastName)
+            .addFunction("toJson", std::function <std::string (const ereol::Contributor*)> (
+                [] (const ereol::Contributor* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif
 
 
 

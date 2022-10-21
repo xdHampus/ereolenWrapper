@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
 
   cmakeFlags = [
   	"-DCMAKE_BUILD_TYPE=Release"
-  	"-DCPR_BUILD_TESTS=OFF" 
+  	"-DCPR_BUILD_TESTS=OFF"
   	"-DCPR_FORCE_USE_SYSTEM_CURL=ON"
   ];
 

@@ -1,7 +1,3 @@
-//
-// Created by root on 1/29/22.
-//
-
 #ifndef EREOLENWRAPPER_BASETESTHELPER_H
 #define EREOLENWRAPPER_BASETESTHELPER_H
 

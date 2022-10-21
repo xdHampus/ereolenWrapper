@@ -1,5 +1,8 @@
 #include "LoanActive.h"
 #include "../util/JSONHelper.h"
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#endif
 
 void ereol::from_json(const std::string  &s, ereol::LoanActive& x){
     nlohmann::json j = nlohmann::json::parse(s);
@@ -34,3 +37,26 @@ namespace nlohmann {
         j["isSubscription"] = x.isSubscription;
     }
 }
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterLoanActive(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::LoanActive>("LoanActive")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("loanIdentifier", &ereol::LoanActive::loanIdentifier)
+            .addProperty("retailerOrderNumber", &ereol::LoanActive::retailerOrderNumber)
+            .addProperty("internalOrderNumber", &ereol::LoanActive::internalOrderNumber)
+            .addProperty("orderDate", &ereol::LoanActive::orderDate)
+            .addProperty("expireDate", &ereol::LoanActive::expireDate)
+            .addProperty("downloadUrl", &ereol::LoanActive::downloadUrl)
+            .addProperty("isSubscription", &ereol::LoanActive::isSubscription)
+            .addFunction("toJson", std::function <std::string (const ereol::LoanActive*)> (
+                [] (const ereol::LoanActive* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif
