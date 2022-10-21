@@ -49,7 +49,7 @@
           ];
         };
 
-        defaultPackage = ereolenWrapperLuaDrv;
+        defaultPackage = ereolenWrapperDrv;
         packages = {
           ereolenWrapper = ereolenWrapperDrv;
           ereolenWrapperLua = ereolenWrapperLuaDrv;
