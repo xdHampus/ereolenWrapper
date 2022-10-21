@@ -2,18 +2,23 @@
 #include <vector>
 #include <cstdlib>
 #include "../util/JSONHelper.h"
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#include <LuaBridge/Vector.h>
+#include <LuaBridge/Optional.h>
+#endif
 
 namespace ereol {
     struct Collection {
         int64_t size;
         std::vector<Record> records;
     };
-    inline void from_json(const nlohmann::json & j, ereol::Collection& x) {
+    void from_json(const nlohmann::json & j, ereol::Collection& x) {
         x.size = j.at("size").get<int64_t>();
         x.records = j.at("records").get<std::vector<ereol::Record>>();
     }
 
-    inline void to_json(nlohmann::json & j, const ereol::Collection & x) {
+    void to_json(nlohmann::json & j, const ereol::Collection & x) {
         j = nlohmann::json::object();
         j["size"] = x.size;
         j["records"] = x.records;
@@ -59,3 +64,24 @@ namespace nlohmann {
 
 
 }
+
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterPageResult(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::PageResult>("PageResult")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("data", &ereol::PageResult::data)
+            .addProperty("count", &ereol::PageResult::count)
+            .addProperty("more", &ereol::PageResult::more)
+            .addProperty("facets", &ereol::PageResult::facets)
+            .addFunction("toJson", std::function <std::string (const ereol::PageResult*)> (
+                [] (const ereol::PageResult* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif

@@ -3,6 +3,14 @@
 
 #include <cstdlib>
 #include "../util/JSONHelper.h"
+#include "../util/HelperFunctions.h"
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#include <LuaBridge/Vector.h>
+#include <LuaBridge/Optional.h>
+#endif
+
+
 
 void ereol::from_json(const std::string  &s, ereol::Record& x){
     nlohmann::json j = nlohmann::json::parse(s);
@@ -60,31 +68,75 @@ namespace nlohmann {
         j["language"] = x.language;
         j["mediaType"] = x.mediaType;
 
-        j["createdDate"] = x.createdDate.value();
-        j["updatedDate"] = x.updatedDate.value();
-        j["firstPublished"] = x.firstPublished.value();
-        j["duration"] = x.duration.value();
 
-        j["icon"] = x.recordType.value();
-        j["cover"] = x.cover.value();
-        j["phid"] = x.phid.value();
-        j["format"] = x.format.value();
-        j["thumbnail"] = x.thumbnail.value();
-        j["abstract"] = x.abstract.value();
-        j["year"] = x.year.value();
-        j["edition"] = x.edition.value();
-        j["shelfmark"] = x.shelfmark.value();
-        j["seriesPart"] = x.seriesPart.value();
-        j["subscription"] = x.subscription.value();
-        j["eReolenGlobalUrl"] = x.eReolenGlobalUrl.value();
+        j["createdDate"] = ereol::or_else(x.createdDate, (int64_t) 0);
+        j["updatedDate"] = ereol::or_else(x.updatedDate, (int64_t) 0);
+        j["firstPublished"] = ereol::or_else(x.firstPublished, (int64_t) 0);
+        j["duration"] = ereol::or_else(x.duration, (int64_t) 0);
 
-        j["contributors"] = x.contributors.value();
+        j["icon"] = ereol::or_else(x.recordType, std::string());
+        j["cover"] = ereol::or_else(x.cover, std::string());
+        j["phid"] = ereol::or_else(x.phid, std::string());
+        j["format"] = ereol::or_else(x.format, std::string());
+        j["thumbnail"] = ereol::or_else(x.thumbnail, std::string());
+        j["abstract"] = ereol::or_else(x.abstract, std::string());
+        j["year"] = ereol::or_else(x.year, std::string());
+        j["edition"] = ereol::or_else(x.edition, std::string());
+        j["shelfmark"] = ereol::or_else(x.shelfmark, std::string());
+        j["seriesPart"] = ereol::or_else(x.seriesPart, std::string());
+        j["subscription"] = ereol::or_else(x.subscription, std::string());
+        j["eReolenGlobalUrl"] = ereol::or_else(x.eReolenGlobalUrl, std::string());
 
-        j["creators"] = x.creators.value();
-        j["series"] = x.series.value();
-        j["subjects"] = x.subjects.value();
-        j["types"] = x.types.value();
+        j["contributors"] = ereol::or_else(x.contributors, std::vector<ereol::Contributor>());
+
+        j["creators"] = ereol::or_else(x.creators, std::vector<std::string>());
+        j["series"] = ereol::or_else(x.series, std::vector<std::string>());
+        j["subjects"] = ereol::or_else(x.subjects, std::vector<std::string>());
+        j["types"] = ereol::or_else(x.types, std::vector<std::string>());
 
     }
 
 }
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterRecord(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::Record>("Record")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("loanIdentifier", &ereol::Record::loanIdentifier)
+            .addProperty("title", &ereol::Record::title)
+            .addProperty("publisher", &ereol::Record::publisher)
+            .addProperty("description", &ereol::Record::description)
+            .addProperty("language", &ereol::Record::language)
+            .addProperty("mediaType", &ereol::Record::mediaType)
+            .addProperty("createdDate", &ereol::Record::createdDate)
+            .addProperty("updatedDate", &ereol::Record::updatedDate)
+            .addProperty("firstPublished", &ereol::Record::firstPublished)
+            .addProperty("duration", &ereol::Record::duration)
+            .addProperty("recordType", &ereol::Record::recordType)
+            .addProperty("cover", &ereol::Record::cover)
+            .addProperty("phid", &ereol::Record::phid)
+            .addProperty("format", &ereol::Record::format)
+            .addProperty("thumbnail", &ereol::Record::thumbnail)
+            .addProperty("abstract", &ereol::Record::abstract)
+            .addProperty("year", &ereol::Record::year)
+            .addProperty("edition", &ereol::Record::edition)
+            .addProperty("shelfmark", &ereol::Record::shelfmark)
+            .addProperty("seriesPart", &ereol::Record::seriesPart)
+            .addProperty("subscription", &ereol::Record::subscription)
+            .addProperty("eReolenGlobalUrl", &ereol::Record::eReolenGlobalUrl)
+            .addProperty("contributors", &ereol::Record::contributors)
+            .addProperty("creators", &ereol::Record::creators)
+            .addProperty("series", &ereol::Record::series)
+            .addProperty("subjects", &ereol::Record::subjects)
+            .addProperty("types", &ereol::Record::types)
+            .addFunction("toJson", std::function <std::string (const ereol::Record*)> (
+                [] (const ereol::Record* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif

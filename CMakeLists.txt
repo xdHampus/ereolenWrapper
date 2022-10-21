@@ -14,6 +14,14 @@ if(APPLE)
 add_compile_options(-mmacosx-version-min=10.15)
 endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_EXPORT_COMPILE_COMMANDS "YES")
+
 ############################
 ##  Modules and scripts   ##
 ############################
@@ -34,26 +42,32 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # Make our cmak
 
 option(ENABLE_INSTALL
     "Should ${PROJECT_NAME} be added to the install list? Useful if included using add_subdirectory." ON)
-option(ENABLE_TESTING "Should unit tests be compiled." ON)
+option(ENABLE_TESTING "Should unit tests be compiled?" ON)
+option(ENABLE_LUA "Should the Lua interface be compiled?" OFF)
+option(EXPORT_UTIL "Export utility headers" OFF)
+option(ENABLE_PI_CODE "Enable position-independent code" ON)
+option(ENABLE_COMPILE_STATIC "Compile library as STATIC" OFF)
+
 
 set(${PROJECT_NAME}_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
     CACHE STRING "Path to install ${PROJECT_NAME} Config*.cmake files to.")
 
-
 ####################
 ##  Dependencies  ##
 ####################
-
-#nlohmann json
 find_package(nlohmann_json 3.2.0 REQUIRED)
-#CPR
 find_package(cpr REQUIRED)
-#GTests
 if(ENABLE_TESTING)
     find_package(GTest REQUIRED)
     include(GoogleTest)
     enable_testing()
 endif()
+if(ENABLE_LUA)
+    include(FindLua)
+    find_package(Lua 5.1 REQUIRED)
+    add_definitions(-DCOMPILE_LUA)
+endif()
+
 
 ###############
 ##  Targets  ##
@@ -63,15 +77,15 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(src)
 
+if(ENABLE_PI_CODE)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 ###############
 ## Packaging ##
 ###############
-set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 
 if(ENABLE_INSTALL)
-    # Use version checking helper provided by CMake so that users can
-    # safely use a version number in their find_package calls
     write_basic_package_version_file(
         ${PROJECT_NAME}ConfigVersion.cmake
         VERSION ${PROJECT_VERSION}
@@ -84,37 +98,48 @@ if(ENABLE_INSTALL)
         NO_SET_AND_CHECK_MACRO
         NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-   	if(ENABLE_TESTING)
-   	    install(
-        TARGETS ereolenwrapper ereolenwrappertests
-        EXPORT ${PROJECT_NAME}_Targets
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+    set(INSTALL_TARGETS ereolenwrapper)
+    set(INSTALL_SRC_DIR src/main/.)
+    set(INSTALL_EXCLUDES )
+
+    if (ENABLE_TESTING)
+        set(INSTALL_SRC_DIR src)
+        set(INSTALL_TARGETS ${INSTALL_TARGETS} ereolenwrappertests)
+        set_target_properties(ereolenwrappertests PROPERTIES OUTPUT_NAME "ereolenwrapper" ) 
+        set(EXPORT_UTIL ON)
+    endif()
+    if(EXPORT_UTIL)
     else()
-       	install(
-	        TARGETS ereolenwrapper
-	        EXPORT ${PROJECT_NAME}_Targets
-	        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-   	endif()
+        set(INSTALL_EXCLUDES ${INSTALL_EXCLUDES} PATTERN util EXCLUDE)
+    endif()
+
+    #if(ENABLE_LUA)
+    #else()
+    set(INSTALL_EXCLUDES ${INSTALL_EXCLUDES} PATTERN lua EXCLUDE)
+    #endif()
 
 
-    install(DIRECTORY src
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FILES_MATCHING PATTERN *.h)
+    install(
+            TARGETS ${INSTALL_TARGETS}
+            EXPORT ${PROJECT_NAME}_Targets
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-    # This time, install all the exported targets under the
-    # ${PROJECT_NAME}_Targets name.
+
+    install(DIRECTORY ${INSTALL_SRC_DIR}
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ereol
+            FILES_MATCHING
+            PATTERN *.h
+            ${INSTALL_EXCLUDES}
+            )
+
+
     install(
         EXPORT ${PROJECT_NAME}_Targets
         NAMESPACE ${PROJECT_NAME}::
         FILE ${PROJECT_NAME}Targets.cmake
         DESTINATION ${${PROJECT_NAME}_INSTALL_CMAKEDIR})
 
-    # So far we only installed the exported targets, now install the package config files.
-    #
-    # If you do not list headers in the PUBLIC_HEADER property, you will need to copy them using
-    # `install(FILES)` or `install(DIRECTORY)` too.
-    #
-    # In that case, you can use CMAKE_INSTALL_INCLUDEDIR as the base destination path.
     install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake

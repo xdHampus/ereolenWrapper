@@ -1,14 +1,3 @@
-// Generators.h
-
-//  To parse this JSON data, first install
-//
-//      json.h  https://github.com/nlohmann/json
-//
-//  Then include this file, and then do
-//
-//     Generators.h data = nlohmann::json::parse(jsonString);
-
-
 #include <nlohmann/json.hpp>
 
 #include <string>
@@ -23,6 +12,7 @@
 #include "../model/Reservation.h"
 #include "src/main/model/PageResult.h"
 #include "src/main/model/Review.h"
+#include "../model/LibraryProfile.h"
 
 
 namespace ereol {
@@ -75,6 +65,9 @@ namespace nlohmann {
     void from_json(const json & j, ereol::Review& x);
     void to_json(json & j, const ereol::Review & x);
 
+    void from_json(const json & j, ereol::LibraryProfile& x);
+    void to_json(json & j, const ereol::LibraryProfile & x);
+
 /*
 
 
@@ -86,29 +79,6 @@ namespace nlohmann {
 
     void from_json(const json & j, ereol::RecordType & x);
     void to_json(json & j, const ereol::RecordType & x);
-
-
-
-
-
-
-
-
-    inline void from_json(const json & j, ereol::LibraryProfile& x) {
-        x.maxConcurrentLoansPerBorrower = j.at("maxConcurrentLoansPerBorrower").get<uint>();
-        x.maxConcurrentReservationsPerBorrower = j.at("maxConcurrentReservationsPerBorrower").get<uint>();
-        x.maxConcurrentAudioLoansPerBorrower = j.at("maxConcurrentAudioLoansPerBorrower").get<uint>();
-        x.maxConcurrentAudioReservationsPerBorrower = j.at("maxConcurrentAudioReservationsPerBorrower").get<uint>();
-    }
-
-    inline void to_json(json & j, const ereol::LibraryProfile & x) {
-        j = json::object();
-        j["maxConcurrentLoansPerBorrower"] = x.maxConcurrentLoansPerBorrower;
-        j["maxConcurrentReservationsPerBorrower"] = x.maxConcurrentReservationsPerBorrower;
-        j["maxConcurrentAudioLoansPerBorrower"] = x.maxConcurrentAudioLoansPerBorrower;
-        j["maxConcurrentAudioReservationsPerBorrower"] = x.maxConcurrentAudioReservationsPerBorrower;
-    }
-
 
 
     inline void from_json(const json & j, ereol::RecordType & x) {

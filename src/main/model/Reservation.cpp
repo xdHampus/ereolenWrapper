@@ -1,5 +1,8 @@
 #include "Reservation.h"
 #include "../util/JSONHelper.h"
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#endif
 
 void ereol::from_json(const std::string  &s, ereol::Reservation& x){
     nlohmann::json j = nlohmann::json::parse(s);
@@ -32,3 +35,25 @@ namespace nlohmann {
         j["expectedRedeemDateUtc"] = x.expectedRedeemDateUtc;        
     }
 }
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterReservation(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::Reservation>("Reservation")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("loanIdentifier", &ereol::Reservation::loanIdentifier)
+            .addProperty("bookId", &ereol::Reservation::bookId)
+            .addProperty("status", &ereol::Reservation::status)
+            .addProperty("createdUtc", &ereol::Reservation::createdUtc)
+            .addProperty("expireUtc", &ereol::Reservation::expireUtc)
+            .addProperty("expectedRedeemDateUtc", &ereol::Reservation::expectedRedeemDateUtc)
+            .addFunction("toJson", std::function <std::string (const ereol::Reservation*)> (
+                [] (const ereol::Reservation* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif

@@ -7,8 +7,8 @@ namespace ereol {
     struct LoanHistorical {
         ereol::LoanIdentifier loanIdentifier;
         std::string loanId;
-        int64_t loanDate;
-        bool manuallyAdded;
+        int64_t loanDate = 0;
+        bool manuallyAdded = false;
         std::string title;
         std::string creator;
         std::string publicationDate;

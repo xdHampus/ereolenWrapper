@@ -1,7 +1,3 @@
-//
-// Created by root on 1/29/22.
-//
-
 #include "BaseTestHelper.h"
 #include "src/main/ApiEnv.h"
 #include "src/main/Auth.h"
@@ -31,7 +27,7 @@ void BaseTestHelper::ensureLoaded() {
             optToken = ereol::Auth::authenticate(
                     getUsername(),
                     getPassword(),
-                    optLibrary.value());
+                    optLibrary.value()).data();
         }
         loaded = true;
     }

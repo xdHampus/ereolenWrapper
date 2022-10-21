@@ -11,6 +11,7 @@ jobs:
       TEST_PASSWORD : ${{ secrets.TEST_PASSWORD }}
       TEST_USERNAME : ${{ secrets.TEST_USERNAME }}    
       FLASK_APP : "src/test/mock-server/app.py"
+      GTEST_OUTPUT : "xml"
     steps:
     - uses: actions/checkout@v2.4.0
     - uses: cachix/install-nix-action@v15
@@ -19,3 +20,8 @@ jobs:
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
     - run: nix develop -c "flask" "run" "--host=0.0.0.0" &
     - run: nix run .#checks.x86_64-linux.tests -L
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v3
+      if: always() # always run even if the previous step fails
+      with:
+        report_paths: 'test*.xml'

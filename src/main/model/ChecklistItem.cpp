@@ -1,5 +1,8 @@
 #include "ChecklistItem.h"
 #include "../util/JSONHelper.h"
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#endif
 
 void ereol::from_json(const std::string  &s, ereol::ChecklistItem& x){
     nlohmann::json j = nlohmann::json::parse(s);
@@ -25,3 +28,21 @@ namespace nlohmann {
         j["creationDateUtc"] = x.creationDateUtc;
     }
 }
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterChecklistItem(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::ChecklistItem>("ChecklistItem")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("loanIdentifier", &ereol::ChecklistItem::loanIdentifier)
+            .addProperty("creationDateUtc", &ereol::ChecklistItem::creationDateUtc)
+            .addFunction("toJson", std::function <std::string (const ereol::ChecklistItem*)> (
+                [] (const ereol::ChecklistItem* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif

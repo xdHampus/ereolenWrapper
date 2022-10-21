@@ -8,7 +8,7 @@
 namespace ereol {
     struct ChecklistItem {
         ereol::LoanIdentifier loanIdentifier;
-        int64_t creationDateUtc;
+        int64_t creationDateUtc = 0;
     };
     void from_json(const std::string  &s, ereol::ChecklistItem& x);
     void to_json(std::string & s, const ereol::ChecklistItem & x);
