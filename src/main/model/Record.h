@@ -16,7 +16,7 @@ namespace ereol {
         std::string language;
         std::string mediaType;
 
-        std::optional<int64_t> createdDate;
+        std::optional<int64_t> createdDate = std::nullopt;
         std::optional<int64_t> updatedDate;
         std::optional<int64_t> firstPublished;
         std::optional<int64_t> duration;    
@@ -46,4 +46,5 @@ namespace ereol {
     void to_json(std::string & s, const ereol::Record & x);
 
 }
+
 #endif //EREOLENWRAPPER_RECORD_H

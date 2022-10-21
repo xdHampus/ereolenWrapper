@@ -1,7 +1,3 @@
-//
-// Created by root on 1/30/22.
-//
-
 // prefix for disabling tests DISABLED_
 
 #include <gtest/gtest.h>
@@ -40,15 +36,16 @@ TEST(ItemTest, GetOthersOfSameTitle) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    std::vector<ereol::Record> records = ereol::Item::getOthersOfSameTitle(
+    ereol::Response<std::vector<ereol::Record>> records = ereol::Item::getOthersOfSameTitle(
             ItemTestHelper::item1,
             itemTH.optToken.value()
             );
-    EXPECT_TRUE(!records.empty());
-    if(!records.empty()) {
-        ereol::Record result = records[0];
+    EXPECT_TRUE(records.success());
+    EXPECT_TRUE(records.data().has_value());
+    if(records.data().has_value()) {
+        ereol::Record result = records.data().value()[0];
         ItemTestHelper::tryCompare(ItemTestHelper::recordMock1, result);
     }
 }
@@ -57,9 +54,9 @@ TEST(ItemTest, GetMoreOfSameGenre) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    ereol::PageResult result1 = ereol::Item::getMoreOfSameGenre(
+    ereol::Response<ereol::PageResult> result1 = ereol::Item::getMoreOfSameGenre(
             ItemTestHelper::item1,
             itemTH.optToken.value(),
             ereol::QuerySettings {
@@ -67,12 +64,13 @@ TEST(ItemTest, GetMoreOfSameGenre) {
                 2
             }
     );
-    EXPECT_TRUE(result1.count > 0);
-    if(result1.count > 0) {
-        ItemTestHelper::tryCompare(ItemTestHelper::pageResultGenre1, result1);
+    EXPECT_TRUE(result1.success());
+    EXPECT_TRUE(result1.data().has_value() && result1.data().value().count > 0);
+    if(result1.data().has_value() && result1.data().value().count > 0) {
+        ItemTestHelper::tryCompare(ItemTestHelper::pageResultGenre1, (ereol::PageResult &) result1.data().value());
     }
 
-    ereol::PageResult result2 = ereol::Item::getMoreOfSameGenre(
+    ereol::Response<ereol::PageResult> result2 = ereol::Item::getMoreOfSameGenre(
             "eyJpIjoiOTc4ODc5NDE5ODAyOCIsInMiOiI4NzA5NzAtYmFzaXM6MzkzOTQ3NTgiLCJjIjoibmV0bHlkYm9nIn0=",
             itemTH.optToken.value(),
             ereol::QuerySettings {
@@ -80,18 +78,20 @@ TEST(ItemTest, GetMoreOfSameGenre) {
                     3
             }
     );
-    EXPECT_TRUE(result2.count > 0);
-    if(result2.count > 0) {
-        ItemTestHelper::tryCompare(ItemTestHelper::pageResultGenre2, result2);
+
+    EXPECT_TRUE(result2.success());
+    EXPECT_TRUE(result2.data().has_value() && result2.data().value().count > 0);
+    if(result2.data().has_value() && result2.data().value().count > 0) {
+        ItemTestHelper::tryCompare(ItemTestHelper::pageResultGenre2, (ereol::PageResult &) result2.data().value());
     }
 }
 TEST(ItemTest, GetMoreOfSameCreator) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    ereol::PageResult result = ereol::Item::getMoreOfSameCreator(
+    ereol::Response<ereol::PageResult> result = ereol::Item::getMoreOfSameCreator(
             ItemTestHelper::item2,
             itemTH.optToken.value(),
             ereol::QuerySettings {
@@ -99,18 +99,19 @@ TEST(ItemTest, GetMoreOfSameCreator) {
                     2
             }
     );
-    EXPECT_TRUE(result.count > 0);
-    if(result.count > 0) {
-        ItemTestHelper::tryCompare(ItemTestHelper::pageResultCreator1, result);
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value() && result.data().value().count > 0);
+    if(result.data().has_value() && result.data().value().count > 0) {
+        ItemTestHelper::tryCompare(ItemTestHelper::pageResultCreator1, (ereol::PageResult &) result.data().value());
     }
 }
 TEST(ItemTest, GetMoreInSameSeries) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    ereol::PageResult result = ereol::Item::getMoreInSameSeries(
+    ereol::Response<ereol::PageResult> result = ereol::Item::getMoreInSameSeries(
             ItemTestHelper::item1,
             itemTH.optToken.value(),
             ereol::QuerySettings {
@@ -118,18 +119,19 @@ TEST(ItemTest, GetMoreInSameSeries) {
                     2
             }
     );
-    EXPECT_TRUE(result.count > 0);
-    if(result.count > 0) {
-        ItemTestHelper::tryCompare(ItemTestHelper::pageResultSeries1, result);
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value() && result.data().value().count > 0);
+    if(result.data().has_value() && result.data().value().count > 0) {
+        ItemTestHelper::tryCompare(ItemTestHelper::pageResultSeries1, (ereol::PageResult &) result.data().value());
     }
 }
 TEST(ItemTest, GetSomethingSimilar) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    std::vector<ereol::Record> result = ereol::Item::getSomethingSimilar(
+    ereol::Response<std::vector<ereol::Record>> result = ereol::Item::getSomethingSimilar(
             ItemTestHelper::item2,
             itemTH.optToken.value(),
             ereol::QuerySettings {
@@ -137,11 +139,12 @@ TEST(ItemTest, GetSomethingSimilar) {
                     2
             }
     );
-    EXPECT_TRUE(!result.empty());
-    EXPECT_EQ(result.size(), ItemTestHelper::recordsSimilar1.size());
-    if(!result.empty() && (result.size() == ItemTestHelper::recordsSimilar1.size())) {
-        for (int i = 0; i < result.size(); ++i) {
-            ItemTestHelper::tryCompare(ItemTestHelper::recordsSimilar1[i], result[i]);
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    EXPECT_EQ(result.data().value().size(), ItemTestHelper::recordsSimilar1.size());
+    if(result.data().has_value() && (result.data().value().size() == ItemTestHelper::recordsSimilar1.size())) {
+        for (int i = 0; i < result.data().value().size(); ++i) {
+            ItemTestHelper::tryCompare(ItemTestHelper::recordsSimilar1[i], result.data().value()[i]);
         }
     }
 }
@@ -149,9 +152,9 @@ TEST(ItemTest, DISABLED_GetPersonalRecommendations) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    std::vector<ereol::Record> result = ereol::Item::getPersonalRecommendations(
+    ereol::Response<std::vector<ereol::Record>> result = ereol::Item::getPersonalRecommendations(
             ItemTestHelper::item1,
             itemTH.optToken.value(),
             ereol::QuerySettings {
@@ -165,17 +168,18 @@ TEST(ItemTest, GetReviews) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    std::vector<ereol::Review> result = ereol::Item::getReviews(
+    ereol::Response<std::vector<ereol::Review>> result = ereol::Item::getReviews(
             ItemTestHelper::item3,
             itemTH.optToken.value()
     );
-    EXPECT_TRUE(!result.empty());
-    EXPECT_EQ(result.size(), ItemTestHelper::reviews1.size());
-    if(!result.empty() && (result.size() == ItemTestHelper::reviews1.size())) {
-        for (int i = 0; i < result.size(); ++i) {
-            ItemTestHelper::tryCompare(ItemTestHelper::reviews1[i], result[i]);
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    EXPECT_EQ(result.data().value().size(), ItemTestHelper::reviews1.size());
+    if(result.data().has_value() && (result.data().value().size() == ItemTestHelper::reviews1.size())) {
+        for (int i = 0; i < result.data().value().size(); ++i) {
+            ItemTestHelper::tryCompare(ItemTestHelper::reviews1[i], result.data().value()[i]);
         }
     }
 }
@@ -183,23 +187,24 @@ TEST(ItemTest, GetCovers) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    std::map<std::string, std::string> result = ereol::Item::getCoverUrls(
+    ereol::Response<std::map<std::string, std::string>> result = ereol::Item::getCoverUrls(
             std::vector<std::string>{
                     ItemTestHelper::item1,
                     ItemTestHelper::item2
                 },
             itemTH.optToken.value()
     );
-    EXPECT_TRUE(!result.empty());
-    EXPECT_EQ(result.size(), ItemTestHelper::coverUrls1.size());
-    if(!result.empty() && (result.size() == ItemTestHelper::coverUrls1.size())) {
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    EXPECT_EQ(result.data().value().size(), ItemTestHelper::coverUrls1.size());
+    if(result.data().has_value() && (result.data().value().size() == ItemTestHelper::coverUrls1.size())) {
         for (auto const& [key, val] : ItemTestHelper::coverUrls1)
         {
-            EXPECT_TRUE(result.contains(key));
-            if(result.contains(key)){
-                EXPECT_STREQ(val.c_str(), result[key].c_str());
+            EXPECT_TRUE(result.data().value().contains(key));
+            if(result.data().value().contains(key)){
+                EXPECT_STREQ(val.c_str(), result.data().value()[key].c_str());
             }
         }
     }
@@ -208,23 +213,25 @@ TEST(ItemTest, GetLoanStatuses) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    std::map<std::string, std::string> result = ereol::Item::getLoanStatuses(
+    ereol::Response<std::map<std::string, std::string>> result = ereol::Item::getLoanStatuses(
             std::vector<std::string>{
                     ItemTestHelper::item1,
                     ItemTestHelper::item2
             },
             itemTH.optToken.value()
     );
-    EXPECT_TRUE(!result.empty());
-    EXPECT_EQ(result.size(), ItemTestHelper::loanStatuses1.size());
-    if(!result.empty() && (result.size() == ItemTestHelper::loanStatuses1.size())) {
+
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    EXPECT_EQ(result.data().value().size(), ItemTestHelper::loanStatuses1.size());
+    if(result.data().has_value() && (result.data().value().size() == ItemTestHelper::loanStatuses1.size())) {
         for (auto const& [key, val] : ItemTestHelper::loanStatuses1)
         {
-            EXPECT_TRUE(result.contains(key));
-            if(result.contains(key)){
-                EXPECT_STREQ(val.c_str(), result[key].c_str());
+            EXPECT_TRUE(result.data().value().contains(key));
+            if(result.data().value().contains(key)){
+                EXPECT_STREQ(val.c_str(), result.data().value()[key].c_str());
             }
         }
     }
@@ -232,20 +239,20 @@ TEST(ItemTest, GetLoanStatuses) {
 TEST(ItemTest, GetProduct) {
     itemTH.ensureLoaded();
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    ereol::Record result = ereol::Item::getProduct(
+    ereol::Response<ereol::Record> result = ereol::Item::getProduct(
             ItemTestHelper::item1,
             itemTH.optToken.value()
     );
-    ItemTestHelper::tryCompare(ItemTestHelper::recordMock2, result);
+    ItemTestHelper::tryCompare(ItemTestHelper::recordMock2, (ereol::Record &) result.data().value());
 }
 TEST(ItemTest, Search) {
     itemTH.ensureLoaded();
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
-    ereol::PageResult result = ereol::Item::search(
+    ereol::Response<ereol::PageResult> result = ereol::Item::search(
             ItemTestHelper::query1,
             itemTH.optToken.value(),
             ereol::QuerySettings {
@@ -257,9 +264,10 @@ TEST(ItemTest, Search) {
                     }
             }
     );
-    EXPECT_TRUE(result.count > 0);
-    if(result.count > 0) {
-        ItemTestHelper::tryCompare(ItemTestHelper::pageResultSearch1, result);
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value() && result.data().value().count > 0);
+    if(result.data().has_value() && result.data().value().count > 0) {
+        ItemTestHelper::tryCompare(ItemTestHelper::pageResultSearch1, (ereol::PageResult &) result.data().value());
     }
 }
 

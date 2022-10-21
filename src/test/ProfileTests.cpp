@@ -30,11 +30,12 @@ TEST(ProfileTest, TestLibProfile){
     int expectedMaxConcurrentAudioLoansPerBorrower = 10;
     int expectedMaxConcurrentAudioReservationsPerBorrower = 3;
 
-    std::optional<ereol::LibraryProfile> optLibraryProfile = ereol::Profile::getLibraryProfile(library);
+    ereol::Response<ereol::LibraryProfile> optLibraryProfile = ereol::Profile::getLibraryProfile(library);
 
-    EXPECT_TRUE(optLibraryProfile.has_value());
-    if(optLibraryProfile.has_value()){
-        ereol::LibraryProfile profile = optLibraryProfile.value();
+    EXPECT_TRUE(optLibraryProfile.success());
+    EXPECT_TRUE(optLibraryProfile.data().has_value());
+    if(optLibraryProfile.data().has_value()){
+        ereol::LibraryProfile profile = optLibraryProfile.data().value();
         EXPECT_EQ(expectedMaxConcurrentLoansPerBorrower, profile.maxConcurrentLoansPerBorrower);
         EXPECT_EQ(expectedMaxConcurrentReservationsPerBorrower, profile.maxConcurrentReservationsPerBorrower);
         EXPECT_EQ(expectedMaxConcurrentAudioLoansPerBorrower, profile.maxConcurrentAudioLoansPerBorrower);
@@ -47,14 +48,17 @@ TEST(ProfileTest, GetLoansTest) {
     profileTH.ensureLoaded();
 
     EXPECT_TRUE(profileTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()).success());
 
-    std::optional<std::vector<ereol::LoanActive>> optResults = ereol::Profile::getLoans(profileTH.optToken.value());
-    EXPECT_TRUE(optResults.has_value());
-    if(optResults.has_value()){
+    ereol::Response<std::vector<ereol::LoanActive>> optResults = ereol::Profile::getLoans(profileTH.optToken.value());
+
+    EXPECT_TRUE(optResults.success());
+    EXPECT_TRUE(optResults.data().has_value());
+    if(optResults.data().has_value()){
+        std::vector<ereol::LoanActive> results = optResults.data().value();
         int mockSize = profileTH.loansMockData.size();
         int i = 0;
-        for (const auto &result : optResults.value()){
+        for (const auto &result : results){
             EXPECT_TRUE(i < mockSize);
             ereol::LoanActive mockResult = profileTH.loansMockData.at(i);
 
@@ -76,14 +80,16 @@ TEST(ProfileTest, GetChecklistTest) {
 
 
     EXPECT_TRUE(profileTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()).success());
 
-    std::optional<std::vector<ereol::ChecklistItem>> optResults = ereol::Profile::getCheckList(profileTH.optToken.value());
-    EXPECT_TRUE(optResults.has_value());
-    if(optResults.has_value()){
+    ereol::Response<std::vector<ereol::ChecklistItem>> optResults = ereol::Profile::getCheckList(profileTH.optToken.value());
+    EXPECT_TRUE(optResults.success());
+    EXPECT_TRUE(optResults.data().has_value());
+    if(optResults.data().has_value()){
+        std::vector<ereol::ChecklistItem> results = optResults.data().value();
         int mockSize = profileTH.checklistMockData.size();
         int i = 0;
-        for (const auto &result : optResults.value()){
+        for (const auto &result : results){
             EXPECT_TRUE(i < mockSize);
             ereol::ChecklistItem mockResult = profileTH.checklistMockData.at(i);
 
@@ -101,14 +107,16 @@ TEST(ProfileTest, GetReservationsTest) {
     profileTH.ensureLoaded();
 
     EXPECT_TRUE(profileTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()).success());
 
-    std::optional<std::vector<ereol::Reservation>> optResults = ereol::Profile::getReservations(profileTH.optToken.value());
-    EXPECT_TRUE(optResults.has_value());
-    if(optResults.has_value()){
+    ereol::Response<std::vector<ereol::Reservation>> optResults = ereol::Profile::getReservations(profileTH.optToken.value());
+    EXPECT_TRUE(optResults.success());
+    EXPECT_TRUE(optResults.data().has_value());
+    if(optResults.data().has_value()){
+        std::vector<ereol::Reservation> results = optResults.data().value();
         int mockSize = profileTH.reservationsMockData.size();
         int i = 0;
-        for (const auto &result : optResults.value()){
+        for (const auto &result : results){
             EXPECT_TRUE(i < mockSize);
             ereol::Reservation mockResult = profileTH.reservationsMockData.at(i);
 
@@ -128,14 +136,16 @@ TEST(ProfileTest, GetLoanHistoryTest) {
     profileTH.ensureLoaded();
 
     EXPECT_TRUE(profileTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()));
+    EXPECT_TRUE(ereol::Auth::isAuthenticated(profileTH.optToken.value()).success());
 
-    std::optional<std::vector<ereol::LoanHistorical>> optResults = ereol::Profile::getLoanHistory(profileTH.optToken.value());
-    EXPECT_TRUE(optResults.has_value());
-    if(optResults.has_value()){
+    ereol::Response<std::vector<ereol::LoanHistorical>> optResults = ereol::Profile::getLoanHistory(profileTH.optToken.value());
+    EXPECT_TRUE(optResults.success());
+    EXPECT_TRUE(optResults.data().has_value());
+    if(optResults.data().has_value()){
+        std::vector<ereol::LoanHistorical> results = optResults.data().value();
         int mockSize = profileTH.loanHistoryMockData.size();
         int i = 0;
-        for (const auto &result : optResults.value()){
+        for (const auto &result : results){
             EXPECT_TRUE(i < mockSize);
             ereol::LoanHistorical mockResult = profileTH.loanHistoryMockData.at(i);
 

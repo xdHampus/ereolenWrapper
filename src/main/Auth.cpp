@@ -4,14 +4,20 @@
 #include "src/main/model/RpcPayload.h"
 #include "src/main/model/Token.h"
 #include <cpr/cpr.h>
-#include <iostream>
 #include <nlohmann/json.hpp>
+#include "src/main/util/ErrorResponse.h"
+#include "src/main/util/ApiCaller.h"
+#ifdef COMPILE_LUA
+#include "lua/LuaInterface.h"
+#include "lua/ResponseLua.h"
+#endif
+
 
 const std::string authMethod   = "authenticate";
 const std::string isAuthMethod = "isAuthenticated";
 const std::string deAuthMethod = "deauthenticate";
 
-std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std::string password, ereol::Library library) {
+ereol::Response<ereol::Token> ereol::Auth::authenticate(const std::string& username,const std::string& password,const ereol::Library& library) {
     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
             authMethod,
             {
@@ -24,10 +30,7 @@ std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std:
             }
             );
 
-    cpr::Response r = cpr::Post(
-            cpr::Url{ereol::ApiEnv::getRPC()},
-            cpr::Body{payloadJson},
-            cpr::Header{{"Content-Type", "text/plain"}});
+    cpr::Response r = ereol::ApiCaller::requestPost(payloadJson);
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
@@ -35,81 +38,61 @@ std::optional<ereol::Token> ereol::Auth::authenticate(std::string username, std:
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
             if(jr["result"]["result"].get<bool>()) {
                 ereol::Token token;
-                token.timeFetched = 9999;
+                token.timeFetched = 9999; //TODO: Get time at this instance
                 token.sessid = r.cookies["PHPSESSID"];
                 token.library = library;
-                return {token};
-            } else { //TODO: Incorrect credentials
-            }
-        } else { //TODO: Handle API errors
-        }
-    } else { //TODO: Handle HTTP errors
-    }
-    return {};
+                return Response<Token>(token);
+            } else { return ereol::ErrorResponse::incorrectCredentials<Token>(); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<Token>({}); }
+    } else { return ereol::ErrorResponse::genericErrorHTTP<Token>({}); }
 }
 
-bool ereol::Auth::deauthenticate(ereol::Token token) {
-    std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            deAuthMethod,
-            {
-                    ereol::ApiEnv::getApiKey(),
-                    ereol::ApiEnv::getAppVersion(),
-                    ereol::ApiEnv::getLanguage(),
-                    ereol::ApiEnv::getLibraryCode(token.library)
-            }
-    );
-
-    cpr::Response r = cpr::Post(
-            cpr::Url{ereol::ApiEnv::getRPC()},
-            cpr::Body{payloadJson},
-            cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+ereol::Response<bool> ereol::Auth::deauthenticate(ereol::Token& token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadJSON(deAuthMethod, token.library);
+    cpr::Response r = ereol::ApiCaller::requestPost(payloadJson, token);
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
-
-
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
             if(jr["result"]["result"].get<bool>()) {
-                return true;
-            } else { //TODO: SESSID not authenticated or incorrect
-            }
-        } else { //TODO: Handle API errors
-        }
-    } else { //TODO: Handle HTTP errors
-    }
-    return false;
+                return Response<bool>(true);
+            } else { return ereol::ErrorResponse::invalidSessionID<bool>(); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<bool>({}); }
+    } else { return ereol::ErrorResponse::genericErrorHTTP<bool>({}); }
 }
 
-bool ereol::Auth::isAuthenticated(ereol::Token token) {
-    std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            isAuthMethod,
-            {
-                    ereol::ApiEnv::getApiKey(),
-                    ereol::ApiEnv::getAppVersion(),
-                    ereol::ApiEnv::getLanguage(),
-                    ereol::ApiEnv::getLibraryCode(token.library)
-            }
-    );
-
-    cpr::Response r = cpr::Post(
-            cpr::Url{ereol::ApiEnv::getRPC()},
-            cpr::Body{payloadJson},
-            cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+ereol::Response<bool> ereol::Auth::isAuthenticated(ereol::Token& token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadJSON(isAuthMethod, token.library);
+    cpr::Response r = ereol::ApiCaller::requestPost(payloadJson, token);
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
 
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
             if(jr["result"]["data"].get<bool>()) {
-                return true;
-            } else { //TODO: SESSID not authenticated or incorrect
-            }
-        } else { //TODO: Handle API errors
-        }
-    } else { //TODO: Handle HTTP errors
-    }
-    return false;
+                return Response<bool>(true);
+            } else { return ereol::ErrorResponse::invalidSessionID<bool>(); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<bool>({}); }
+    } else { return ereol::ErrorResponse::genericErrorHTTP<bool>({}); }
 }
 
+
+
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterAuth(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::Auth>("Auth")
+            .addStaticFunction ("authenticate",
+                std::function<ereol::Response<ereol::Token>(const std::string&, const std::string&, int)>(
+                [](const std::string& username,const std::string& password, int library){
+                    return ereol::Auth::authenticate(username,password,static_cast<ereol::Library>(library));
+                })
+            )
+            .addStaticFunction ("deauthenticate", ereol::Auth::deauthenticate)
+            .addStaticFunction ("isAuthenticated", ereol::Auth::isAuthenticated)
+        .endClass()
+    .endNamespace();
+}
+#endif

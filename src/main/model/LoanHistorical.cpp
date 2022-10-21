@@ -2,6 +2,10 @@
 #include <functional>
 #include <cstdlib>
 #include "../util/JSONHelper.h"
+#ifdef COMPILE_LUA
+#include "../lua/LuaInterface.h"
+#include <LuaBridge/Vector.h>
+#endif
 
 void ereol::from_json(const std::string  &s, ereol::LoanHistorical& x){
     nlohmann::json j = nlohmann::json::parse(s);
@@ -38,3 +42,27 @@ namespace nlohmann {
         j["materialTypes"] = x.materialTypes;
     }
 }
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterLoanHistorical(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::LoanHistorical>("LoanHistorical")
+            .addConstructor <void (*) (void)> ()
+            .addProperty("loanIdentifier", &ereol::LoanHistorical::loanIdentifier)
+            .addProperty("loanId", &ereol::LoanHistorical::loanId)
+            .addProperty("loanDate", &ereol::LoanHistorical::loanDate)
+            .addProperty("manuallyAdded", &ereol::LoanHistorical::manuallyAdded)
+            .addProperty("title", &ereol::LoanHistorical::title)
+            .addProperty("creator", &ereol::LoanHistorical::creator)
+            .addProperty("publicationDate", &ereol::LoanHistorical::publicationDate)
+            .addProperty("materialTypes", &ereol::LoanHistorical::materialTypes)
+            .addFunction("toJson", std::function <std::string (const ereol::LoanHistorical*)> (
+                [] (const ereol::LoanHistorical* o) {
+                    std::string s; ereol::to_json(s,*o);
+                    return s;
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif

@@ -1,6 +1,3 @@
-//
-// Created by root on 1/30/22.
-//
 #include <gtest/gtest.h>
 #include <optional>
 #include <string>

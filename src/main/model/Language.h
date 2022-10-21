@@ -1,5 +1,5 @@
 #pragma once
 
 namespace ereol {
-    enum class Language : int { UNKNOWN, DANISH, ENGLISH };
+    enum Language { UNKNOWN, DANISH, ENGLISH };
 }

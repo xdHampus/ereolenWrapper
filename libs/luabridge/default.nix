@@ -19,10 +19,19 @@ stdenv.mkDerivation rec {
   buildInputs = [ ];
 
   cmakeFlags = [
-  	"-DCMAKE_BUILD_TYPE=Release"
+  	#"-DCMAKE_BUILD_TYPE=Release"
+  	"-DLUABRIDGE_TESTING=OFF"
   	"-DLUABRIDGE_CXX17=${if cxx17-features then "1" else "0"}"
   ];
 
+
+  configurePhase = '' ls '';
+  buildPhase = '' ls '';
+
+  installPhase = ''
+    mkdir -p $out/bin
+    mv ./Source $out/include
+  '';
 
   meta = with lib; {
     homepage = "https://github.com/vinniefalco/LuaBridge";

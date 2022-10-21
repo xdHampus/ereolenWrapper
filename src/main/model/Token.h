@@ -5,7 +5,7 @@
 #include <string>
 namespace ereol {
     struct Token {
-        int64_t timeFetched;
+        int64_t timeFetched = 0;
         std::string sessid;
         std::string expirationDate;
         ereol::Library library;

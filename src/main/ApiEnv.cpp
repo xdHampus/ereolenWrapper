@@ -3,7 +3,10 @@
 #include <cpr/cpr.h>
 #include <string>
 #include <map>
-
+#ifdef COMPILE_LUA
+#include "lua/LuaInterface.h"
+#include "lua/ResponseLua.h"
+#endif
 
 const std::string apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
 static std::string rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
@@ -300,3 +303,48 @@ std::string ereol::ApiEnv::getRpcPayloadJSON(std::string method, std::vector<std
 
     return convertRpcPayloadToJSON(rpcPayload, settings);
 }
+
+#ifdef COMPILE_LUA
+void ereol::luaRegisterApiEnv(lua_State* L){
+    luabridge::getGlobalNamespace(L)
+    .beginNamespace("ereol")
+        .beginClass<ereol::ApiEnv>("ApiEnv")
+            .addStaticFunction ("getApiKey", ereol::ApiEnv::getApiKey)
+            .addStaticFunction ("getRPC", ereol::ApiEnv::getRPC)
+            .addStaticFunction ("setRPC", ereol::ApiEnv::setRPC)
+            .addStaticFunction ("getAppVersion", ereol::ApiEnv::getAppVersion)
+            .addStaticFunction ("getLanguage", ereol::ApiEnv::getLanguage)
+            .addStaticFunction ("getLibraryCount", ereol::ApiEnv::getLibraryCount)
+            .addStaticFunction ("getLibraryName", std::function<std::string(int)>(
+                [](int library){
+                    return ereol::ApiEnv::getLibraryName(static_cast<ereol::Library>(library));
+                })
+            )
+            .addStaticFunction ("getLibraryCode", std::function<std::string(int)>(
+                [](int library){
+                    return ereol::ApiEnv::getLibraryCode(static_cast<ereol::Library>(library));
+                })
+            )
+            //TODO: Return error or optional in case of incorrect code
+            .addStaticFunction ("getLibraryFromCode", std::function<int(std::string)>(
+                [](std::string libraryCode){
+                    auto libraryOpt = ereol::ApiEnv::getLibraryFromCode(libraryCode);
+                    return libraryOpt.has_value() ? static_cast<int>(*libraryOpt) : 0;
+                })
+            )
+            .addStaticFunction ("convertRpcPayloadToJSON", std::function<std::string(ereol::RpcPayload)>(
+                [](ereol::RpcPayload p){ return ereol::ApiEnv::convertRpcPayloadToJSON(p);
+            }))
+            .addStaticFunction ("convertRpcPayloadToJSONSettings", std::function<std::string(ereol::RpcPayload,ereol::QuerySettings)>(
+                [](ereol::RpcPayload p, ereol::QuerySettings s){ return ereol::ApiEnv::convertRpcPayloadToJSON(p,s);
+            }))
+            .addStaticFunction ("getRpcPayloadJSON", std::function<std::string(std::string,std::vector<std::string>)>(
+                [](std::string m, std::vector<std::string> v){ return ereol::ApiEnv::getRpcPayloadJSON(m,v);
+            }))
+            .addStaticFunction ("getRpcPayloadJSONSettings", std::function<std::string(std::string,std::vector<std::string>,ereol::QuerySettings)>(
+                [](std::string m, std::vector<std::string> v, ereol::QuerySettings s){ return ereol::ApiEnv::getRpcPayloadJSON(m,v,s);
+            }))
+        .endClass()
+    .endNamespace();
+}
+#endif
