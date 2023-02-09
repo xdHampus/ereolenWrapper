@@ -4,3 +4,4 @@ result
 cmake-build-*
 secrets
 __pycache__
+.stignore
