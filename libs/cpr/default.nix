@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation rec {
   pname = "cpr";
-  version = "1.7.2";
+  version = "1.10.0";
 
   src = fetchgit {
     url = "https://github.com/libcpr/cpr.git";
-    rev = "beb9e98806bb84bcc130a2cebfbcbbc6ce62b335";
-    sha256 = "19rsq1pr1mc5psr9rs8nvz7p9rfqsg1isp5inc8vc59wfa0b5ppn";
+    rev = "0817715923c9705e68994eb52ef9df3f6845beba";
+    sha256 = "z9Aom5e6k1KmB2ncDHz8h0wDGkg6h1yazVJBdEZyswo=";
     fetchSubmodules = true;
   };
 

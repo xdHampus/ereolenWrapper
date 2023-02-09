@@ -27,14 +27,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS "YES")
 ############################
 
 # Standard CMake modules
-include(CTest)                          # Must be called before adding tests but after calling project(). This automatically calls enable_testing() and configures ctest targets when using Make/Ninja
-include(CMakeDependentOption)           # This is a really useful scripts that creates options that depends on other options. It can even be used with generator expressions !
-include(GNUInstallDirs)                 # This will define the default values for installation directories (all platforms even if named GNU)
-include(InstallRequiredSystemLibraries) # Tell CMake that the `install` target needs to install required system libraries (eg: Windows SDK)
-include(CMakePackageConfigHelpers)      # Helper to create relocatable packages
-
+include(CTest)                         
+include(CMakeDependentOption)           
+include(GNUInstallDirs)                 
+include(InstallRequiredSystemLibraries) 
+include(CMakePackageConfigHelpers)    
 # Custom modules and scripts
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # Make our cmake scripts available
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") 
 
 ###############
 ##  Options  ##
@@ -44,6 +43,7 @@ option(ENABLE_INSTALL
     "Should ${PROJECT_NAME} be added to the install list? Useful if included using add_subdirectory." ON)
 option(ENABLE_TESTING "Should unit tests be compiled?" ON)
 option(ENABLE_LUA "Should the Lua interface be compiled?" OFF)
+option(ENABLE_LIBGOUROU "Should LibGourou and DeDRM be compiled?" ON)
 option(EXPORT_UTIL "Export utility headers" OFF)
 option(ENABLE_PI_CODE "Enable position-independent code" ON)
 option(ENABLE_COMPILE_STATIC "Compile library as STATIC" OFF)
@@ -55,6 +55,7 @@ set(${PROJECT_NAME}_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NA
 ####################
 ##  Dependencies  ##
 ####################
+
 find_package(nlohmann_json 3.2.0 REQUIRED)
 find_package(cpr REQUIRED)
 if(ENABLE_TESTING)
@@ -67,23 +68,33 @@ if(ENABLE_LUA)
     find_package(Lua 5.1 REQUIRED)
     add_definitions(-DCOMPILE_LUA)
 endif()
-
+if(ENABLE_LIBGOUROU)
+    find_library(
+        LIBGOUROU_LIBRARIES
+        NAMES libgourou.so
+    )
+    find_path(LIBGOUROU_INCLUDE_DIR
+        NAMES libgourou.h
+    )
+    if(NOT LIBGOUROU_INCLUDE_DIR OR NOT LIBGOUROU_LIBRARIES)
+        message(FATAL_ERROR "LIBGOUROU library not found")  
+    endif()
+    add_definitions(-DCOMPILE_LIBGOUROU)
+endif()
 
 ###############
 ##  Targets  ##
 ###############
-
-# Use the project root to find includes
 include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(src)
 
-if(ENABLE_PI_CODE)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
-endif()
+
 ###############
 ## Packaging ##
 ###############
-
+if(ENABLE_PI_CODE)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 
 if(ENABLE_INSTALL)
     write_basic_package_version_file(
@@ -101,7 +112,7 @@ if(ENABLE_INSTALL)
 
     set(INSTALL_TARGETS ereolenwrapper)
     set(INSTALL_SRC_DIR src/main/.)
-    set(INSTALL_EXCLUDES )
+    set(INSTALL_EXCLUDES  )
 
     if (ENABLE_TESTING)
         set(INSTALL_SRC_DIR src)
@@ -113,11 +124,7 @@ if(ENABLE_INSTALL)
     else()
         set(INSTALL_EXCLUDES ${INSTALL_EXCLUDES} PATTERN util EXCLUDE)
     endif()
-
-    #if(ENABLE_LUA)
-    #else()
     set(INSTALL_EXCLUDES ${INSTALL_EXCLUDES} PATTERN lua EXCLUDE)
-    #endif()
 
 
     install(

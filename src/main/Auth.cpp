@@ -31,16 +31,21 @@ ereol::Response<ereol::Token> ereol::Auth::authenticate(const std::string& usern
             );
 
     cpr::Response r = ereol::ApiCaller::requestPost(payloadJson);
-
+    ereol::Token token;
+	for(const cpr::Cookie& item : r.cookies){
+		if("PHPSESSID" != item.GetName()) continue;
+		token.sessid = item.GetValue();
+		break;   		
+	}
+	
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
 
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
             if(jr["result"]["result"].get<bool>()) {
-                ereol::Token token;
                 token.timeFetched = 9999; //TODO: Get time at this instance
-                token.sessid = r.cookies["PHPSESSID"];
                 token.library = library;
+
                 return Response<Token>(token);
             } else { return ereol::ErrorResponse::incorrectCredentials<Token>(); }
         } else { return ereol::ErrorResponse::genericErrorAPI<Token>({}); }

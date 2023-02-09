@@ -6,10 +6,15 @@
 #include "model/PageResult.h"
 #include "model/QuerySettings.h"
 #include "model/Review.h"
+#ifdef COMPILE_LIBGOUROU
+#include "model/LoanActive.h"
+#endif
 #include <string>
 #include <optional>
 #include <vector>
 #include <map>
+
+
 namespace ereol {
 
 
@@ -22,6 +27,7 @@ namespace ereol {
         static ereol::Response<ereol::PageResult> getMoreOfSameCreator(std::string identifier, ereol::Token token, ereol::QuerySettings settings = {});
         static ereol::Response<ereol::PageResult> getMoreInSameSeries(std::string identifier, ereol::Token token, ereol::QuerySettings settings = {});
         static ereol::Response<std::vector<ereol::Record>> getSomethingSimilar(std::string identifier, ereol::Token token, ereol::QuerySettings settings = {});
+
         //TODO:Not implemented correctly, fix
         static ereol::Response<std::vector<ereol::Record>> getPersonalRecommendations(std::string identifier, ereol::Token token, ereol::QuerySettings settings = {});
         static ereol::Response<std::vector<ereol::Review>> getReviews(std::string identifier, ereol::Token token);
@@ -33,6 +39,11 @@ namespace ereol {
 
         static ereol::Response<ereol::PageResult> search(std::string queryString, ereol::Token token, ereol::QuerySettings settings = {});
 
+
+        #ifdef COMPILE_LIBGOUROU
+        static ereol::Response<std::string> download(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x);
+        static ereol::Response<std::string> downloadWithoutDRM(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x);
+        #endif //COMPILE_LIBGOUROU
     };
 }
 #endif //EREOLENWRAPPER_ITEM_H
