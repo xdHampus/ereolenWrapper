@@ -1,0 +1,37 @@
+--- a/Makefile	2023-02-09 20:27:41.111778392 +0100
++++ b/Makefile	2023-02-09 20:26:47.051988946 +0100
+@@ -8,10 +8,8 @@
+     PREFIX := /usr/local
+ endif
+ 
+-UPDFPARSERLIB = ./lib/updfparser/libupdfparser.a
+-
+-CXXFLAGS += -Wall -fPIC -I./include -I./usr/include/pugixml -I./lib/updfparser/include
+-LDFLAGS = -lpugixml
++CXXFLAGS = -Wall -fPIC -I./include
++LDFLAGS = -lpugixml -lupdfparser
+ 
+ VERSION     := $(shell cat include/libgourou.h |grep LIBGOUROU_VERSION|cut -d '"' -f2)
+ 
+@@ -56,7 +54,7 @@
+ SOURCES      = src/libgourou.cpp src/user.cpp src/device.cpp src/fulfillment_item.cpp src/loan_token.cpp src/bytearray.cpp
+ OBJECTS     := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
+ 
+-all: version lib obj $(TARGETS)
++all: version obj $(TARGETS)
+ 
+ version:
+ 	@echo "Building libgourou $(VERSION)"
+@@ -76,10 +74,10 @@
+ 
+ libgourou: $(TARGET_LIBRARIES)
+ 
+-libgourou.a: $(OBJECTS) $(UPDFPARSERLIB)
++libgourou.a: $(OBJECTS) 
+ 	$(AR) rcs --thin $@ $^
+ 
+-libgourou.so.$(VERSION): $(OBJECTS) $(UPDFPARSERLIB)
++libgourou.so.$(VERSION): $(OBJECTS)
+ 	$(CXX) $^ -Wl,-soname,$@ $(LDFLAGS) -o $@ -shared
+ 
+ libgourou.so: libgourou.so.$(VERSION)
