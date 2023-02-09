@@ -11,6 +11,10 @@
 #include <LuaBridge/Map.h>
 #include "lua/ResponseLua.h"
 #endif
+#ifdef COMPILE_LIBGOUROU
+#include <libgourou_log.h>
+#include "model/LoanActive.h"
+#endif
 
 const std::string otherTypesOfSameTitleMethod = "getOtherTypesOfSameTitle";
 const std::string moreOfSameGenreMethod = "getMoreOfSameGenre";
@@ -234,12 +238,23 @@ ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(st
 }
 
 
+#ifdef COMPILE_LIBGOUROU
+ereol::Response<std::string> ereol::Item::download(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x) {
+    gourou::GOUROU_LOG_LEVEL a =  gourou::GOUROU_LOG_LEVEL::LG_LOG_WARN;
+    return ereol::ErrorResponse::genericErrorAPI<std::string>("Could not download"); 
+};
+
+ereol::Response<std::string> ereol::Item::downloadWithoutDRM(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x) {
+    return ereol::Item::download(path, filename, x);
+}   
+#endif //COMPILE_LIBGOUROU
+
 #ifdef COMPILE_LUA
 void ereol::luaRegisterItem(lua_State* L){
     luabridge::getGlobalNamespace(L)
     .beginNamespace("ereol")
         .beginClass<ereol::Item>("Item")
-                /*
+            /*
             .addStaticFunction ("getLibraryProfile",
                 std::function<ereol::Response<ereol::LibraryProfile>(int)>(
                 [](int library){

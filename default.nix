@@ -1,10 +1,12 @@
-{ lib, llvmPackages_11, cmake, gtest, enableTests ? false, cpr ? null
-, enableLua ? false, luabridge ? null, lua ? null, nlohmann_json, openssl, curl
-, zlib }:
+{ lib, llvmPackages_11, cmake, gtest, nlohmann_json, openssl, curl, zlib, 
+enableLua ? false, enableTests ? false, enableLibGourou ? true,
+luabridge ? null, lua ? null,  cpr ? null, libgourou ? null
+}:
 
 assert cpr != null;
 assert enableLua -> lua != null;
 assert enableLua -> luabridge != null;
+assert enableLibGourou -> libgourou != null;
 
 llvmPackages_11.stdenv.mkDerivation rec {
   pname = "ereolenwrapper";
@@ -18,12 +20,14 @@ llvmPackages_11.stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake openssl ] ++ lib.optionals enableTests [ gtest ];
   buildInputs = [ nlohmann_json curl zlib cpr ]
-    ++ lib.optionals enableLua [ lua luabridge ];
+    ++ lib.optionals enableLua [ lua luabridge ]
+    ++ lib.optionals enableLibGourou [ libgourou ];
 
   cmakeFlags = [
     "-DENABLE_INSTALL=ON"
     "-DENABLE_TESTING=${if enableTests then "ON" else "OFF"}"
     "-DENABLE_LUA=${if enableLua then "ON" else "OFF"}"
+    "-DENABLE_LIBGOUROU=${if enableLibGourou then "ON" else "OFF"}"
   ];
 
   meta = with lib; {
@@ -31,7 +35,7 @@ llvmPackages_11.stdenv.mkDerivation rec {
     description = ''
       C++ Wrapper for eReolen.dk RPC API
     '';
-    licencse = licenses.mit;
+    licencse = licenses.lgpl3Plus;
     platforms = with platforms; linux ++ darwin;
     maintainers = [ maintainers.xdhampus ];
   };
