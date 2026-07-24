@@ -14,7 +14,10 @@ const std::string apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
 static std::string rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
 // The server rejects any client older than the version it reports through
 // getSupportedVersion with code 10403, which fails *every* authenticated call.
-// This is only the fallback: call syncAppVersion() to track the live requirement.
+// The app itself never hardcodes this -- it sends Platform.OS + "_" + its own
+// version at runtime. This constant is only the offline fallback; call
+// syncAppVersion() to track the live requirement. (requiredVersion was 3.6.1 and
+// the newest APK on APKPure was 3.6.18 as of 2026-07-25.)
 static std::string appVersion = "android_3.7.2";
 const std::string language = "da";
 const std::string supportedVersionMethod = "getSupportedVersion";
