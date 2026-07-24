@@ -31,6 +31,19 @@ namespace ereol {
             return Response<T>({}, "No result or invalid input", false);
         }
 
+        // eReolen reports failures either as result.code (application errors)
+        // or as error.code (JSON-RPC level, e.g. -32602 wrong param count).
+        static int resultCode(const nlohmann::json &jr) {
+            if(jr.contains("result") && jr["result"].is_object()
+               && jr["result"].contains("code") && jr["result"]["code"].is_number_integer()) {
+                return jr["result"]["code"].get<int>();
+            }
+            if(jr.contains("error") && jr["error"].is_object()
+               && jr["error"].contains("code") && jr["error"]["code"].is_number_integer()) {
+                return jr["error"]["code"].get<int>();
+            }
+            return 0;
+        }
 
     };
 }

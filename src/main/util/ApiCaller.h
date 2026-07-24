@@ -32,8 +32,8 @@ namespace ereol {
                 if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
                     if(jr["result"]["result"].get<bool>() && jr["result"]["data"] != nullptr) {
                         return ereol::Response<T>({jr["result"]["data"].get<T>()});
-                    } else { return fallbackError; }
-                } else { return ereol::ErrorResponse::genericErrorAPI<T>({}); }
+                    } else { return fallbackError.withCode(ereol::ErrorResponse::resultCode(jr)); }
+                } else { return ereol::ErrorResponse::genericErrorAPI<T>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
             } else { return ereol::ErrorResponse::genericErrorHTTP<T>({}); }
         }
         template <typename T>
@@ -43,8 +43,8 @@ namespace ereol {
                 if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
                     if(jr["result"]["result"].get<bool>() && jr["result"]["data"] != nullptr) {
                         return ereol::Response<T>({jr["result"]["data"].get<T>()});
-                    } else { return ereol::ErrorResponse::invalidInput<T>(); }
-                } else { return ereol::ErrorResponse::genericErrorAPI<T>({}); }
+                    } else { return ereol::ErrorResponse::invalidInput<T>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+                } else { return ereol::ErrorResponse::genericErrorAPI<T>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
             } else { return ereol::ErrorResponse::genericErrorHTTP<T>({}); }
         }
     public:
