@@ -1,14 +1,13 @@
-{ lib, llvmPackages_11, cmake, gtest, nlohmann_json, openssl, curl, zlib, 
+{ lib, stdenv, cmake, gtest, nlohmann_json, openssl, curl, zlib, libgourou, cpr,
 enableLua ? false, enableTests ? false, enableLibGourou ? true,
-luabridge ? null, lua ? null,  cpr ? null, libgourou ? null
+luabridge ? null, lua ? null
 }:
 
-assert cpr != null;
 assert enableLua -> lua != null;
 assert enableLua -> luabridge != null;
 assert enableLibGourou -> libgourou != null;
 
-llvmPackages_11.stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   pname = "ereolenwrapper";
   version = "0.1.0";
 
