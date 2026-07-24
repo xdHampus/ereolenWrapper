@@ -5,6 +5,8 @@
 #include <map>
 #ifdef COMPILE_LUA
 #include "lua/LuaInterface.h"
+#include <LuaBridge/Vector.h>
+#include <LuaBridge/Optional.h>
 #include "lua/ResponseLua.h"
 #endif
 
@@ -370,11 +372,13 @@ void ereol::luaRegisterApiEnv(lua_State* L){
                     return ereol::ApiEnv::getLibraryCode(static_cast<ereol::Library>(library));
                 })
             )
-            //TODO: Return error or optional in case of incorrect code
-            .addStaticFunction ("getLibraryFromCode", std::function<int(std::string)>(
-                [](std::string libraryCode){
+            // nil on miss. Returning 0 silently routed every request to
+            // Albertslund, which is the enum's zero value.
+            .addStaticFunction ("getLibraryFromCode", std::function<std::optional<int>(std::string)>(
+                [](std::string libraryCode) -> std::optional<int> {
                     auto libraryOpt = ereol::ApiEnv::getLibraryFromCode(libraryCode);
-                    return libraryOpt.has_value() ? static_cast<int>(*libraryOpt) : 0;
+                    if(!libraryOpt.has_value()) { return std::nullopt; }
+                    return static_cast<int>(*libraryOpt);
                 })
             )
             .addStaticFunction ("convertRpcPayloadToJSON", std::function<std::string(ereol::RpcPayload)>(

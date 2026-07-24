@@ -47,8 +47,8 @@ ereol::Response<std::vector<ereol::Record>> ereol::Item::getOthersOfSameTitle(st
                     results.push_back(jr["result"]["data"]["audiobook"].get<ereol::Record>());
                 }
                 return ereol::Response<std::vector<ereol::Record>>(results);
-            } else { return ereol::ErrorResponse::invalidInput<std::vector<ereol::Record>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::vector<ereol::Record>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::vector<ereol::Record>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::vector<ereol::Record>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::vector<ereol::Record>>({}); }
 }
 
@@ -136,8 +136,8 @@ ereol::Response<std::map<std::string, std::string>> ereol::Item::getCoverUrls(st
                     }
                 }
                 return ereol::Response<std::map<std::string, std::string>>(result);
-            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::map<std::string, std::string>>({}); }
 }
 
@@ -180,8 +180,8 @@ ereol::Item::getLoanStatuses(std::vector<std::string> identifiers, ereol::Token 
                     }
                 }
                 return ereol::Response<std::map<std::string, std::string>>(result);
-            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::map<std::string, std::string>>({}); }
 }
 
@@ -232,8 +232,8 @@ ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(st
                     }
                 }
                 return ereol::Response<std::map<std::string, ereol::Record>>(result);
-            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, ereol::Record>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, ereol::Record>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, ereol::Record>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, ereol::Record>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::map<std::string, ereol::Record>>({}); }
 }
 

@@ -4,6 +4,7 @@
 #include "src/main/model/RpcPayload.h"
 #include "src/main/model/Token.h"
 #include <cpr/cpr.h>
+#include <ctime>
 #include <nlohmann/json.hpp>
 #include "src/main/util/ErrorResponse.h"
 #include "src/main/util/ApiCaller.h"
@@ -43,12 +44,12 @@ ereol::Response<ereol::Token> ereol::Auth::authenticate(const std::string& usern
 
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
             if(jr["result"]["result"].get<bool>()) {
-                token.timeFetched = 9999; //TODO: Get time at this instance
+                token.timeFetched = static_cast<int64_t>(std::time(nullptr));
                 token.library = library;
 
                 return Response<Token>(token);
-            } else { return ereol::ErrorResponse::incorrectCredentials<Token>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<Token>({}); }
+            } else { return ereol::ErrorResponse::incorrectCredentials<Token>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<Token>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<Token>({}); }
 }
 
@@ -61,8 +62,8 @@ ereol::Response<bool> ereol::Auth::deauthenticate(ereol::Token& token) {
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
             if(jr["result"]["result"].get<bool>()) {
                 return Response<bool>(true);
-            } else { return ereol::ErrorResponse::invalidSessionID<bool>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<bool>({}); }
+            } else { return ereol::ErrorResponse::invalidSessionID<bool>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<bool>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<bool>({}); }
 }
 
@@ -76,8 +77,8 @@ ereol::Response<bool> ereol::Auth::isAuthenticated(ereol::Token& token) {
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
             if(jr["result"]["data"].get<bool>()) {
                 return Response<bool>(true);
-            } else { return ereol::ErrorResponse::invalidSessionID<bool>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<bool>({}); }
+            } else { return ereol::ErrorResponse::invalidSessionID<bool>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<bool>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<bool>({}); }
 }
 
