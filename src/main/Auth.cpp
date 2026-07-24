@@ -75,7 +75,8 @@ ereol::Response<bool> ereol::Auth::isAuthenticated(ereol::Token& token) {
         auto jr = nlohmann::json::parse(r.text);
 
         if(jr["result"] != nullptr && jr["result"]["result"] != nullptr){
-            if(jr["result"]["data"].get<bool>()) {
+            // data is null on some failures; .get<bool>() would throw there.
+            if(jr["result"]["data"].is_boolean() && jr["result"]["data"].get<bool>()) {
                 return Response<bool>(true);
             } else { return ereol::ErrorResponse::invalidSessionID<bool>().withCode(ereol::ErrorResponse::resultCode(jr)); }
         } else { return ereol::ErrorResponse::genericErrorAPI<bool>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }

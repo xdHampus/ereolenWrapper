@@ -1,5 +1,24 @@
+import copy
+
 from common import wrap_response, invalid_params, invalid_params_count
 from ItemAPI import item_1, resp_record_1
+
+
+# The identifiers m_loans and m_reservations hand out, so that a loan list built
+# from getLoans + getRecordsByIdentifiers shows titles offline the way it does
+# against the live API.
+loan_titles = {
+    "eyJpIjoiOTc4ODcyNjE1MzY2OCIsImMiOiJlcmVvbGVuIn0=":
+        ("9788726153668", "Forvandlingen", "Franz Kafka"),
+    "eyJpIjoiOTc4ODc2NDQ4MDkyNCIsImMiOiJuZXRseWRib2cifQ==":
+        ("9788764480924", "Mord på Bretagnes kyst", "Jean-Luc Bannalec"),
+    "eyJpIjoiOTc4ODcyODExNzg1OSIsImMiOiJuZXRseWRib2cifQ==":
+        ("9788728117859", "Slaget om Stalingrad", "Troels Ussing"),
+    "eyJpIjoiOTc4ODcwMjMxMjYyMSIsImMiOiJlcmVvbGVuIn0=":
+        ("9788702312621", "Pan", "Knut Hamsun"),
+    "eyJpIjoiOTc4MTYyMzM3MjE5NCIsImMiOiJuZXRseWRib2cifQ==":
+        ("9781623372194", "The Rhythm of War", "Brandon Sanderson"),
+}
 
 
 # getRecordsByIdentifiers returns a map keyed by identifier, where each entry is
@@ -18,12 +37,14 @@ def m_records_by_identifier(data, app):
     records = {}
     for identifier in identifiers:
         if identifier == item_1:
-            records[identifier] = {
-                "result": True,
-                "data": record_1,
-                "code": 0,
-                "message": ""
-            }
+            record = record_1
+        elif identifier in loan_titles:
+            isbn, title, creator = loan_titles[identifier]
+            record = copy.deepcopy(record_1)
+            record["identifier"] = identifier
+            record["isbn"] = isbn
+            record["title"] = title
+            record["creators"] = [creator]
         else:
             records[identifier] = {
                 "result": False,
@@ -31,6 +52,14 @@ def m_records_by_identifier(data, app):
                 "code": 10407,
                 "message": ""
             }
+            continue
+
+        records[identifier] = {
+            "result": True,
+            "data": record,
+            "code": 0,
+            "message": ""
+        }
 
     return wrap_response({
         "jsonrpc": "2.0",
