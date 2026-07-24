@@ -3,6 +3,12 @@
 #include "src/main/util/ApiCaller.h"
 #ifdef COMPILE_LUA
 #include "lua/LuaInterface.h"
+// Every Profile method returns a Response<std::vector<...>>. Without these
+// Stack<> specializations LuaBridge falls back to the userdata path and fails
+// at runtime with "The class is not registered in LuaBridge".
+#include <LuaBridge/Vector.h>
+#include <LuaBridge/Optional.h>
+#include <LuaBridge/Map.h>
 #include "lua/ResponseLua.h"
 #endif
 

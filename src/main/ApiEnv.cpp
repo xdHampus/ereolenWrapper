@@ -10,8 +10,12 @@
 
 const std::string apiKey = "HgAMJJhTM5qp9Q3nElWE0P2yPrdOoc8N";
 static std::string rpcEndpoint = "https://ereolen.redia.dk/v1/rpc.php/";
-const std::string appVersion = "android_3.5.3";
+// The server rejects any client older than the version it reports through
+// getSupportedVersion with code 10403, which fails *every* authenticated call.
+// This is only the fallback: call syncAppVersion() to track the live requirement.
+static std::string appVersion = "android_3.7.2";
 const std::string language = "da";
+const std::string supportedVersionMethod = "getSupportedVersion";
 
 std::string ereol::ApiEnv::getApiKey(){
     return apiKey;
@@ -25,8 +29,46 @@ void ereol::ApiEnv::setRPC(std::string endpoint){
 std::string ereol::ApiEnv::getAppVersion(){
     return appVersion;
 }
+void ereol::ApiEnv::setAppVersion(std::string version){
+    appVersion = std::move(version);
+}
 std::string ereol::ApiEnv::getLanguage(){
     return language;
+}
+
+// getSupportedVersion uses the 3-param prefix (no library code) and needs no session.
+std::string ereol::ApiEnv::getRequiredAppVersion(){
+    std::string payloadJson = getRpcPayloadJSON(
+            supportedVersionMethod,
+            { apiKey, appVersion, language });
+
+    cpr::Response r = cpr::Post(
+            cpr::Url{rpcEndpoint},
+            cpr::Body{payloadJson},
+            cpr::Header{{"Content-Type", "text/plain"}});
+
+    if(r.status_code != 200) { return {}; }
+
+    auto jr = nlohmann::json::parse(r.text, nullptr, false);
+    if(jr.is_discarded()) { return {}; }
+    if(jr["result"] == nullptr || jr["result"]["data"] == nullptr) { return {}; }
+    if(jr["result"]["data"]["requiredVersion"] == nullptr) { return {}; }
+
+    return jr["result"]["data"]["requiredVersion"].get<std::string>();
+}
+
+bool ereol::ApiEnv::syncAppVersion(){
+    std::string required = getRequiredAppVersion();
+    if(required.empty()) { return false; }
+
+    // Keep whatever platform prefix is configured ("android_", "ios_"); the
+    // server only compares the numeric part.
+    std::string prefix = "android_";
+    std::size_t sep = appVersion.rfind('_');
+    if(sep != std::string::npos) { prefix = appVersion.substr(0, sep + 1); }
+
+    appVersion = prefix + required;
+    return true;
 }
 
 
@@ -313,6 +355,9 @@ void ereol::luaRegisterApiEnv(lua_State* L){
             .addStaticFunction ("getRPC", ereol::ApiEnv::getRPC)
             .addStaticFunction ("setRPC", ereol::ApiEnv::setRPC)
             .addStaticFunction ("getAppVersion", ereol::ApiEnv::getAppVersion)
+            .addStaticFunction ("setAppVersion", ereol::ApiEnv::setAppVersion)
+            .addStaticFunction ("getRequiredAppVersion", ereol::ApiEnv::getRequiredAppVersion)
+            .addStaticFunction ("syncAppVersion", ereol::ApiEnv::syncAppVersion)
             .addStaticFunction ("getLanguage", ereol::ApiEnv::getLanguage)
             .addStaticFunction ("getLibraryCount", ereol::ApiEnv::getLibraryCount)
             .addStaticFunction ("getLibraryName", std::function<std::string(int)>(
