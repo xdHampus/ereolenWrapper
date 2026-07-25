@@ -47,6 +47,8 @@ namespace ereol {
     void luaRegisterResponse(lua_State *L);
 
     void luaRegisterReview(lua_State *L);
+    void luaRegisterCreatorInfo(lua_State *L);
+    void luaRegisterSuggestion(lua_State *L);
 
     void luaRegisterRpcPayload(lua_State *L);
 
