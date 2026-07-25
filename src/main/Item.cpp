@@ -27,6 +27,7 @@ const std::string productMethod = "getProduct";
 const std::string recordsMethod = "getRecordsByIdentifiers";
 const std::string searchMethod = "search";
 const std::string createLoanMethod = "createLoan";
+const std::string suggestionsMethod = "getSuggestions";
 
 ereol::Response<std::vector<ereol::Record>> ereol::Item::getOthersOfSameTitle(std::string identifier, ereol::Token token){
     std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(otherTypesOfSameTitleMethod, identifier, token.library);
@@ -185,6 +186,17 @@ ereol::Response<ereol::PageResult> ereol::Item::search(std::string queryString, 
     return ereol::ApiCaller::getResponse<ereol::PageResult>(payloadJson, token);
 }
 
+// aboutCreatorsMethod was declared above with no function behind it since 2023.
+ereol::Response<std::vector<ereol::CreatorInfo>> ereol::Item::getAboutCreators(std::string identifier, ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(aboutCreatorsMethod, identifier, token.library);
+    return ereol::ApiCaller::getResponse<std::vector<ereol::CreatorInfo>>(payloadJson, token);
+}
+
+ereol::Response<std::vector<ereol::Suggestion>> ereol::Item::getSuggestions(std::string prefix, ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(suggestionsMethod, prefix, token.library);
+    return ereol::ApiCaller::getResponse<std::vector<ereol::Suggestion>>(payloadJson, token);
+}
+
 ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(std::vector<std::string> identifiers, ereol::Token token) {
     ereol::RpcPayload rpcPayload;
     rpcPayload.method = recordsMethod;
@@ -338,6 +350,8 @@ void ereol::luaRegisterItem(lua_State* L){
             .addStaticFunction ("getSomethingSimilar", ereol::Item::getSomethingSimilar)
             .addStaticFunction ("getPersonalRecommendations", ereol::Item::getPersonalRecommendations)
             .addStaticFunction ("getReviews", ereol::Item::getReviews)
+            .addStaticFunction ("getAboutCreators", ereol::Item::getAboutCreators)
+            .addStaticFunction ("getSuggestions", ereol::Item::getSuggestions)
             .addStaticFunction ("getCoverUrls", ereol::Item::getCoverUrls)
             .addStaticFunction ("getLoanStatuses", ereol::Item::getLoanStatuses)
             .addStaticFunction ("getProduct", ereol::Item::getProduct)

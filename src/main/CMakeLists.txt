@@ -38,6 +38,8 @@ add_library(${PROJECT_NAME} ${LIBRARY_INST_TYPE}
 	model/PageResult.h      model/PageResult.cpp
 	model/Response.h        model/Response.cpp
 	model/Review.h          model/Review.cpp
+	model/CreatorInfo.h     model/CreatorInfo.cpp
+	model/Suggestion.h      model/Suggestion.cpp
 
 	util/JSONHelper.h
 	util/ApiCaller.h

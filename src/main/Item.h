@@ -6,6 +6,8 @@
 #include "model/PageResult.h"
 #include "model/QuerySettings.h"
 #include "model/Review.h"
+#include "model/CreatorInfo.h"
+#include "model/Suggestion.h"
 #include "model/LoanActive.h"
 #include <string>
 #include <optional>
@@ -29,6 +31,9 @@ namespace ereol {
         // Takes no method args -- 4 params, prefix only.
         static ereol::Response<std::vector<ereol::Record>> getPersonalRecommendations(ereol::Token token);
         static ereol::Response<std::vector<ereol::Review>> getReviews(std::string identifier, ereol::Token token);
+        static ereol::Response<std::vector<ereol::CreatorInfo>> getAboutCreators(std::string identifier, ereol::Token token);
+        // Search typeahead. Unauthenticated; 5 params.
+        static ereol::Response<std::vector<ereol::Suggestion>> getSuggestions(std::string prefix, ereol::Token token);
 
         static ereol::Response<std::map<std::string, std::string>> getCoverUrls(std::vector<std::string> identifiers, ereol::Token token);
         static ereol::Response<std::map<std::string, std::string>> getLoanStatuses(std::vector<std::string> identifiers, ereol::Token token);

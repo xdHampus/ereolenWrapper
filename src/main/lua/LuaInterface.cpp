@@ -29,6 +29,8 @@ int luaopen_libereolenwrapper(lua_State *L) {
     ereol::luaRegisterReservation(L);
     ereol::luaRegisterResponse(L);
     ereol::luaRegisterReview(L);
+    ereol::luaRegisterCreatorInfo(L);
+    ereol::luaRegisterSuggestion(L);
     ereol::luaRegisterRpcPayload(L);
     ereol::luaRegisterTerm(L);
     ereol::luaRegisterToken(L);

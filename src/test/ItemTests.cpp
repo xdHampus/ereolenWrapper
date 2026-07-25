@@ -1034,3 +1034,32 @@ ereol::PageResult ItemTestHelper::pageResultSearch1  = {
         std::string type;
         std::string translationKey;
  */
+
+TEST(ItemTest, GetAboutCreators) {
+    itemTH.ensureLoaded();
+    EXPECT_TRUE(itemTH.optToken.has_value());
+
+    ereol::Response<std::vector<ereol::CreatorInfo>> result = ereol::Item::getAboutCreators(
+            ItemTestHelper::item2, itemTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    ASSERT_EQ(result.data().value().size(), 1u);
+    EXPECT_STREQ("Forfatterweb", result.data().value()[0].source.c_str());
+    EXPECT_STREQ("Knut Hamsun", result.data().value()[0].creator.c_str());
+    EXPECT_FALSE(result.data().value()[0].subTitle.empty());
+    EXPECT_FALSE(result.data().value()[0].url.empty());
+}
+
+TEST(ItemTest, GetSuggestions) {
+    itemTH.ensureLoaded();
+    EXPECT_TRUE(itemTH.optToken.has_value());
+
+    ereol::Response<std::vector<ereol::Suggestion>> result = ereol::Item::getSuggestions(
+            "or", itemTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    ASSERT_EQ(result.data().value().size(), 2u);
+    EXPECT_STREQ("redia.subject", result.data().value()[0].facet.c_str());
+    EXPECT_FALSE(result.data().value()[0].suggestion.empty());
+    EXPECT_STREQ("redia.creator", result.data().value()[1].facet.c_str());
+}
