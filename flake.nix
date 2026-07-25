@@ -38,6 +38,7 @@
             gtest
             nlohmann_json
             curl
+            cpr
             # Needs to be a withPackages env: a bare python3 + python3Packages.flask
             # does not put flask on the interpreter's import path.
             (python3.withPackages (ps: with ps; [ flask ]))
