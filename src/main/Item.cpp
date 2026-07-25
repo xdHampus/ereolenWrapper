@@ -4,6 +4,7 @@
 #include "ApiEnv.h"
 #include "util/JSONHelper.h"
 #include "util/ApiCaller.h"
+#include <fstream>
 #ifdef COMPILE_LUA
 #include "lua/LuaInterface.h"
 #include <LuaBridge/Vector.h>
@@ -13,7 +14,6 @@
 #endif
 #ifdef COMPILE_LIBGOUROU
 #include <libgourou_log.h>
-#include "model/LoanActive.h"
 #endif
 
 const std::string otherTypesOfSameTitleMethod = "getOtherTypesOfSameTitle";
@@ -29,6 +29,7 @@ const std::string loanStatusesMethod = "ereolen.getLoanStatuses";
 const std::string productMethod = "getProduct";
 const std::string recordsMethod = "getRecordsByIdentifiers";
 const std::string searchMethod = "search";
+const std::string createLoanMethod = "createLoan";
 
 ereol::Response<std::vector<ereol::Record>> ereol::Item::getOthersOfSameTitle(std::string identifier, ereol::Token token){
     std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(otherTypesOfSameTitleMethod, identifier, token.library);
@@ -238,16 +239,96 @@ ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(st
 }
 
 
-#ifdef COMPILE_LIBGOUROU
-ereol::Response<std::string> ereol::Item::download(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x) {
-    gourou::GOUROU_LOG_LEVEL a =  gourou::GOUROU_LOG_LEVEL::LG_LOG_WARN;
-    return ereol::ErrorResponse::genericErrorAPI<std::string>("Could not download"); 
-};
+// createLoan's response data is a loan object, but the app only uses it to
+// trigger a getLoans() refresh (bundle module 1322). Parse it defensively rather
+// than through LoanActive::from_json, which throws on a missing field: a
+// successful borrow must not be reported as a failure over a shape difference.
+ereol::Response<ereol::LoanActive> ereol::Item::createLoan(std::string identifier, ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(createLoanMethod, identifier, token.library);
+    cpr::Response r = ereol::ApiCaller::requestPost(payloadJson, token);
 
-ereol::Response<std::string> ereol::Item::downloadWithoutDRM(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x) {
-    return ereol::Item::download(path, filename, x);
-}   
-#endif //COMPILE_LIBGOUROU
+    if(r.status_code != 200) { return ereol::ErrorResponse::genericErrorHTTP<ereol::LoanActive>({}); }
+
+    auto jr = nlohmann::json::parse(r.text, nullptr, false);
+    if(jr.is_discarded()) { return ereol::ErrorResponse::genericErrorAPI<ereol::LoanActive>("Malformed response"); }
+
+    if(jr["result"] == nullptr || jr["result"]["result"] == nullptr) {
+        return ereol::ErrorResponse::genericErrorAPI<ereol::LoanActive>({}).withCode(ereol::ErrorResponse::resultCode(jr));
+    }
+    if(!jr["result"]["result"].get<bool>()) {
+        return ereol::ErrorResponse::invalidInput<ereol::LoanActive>().withCode(ereol::ErrorResponse::resultCode(jr));
+    }
+
+    ereol::LoanActive loan;
+    const auto &d = jr["result"]["data"];
+    if(d.is_object()) {
+        loan.loanIdentifier.identifier = d.value("identifier", identifier);
+        loan.loanIdentifier.isbn       = d.value("isbn", std::string{});
+        loan.retailerOrderNumber       = d.value("retailerOrderNumber", std::string{});
+        loan.internalOrderNumber       = d.value("internalOrderNumber", std::string{});
+        loan.orderDate                 = d.value("orderDate", static_cast<int64_t>(0));
+        loan.expireDate                = d.value("expireDate", static_cast<int64_t>(0));
+        loan.downloadUrl               = d.value("downloadUrl", std::string{});
+        loan.isSubscription            = d.value("isSubscription", false);
+    } else {
+        loan.loanIdentifier.identifier = identifier;
+    }
+    return ereol::Response<ereol::LoanActive>(loan);
+}
+
+// Fetches a loan's fulfilment ticket to disk. For an ebook this is an Adobe
+// ACSM (application/vnd.adobe.adept+xml), which a fulfilment implementation
+// then redeems against the operator at acs.pubhub.dk; for an audiobook the same
+// field is a plain media URL. Needs no session cookie -- verified 2026-07-25,
+// the loan's internalOrderNumber in the URL is the only authorisation.
+//
+// This is deliberately not fulfilment. Redeeming the ACSM needs an activated
+// Adobe device and produces an *encrypted* EPUB that must then be decrypted;
+// KOReader cannot read the encrypted form.
+ereol::Response<std::string> ereol::Item::download(const std::string &path, const std::string &filename, const ereol::LoanActive &x) {
+    if(x.downloadUrl.empty()) {
+        return ereol::ErrorResponse::genericErrorAPI<std::string>("Loan has no downloadUrl");
+    }
+
+    cpr::Response r = cpr::Get(cpr::Url{x.downloadUrl}, cpr::Redirect{});
+    if(r.status_code != 200) {
+        return ereol::ErrorResponse::genericErrorHTTP<std::string>(
+                "HTTP " + std::to_string(r.status_code) + " for " + x.downloadUrl);
+    }
+    if(r.text.empty()) {
+        return ereol::ErrorResponse::genericErrorHTTP<std::string>("Empty body");
+    }
+
+    // Trust the server's own type rather than the URL, which differs between
+    // the createLoan response and the getLoans field for the same loan.
+    std::string extension = ".bin";
+    auto contentType = r.header.find("Content-Type");
+    if(contentType != r.header.end()) {
+        if(contentType->second.find("adept") != std::string::npos) { extension = ".acsm"; }
+        else if(contentType->second.find("epub") != std::string::npos) { extension = ".epub"; }
+        else if(contentType->second.find("pdf") != std::string::npos) { extension = ".pdf"; }
+        else if(contentType->second.find("mpeg") != std::string::npos) { extension = ".mp3"; }
+    }
+
+    std::string outputPath = path;
+    if(!outputPath.empty() && outputPath.back() != '/') { outputPath += '/'; }
+    outputPath += filename + extension;
+
+    std::ofstream out(outputPath, std::ios::binary | std::ios::trunc);
+    if(!out) {
+        return ereol::ErrorResponse::genericErrorAPI<std::string>("Cannot write " + outputPath);
+    }
+    out.write(r.text.data(), static_cast<std::streamsize>(r.text.size()));
+    out.close();
+    if(!out) {
+        return ereol::ErrorResponse::genericErrorAPI<std::string>("Write failed for " + outputPath);
+    }
+
+    // Response<std::string> has both Response(optional<T> data) and
+    // Response(string message); a bare string picks the message overload and
+    // silently leaves data empty. Be explicit.
+    return ereol::Response<std::string>(std::optional<std::string>{outputPath});
+}
 
 #ifdef COMPILE_LUA
 void ereol::luaRegisterItem(lua_State* L){
@@ -273,6 +354,8 @@ void ereol::luaRegisterItem(lua_State* L){
             .addStaticFunction ("getProduct", ereol::Item::getProduct)
             .addStaticFunction ("getRecords", ereol::Item::getRecords)
             .addStaticFunction ("search", ereol::Item::search)
+            .addStaticFunction ("createLoan", ereol::Item::createLoan)
+            .addStaticFunction ("download", ereol::Item::download)
 
         .endClass()
     .endNamespace();

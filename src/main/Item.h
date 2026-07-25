@@ -6,9 +6,7 @@
 #include "model/PageResult.h"
 #include "model/QuerySettings.h"
 #include "model/Review.h"
-#ifdef COMPILE_LIBGOUROU
 #include "model/LoanActive.h"
-#endif
 #include <string>
 #include <optional>
 #include <vector>
@@ -39,11 +37,14 @@ namespace ereol {
 
         static ereol::Response<ereol::PageResult> search(std::string queryString, ereol::Token token, ereol::QuerySettings settings = {});
 
+        // Borrows a title. Consumes a slot against the library's
+        // maxConcurrentLoansPerBorrower quota, and there is no return-loan RPC:
+        // loans only expire. Check getLoanStatuses first.
+        static ereol::Response<ereol::LoanActive> createLoan(std::string identifier, ereol::Token token);
 
-        #ifdef COMPILE_LIBGOUROU
-        static ereol::Response<std::string> download(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x);
-        static ereol::Response<std::string> downloadWithoutDRM(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x);
-        #endif //COMPILE_LIBGOUROU
+        // Writes the loan's fulfilment ticket (an .acsm for ebooks) to
+        // <path>/<filename><ext> and returns that path. Not fulfilment itself.
+        static ereol::Response<std::string> download(const std::string &path, const std::string &filename, const ereol::LoanActive &x);
     };
 }
 #endif //EREOLENWRAPPER_ITEM_H
