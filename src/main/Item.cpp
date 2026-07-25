@@ -110,7 +110,8 @@ ereol::Response<std::map<std::string, std::string>> ereol::Item::getCoverUrls(st
             cpr::Url{ereol::ApiEnv::getRPC()},
             cpr::Body{payloadJson},
             cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+            cpr::Cookies{{"PHPSESSID", token.sessid}},
+            ereol::sslOptions());
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
@@ -154,7 +155,8 @@ ereol::Item::getLoanStatuses(std::vector<std::string> identifiers, ereol::Token 
             cpr::Url{ereol::ApiEnv::getRPC()},
             cpr::Body{payloadJson},
             cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+            cpr::Cookies{{"PHPSESSID", token.sessid}},
+            ereol::sslOptions());
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
@@ -218,7 +220,8 @@ ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(st
             cpr::Url{ereol::ApiEnv::getRPC()},
             cpr::Body{payloadJson},
             cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+            cpr::Cookies{{"PHPSESSID", token.sessid}},
+            ereol::sslOptions());
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
@@ -291,7 +294,7 @@ ereol::Response<std::string> ereol::Item::download(const std::string &path, cons
         return ereol::ErrorResponse::genericErrorAPI<std::string>("Loan has no downloadUrl");
     }
 
-    cpr::Response r = cpr::Get(cpr::Url{x.downloadUrl}, cpr::Redirect{});
+    cpr::Response r = cpr::Get(cpr::Url{x.downloadUrl}, cpr::Redirect{}, ereol::sslOptions());
     if(r.status_code != 200) {
         return ereol::ErrorResponse::genericErrorHTTP<std::string>(
                 "HTTP " + std::to_string(r.status_code) + " for " + x.downloadUrl);

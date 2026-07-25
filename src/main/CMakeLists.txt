@@ -43,6 +43,7 @@ add_library(${PROJECT_NAME} ${LIBRARY_INST_TYPE}
 
 	util/JSONHelper.h
 	util/ApiCaller.h
+	util/SslOptions.h
 	util/ErrorResponse.h
 	util/HelperFunctions.h
 

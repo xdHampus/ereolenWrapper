@@ -3,6 +3,7 @@
 #include <cpr/cpr.h>
 #include <string>
 #include <map>
+#include "util/SslOptions.h"
 #ifdef COMPILE_LUA
 #include "lua/LuaInterface.h"
 #include <LuaBridge/Vector.h>
@@ -40,6 +41,13 @@ void ereol::ApiEnv::setAppVersion(std::string version){
 std::string ereol::ApiEnv::getLanguage(){
     return language;
 }
+static std::string caBundle;
+std::string ereol::ApiEnv::getCaBundle(){
+    return caBundle;
+}
+void ereol::ApiEnv::setCaBundle(std::string path){
+    caBundle = std::move(path);
+}
 
 // getSupportedVersion uses the 3-param prefix (no library code) and needs no session.
 std::string ereol::ApiEnv::getRequiredAppVersion(){
@@ -50,7 +58,8 @@ std::string ereol::ApiEnv::getRequiredAppVersion(){
     cpr::Response r = cpr::Post(
             cpr::Url{rpcEndpoint},
             cpr::Body{payloadJson},
-            cpr::Header{{"Content-Type", "text/plain"}});
+            cpr::Header{{"Content-Type", "text/plain"}},
+            ereol::sslOptions());
 
     if(r.status_code != 200) { return {}; }
 
@@ -364,6 +373,8 @@ void ereol::luaRegisterApiEnv(lua_State* L){
             .addStaticFunction ("getRequiredAppVersion", ereol::ApiEnv::getRequiredAppVersion)
             .addStaticFunction ("syncAppVersion", ereol::ApiEnv::syncAppVersion)
             .addStaticFunction ("getLanguage", ereol::ApiEnv::getLanguage)
+            .addStaticFunction ("getCaBundle", ereol::ApiEnv::getCaBundle)
+            .addStaticFunction ("setCaBundle", ereol::ApiEnv::setCaBundle)
             .addStaticFunction ("getLibraryCount", ereol::ApiEnv::getLibraryCount)
             .addStaticFunction ("getLibraryName", std::function<std::string(int)>(
                 [](int library){

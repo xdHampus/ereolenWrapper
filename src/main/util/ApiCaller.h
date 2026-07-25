@@ -7,6 +7,7 @@
 #include "src/main/model/Response.h"
 #include "src/main/ApiEnv.h"
 #include "ErrorResponse.h"
+#include "SslOptions.h"
 
 namespace ereol {
     class ApiCaller {
@@ -52,14 +53,16 @@ namespace ereol {
             return cpr::Post(
                     cpr::Url{ereol::ApiEnv::getRPC()},
                     cpr::Body{payload},
-                    cpr::Header{{"Content-Type", "text/plain"}});
+                    cpr::Header{{"Content-Type", "text/plain"}},
+                    ereol::sslOptions());
         }
         static cpr::Response requestPost(std::string &payload, ereol::Token &token){
             return cpr::Post(
                     cpr::Url{ereol::ApiEnv::getRPC()},
                     cpr::Body{payload},
                     cpr::Header{{"Content-Type", "text/plain"}},
-                    cpr::Cookies{{"PHPSESSID", token.sessid}});
+                    cpr::Cookies{{"PHPSESSID", token.sessid}},
+                    ereol::sslOptions());
         }
         template <typename T>
         static ereol::Response<T>  getResponse(std::string &payload) {
