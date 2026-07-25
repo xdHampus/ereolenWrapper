@@ -95,6 +95,41 @@ namespace ereol {
                     }
             );
         }
+        // Several methods take an array where a single identifier would go.
+        static std::string defaultPayloadIdentifiersJSON(const std::string &method, const std::vector<std::string> &identifiers, const ereol::Library &library){
+            nlohmann::json j;
+            j["jsonrpc"] = "2.0";
+            j["method"] = method;
+            j["params"] = std::vector<std::string> {
+                    ereol::ApiEnv::getApiKey(),
+                    ereol::ApiEnv::getAppVersion(),
+                    ereol::ApiEnv::getLanguage(),
+                    ereol::ApiEnv::getLibraryCode(library),
+            };
+            j["params"][4] = identifiers;
+            j["id"] = ereol::RpcPayload().id;
+            return j.dump();
+        }
+
+        // Write methods answer with result.result and a data field that is often
+        // null, so Response<bool> cannot go through the templated handler --
+        // which requires data to be present.
+        static ereol::Response<bool> getAck(std::string &payload, ereol::Token &token){
+            cpr::Response r = requestPost(payload, token);
+            if(r.status_code != 200) { return ereol::ErrorResponse::genericErrorHTTP<bool>({}); }
+
+            auto jr = nlohmann::json::parse(r.text, nullptr, false);
+            if(jr.is_discarded()) { return ereol::ErrorResponse::genericErrorAPI<bool>("Malformed response"); }
+
+            if(jr["result"] == nullptr || jr["result"]["result"] == nullptr) {
+                return ereol::ErrorResponse::genericErrorAPI<bool>({}).withCode(ereol::ErrorResponse::resultCode(jr));
+            }
+            if(!jr["result"]["result"].get<bool>()) {
+                return ereol::ErrorResponse::invalidInput<bool>().withCode(ereol::ErrorResponse::resultCode(jr));
+            }
+            return ereol::Response<bool>(true);
+        }
+
         static std::string defaultPayloadIdentifierJSON(std::string method, std::string identifier, ereol::Library &library){
             return ereol::ApiEnv::getRpcPayloadJSON(
                     method,
