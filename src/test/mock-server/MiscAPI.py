@@ -18,6 +18,20 @@ loan_titles = {
         ("9788702312621", "Pan", "Knut Hamsun"),
     "eyJpIjoiOTc4MTYyMzM3MjE5NCIsImMiOiJuZXRseWRib2cifQ==":
         ("9781623372194", "The Rhythm of War", "Brandon Sanderson"),
+    # ...and the ones m_checklist hands out, so the want-to-read list resolves
+    # to titles offline the way it does live.
+    "eyJpIjoiOTc4ODcwMjA5NjQwOCIsImMiOiJlcmVvbGVuIn0=":
+        ("9788702096408", "Sekstetten", "Anne Marie Løn"),
+    "eyJpIjoiOTc4ODc5OTg2Mzc5MiIsImMiOiJlcmVvbGVuIn0=":
+        ("9788799863792", "Death save", "Rune Ryberg"),
+    "eyJpIjoiOTc4ODc5MzczNzI3MyIsImMiOiJlcmVvbGVuIn0=":
+        ("9788793737273", "Ulv blandt ulve", "Palle Schmidt (f. 1972)"),
+    "eyJpIjoiOTc4ODcyODIxMzIzMCIsImMiOiJuZXRseWRib2cifQ==":
+        ("9788728213230", "POTUS. 39", ""),
+    "eyJpIjoiOTc4ODcyNjE0MTM0NCIsImMiOiJuZXRseWRib2cifQ==":
+        ("9788726141344", "Daode Jing", "Lao-tse"),
+    "eyJpIjoiOTc4ODcwMjE5MTI3MSIsImMiOiJlcmVvbGVuIn0=":
+        ("9788702191271", "1984", "George Orwell"),
 }
 
 
