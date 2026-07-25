@@ -26,8 +26,8 @@ namespace ereol {
         static ereol::Response<ereol::PageResult> getMoreInSameSeries(std::string identifier, ereol::Token token, ereol::QuerySettings settings = {});
         static ereol::Response<std::vector<ereol::Record>> getSomethingSimilar(std::string identifier, ereol::Token token, ereol::QuerySettings settings = {});
 
-        //TODO:Not implemented correctly, fix
-        static ereol::Response<std::vector<ereol::Record>> getPersonalRecommendations(std::string identifier, ereol::Token token, ereol::QuerySettings settings = {});
+        // Takes no method args -- 4 params, prefix only.
+        static ereol::Response<std::vector<ereol::Record>> getPersonalRecommendations(ereol::Token token);
         static ereol::Response<std::vector<ereol::Review>> getReviews(std::string identifier, ereol::Token token);
 
         static ereol::Response<std::map<std::string, std::string>> getCoverUrls(std::vector<std::string> identifiers, ereol::Token token);

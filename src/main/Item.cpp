@@ -67,27 +67,19 @@ ereol::Response<ereol::PageResult> ereol::Item::getMoreInSameSeries(std::string 
 }
 
 ereol::Response<std::vector<ereol::Record>> ereol::Item::getSomethingSimilar(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
+    // This method takes exactly 7 params. Sending facets as an 8th gets
+    // "Invalid parameter count for method getSomethingSimilar. Expected 7
+    // parameters." -- so drop them rather than let a caller trip over it.
+    settings.facets = std::nullopt;
     std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierConfiguredJSON(somethingSimilarMethod, identifier, token.library, settings);
     return ereol::ApiCaller::getResponse<std::vector<ereol::Record>>(payloadJson, token);
 }
-//TODO: Not implemented correctly
-ereol::Response<std::vector<ereol::Record>> ereol::Item::getPersonalRecommendations(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
-    return ereol::Response<std::vector<ereol::Record>>("Error",false);
-    /*
-     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            personalRecommendationsMethod,
-            {
-                    ereol::ApiEnv::getApiKey(),
-                    ereol::ApiEnv::getAppVersion(),
-                    ereol::ApiEnv::getLanguage(),
-                    ereol::ApiEnv::getLibraryCode(token.library),
-                    identifier
-            },
-            settings
-    );
-    ereol::Response<std::vector<ereol::Record>> response = ereol::ApiCaller::getResponse<std::vector<ereol::Record>>(payloadJson, token);
-    return response.data;
-     */
+// Takes no arguments at all: 4 params, just the standard prefix. The original
+// implementation passed an identifier and QuerySettings, which is why it never
+// worked and was left commented out. Some accounts still answer 11675.
+ereol::Response<std::vector<ereol::Record>> ereol::Item::getPersonalRecommendations(ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadJSON(personalRecommendationsMethod, token.library);
+    return ereol::ApiCaller::getResponse<std::vector<ereol::Record>>(payloadJson, token);
 }
 
 ereol::Response<std::vector<ereol::Review>> ereol::Item::getReviews(std::string identifier, ereol::Token token) {
