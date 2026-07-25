@@ -12,9 +12,6 @@
 #include <LuaBridge/Map.h>
 #include "lua/ResponseLua.h"
 #endif
-#ifdef COMPILE_LIBGOUROU
-#include <libgourou_log.h>
-#endif
 
 const std::string otherTypesOfSameTitleMethod = "getOtherTypesOfSameTitle";
 const std::string moreOfSameGenreMethod = "getMoreOfSameGenre";
