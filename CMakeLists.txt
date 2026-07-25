@@ -43,7 +43,6 @@ option(ENABLE_INSTALL
     "Should ${PROJECT_NAME} be added to the install list? Useful if included using add_subdirectory." ON)
 option(ENABLE_TESTING "Should unit tests be compiled?" ON)
 option(ENABLE_LUA "Should the Lua interface be compiled?" OFF)
-option(ENABLE_LIBGOUROU "Should LibGourou and DeDRM be compiled?" ON)
 option(EXPORT_UTIL "Export utility headers" OFF)
 option(ENABLE_PI_CODE "Enable position-independent code" ON)
 option(ENABLE_COMPILE_STATIC "Compile library as STATIC" OFF)
@@ -67,19 +66,6 @@ if(ENABLE_LUA)
     include(FindLua)
     find_package(Lua 5.1 REQUIRED)
     add_definitions(-DCOMPILE_LUA)
-endif()
-if(ENABLE_LIBGOUROU)
-    find_library(
-        LIBGOUROU_LIBRARIES
-        NAMES libgourou.so
-    )
-    find_path(LIBGOUROU_INCLUDE_DIR
-        NAMES libgourou.h
-    )
-    if(NOT LIBGOUROU_INCLUDE_DIR OR NOT LIBGOUROU_LIBRARIES)
-        message(FATAL_ERROR "LIBGOUROU library not found")  
-    endif()
-    add_definitions(-DCOMPILE_LIBGOUROU)
 endif()
 
 ###############

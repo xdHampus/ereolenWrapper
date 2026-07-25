@@ -11,9 +11,9 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        # cpr, libgourou and updfparser now come from nixpkgs. libgourou and
-        # updfparser used to be built here from git://soutade.fr/, unreachable
-        # since 2024; the vendored cpr 1.10.0 no longer compiles against curl 8.
+        # cpr comes from nixpkgs; the vendored 1.10.0 no longer compiles
+        # against curl 8. libgourou and updfparser are gone entirely: ACSM
+        # fulfilment happens in acsm.koplugin, in Lua, on the KOReader side.
         libluabridgeDrv = pkgs.callPackage ./libs/luabridge/default.nix { };
 
         ereolenWrapperDrv = pkgs.callPackage ./default.nix { };
@@ -38,7 +38,6 @@
             gtest
             nlohmann_json
             curl
-            libgourou
             # Needs to be a withPackages env: a bare python3 + python3Packages.flask
             # does not put flask on the interpreter's import path.
             (python3.withPackages (ps: with ps; [ flask ]))
@@ -51,8 +50,6 @@
           ereolenWrapperLua = ereolenWrapperLuaDrv;
           libluabridge = libluabridgeDrv;
           libcpr = pkgs.cpr;
-          libgourou = pkgs.libgourou;
-          updfparser = pkgs.updfparser;
         };
         checks = {
           tests = pkgs.callPackage ./default.nix {
