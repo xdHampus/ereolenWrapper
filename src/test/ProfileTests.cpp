@@ -332,3 +332,57 @@ std::vector<ereol::LoanHistorical> ProfileTestHelper::loanHistoryMockData = {
 
 };
 
+TEST(ProfileTest, AddToCheckListTest) {
+    profileTH.ensureLoaded();
+    EXPECT_TRUE(profileTH.optToken.has_value());
+
+    ereol::Response<bool> result = ereol::Profile::addToCheckList(
+            "eyJpIjoiOTc4ODc5NDE5ODAyOCIsInMiOiI4NzA5NzAtYmFzaXM6MzkzOTQ3NTgiLCJjIjoibmV0bHlkYm9nIn0=",
+            profileTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().value_or(false));
+}
+
+TEST(ProfileTest, RemoveFromCheckListTest) {
+    profileTH.ensureLoaded();
+    EXPECT_TRUE(profileTH.optToken.has_value());
+
+    ereol::Response<bool> result = ereol::Profile::removeFromCheckList(
+            { "eyJpIjoiOTc4ODc5NDE5ODAyOCIsInMiOiI4NzA5NzAtYmFzaXM6MzkzOTQ3NTgiLCJjIjoibmV0bHlkYm9nIn0=" },
+            profileTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().value_or(false));
+}
+
+TEST(ProfileTest, AddReservationTest) {
+    profileTH.ensureLoaded();
+    EXPECT_TRUE(profileTH.optToken.has_value());
+
+    ereol::Response<bool> result = ereol::Profile::addReservation(
+            "eyJpIjoiOTc4ODc5NDE5ODAyOCIsInMiOiI4NzA5NzAtYmFzaXM6MzkzOTQ3NTgiLCJjIjoibmV0bHlkYm9nIn0=",
+            "reader@example.com", "12345678", profileTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().value_or(false));
+}
+
+TEST(ProfileTest, AddReservationRequiresContactDetails) {
+    profileTH.ensureLoaded();
+    EXPECT_TRUE(profileTH.optToken.has_value());
+
+    // The app gates reserving on the user having an email and phone on file.
+    ereol::Response<bool> result = ereol::Profile::addReservation(
+            "eyJpIjoiOTc4ODc5NDE5ODAyOCIsInMiOiI4NzA5NzAtYmFzaXM6MzkzOTQ3NTgiLCJjIjoibmV0bHlkYm9nIn0=",
+            "", "", profileTH.optToken.value());
+    EXPECT_FALSE(result.success());
+}
+
+TEST(ProfileTest, RemoveReservationsTest) {
+    profileTH.ensureLoaded();
+    EXPECT_TRUE(profileTH.optToken.has_value());
+
+    ereol::Response<bool> result = ereol::Profile::removeReservations(
+            { "eyJpIjoiOTc4MTYyMzM3MjE5NCIsImMiOiJuZXRseWRib2cifQ==" },
+            profileTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().value_or(false));
+}
