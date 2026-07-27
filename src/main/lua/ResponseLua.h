@@ -9,7 +9,7 @@ namespace luabridge {
 {
     static void push(lua_State* L, ereol::Response<T> const& response) {
         bool containsData = response.data() != std::nullopt && response.data().has_value();
-        lua_createtable(L, 0, containsData ? 4 : 3);
+        lua_createtable(L, 0, containsData ? 5 : 4);
 
 
         if(containsData)
@@ -29,6 +29,10 @@ namespace luabridge {
 
         Stack<std::string>::push(L, "detailedMessage");
         Stack<std::string>::push(L, (response.detailedMessage()) ? *response.detailedMessage() : "");
+        lua_settable(L, -3);
+
+        Stack<std::string>::push(L, "code");
+        Stack<int>::push(L, response.code());
         lua_settable(L, -3);
 
     }

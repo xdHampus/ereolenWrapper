@@ -12,6 +12,8 @@
 #include "../model/Reservation.h"
 #include "src/main/model/PageResult.h"
 #include "src/main/model/Review.h"
+#include "../model/CreatorInfo.h"
+#include "../model/Suggestion.h"
 #include "../model/LibraryProfile.h"
 
 
@@ -64,6 +66,12 @@ namespace nlohmann {
 
     void from_json(const json & j, ereol::Review& x);
     void to_json(json & j, const ereol::Review & x);
+
+    void from_json(const json & j, ereol::CreatorInfo& x);
+    void to_json(json & j, const ereol::CreatorInfo & x);
+
+    void from_json(const json & j, ereol::Suggestion& x);
+    void to_json(json & j, const ereol::Suggestion & x);
 
     void from_json(const json & j, ereol::LibraryProfile& x);
     void to_json(json & j, const ereol::LibraryProfile & x);

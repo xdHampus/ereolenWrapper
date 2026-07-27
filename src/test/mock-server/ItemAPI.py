@@ -207,7 +207,53 @@ def m_search_string(data, app):
 
 #TODO: Fill in mock data
 def resp_about_creator_1(data):
-    return no_results(data)
+    return {
+        "jsonrpc": "2.0",
+        "id": data["id"] if "id" in data else "",
+        "result": {
+            "result": True,
+            "data": [
+                {
+                    "source": "Forfatterweb",
+                    "creator": "Knut Hamsun",
+                    "subTitle": "Portr\u00e6t af forfatteren og nobelprismodtageren, der har v\u00e6ret elsket og siden hadet dybt i sit hjemland",
+                    "url": "http://www.forfatterweb.dk/oversigt/hamsun-knut"
+                }
+            ],
+            "code": 0,
+            "message": ""
+        }
+    }
+
+
+# getSuggestions takes a prefix and answers with typeahead completions.
+def m_suggestions(data, app):
+    if len(data["params"]) != 5:
+        return wrap_response(invalid_params_count(data), app)
+    prefix = data["params"][4]
+    if not isinstance(prefix, str) or prefix == "":
+        return wrap_response(invalid_params(data), app)
+    return wrap_response({
+        "jsonrpc": "2.0",
+        "id": data["id"] if "id" in data else "",
+        "result": {
+            "result": True,
+            "data": [
+                {
+                    "facet": "redia.subject",
+                    "translationKey": "key__suggestion_subject",
+                    "suggestion": prefix + "beidsmilj\u00f8"
+                },
+                {
+                    "facet": "redia.creator",
+                    "translationKey": "key__suggestion_creator",
+                    "suggestion": prefix + "well, George"
+                }
+            ],
+            "code": 0,
+            "message": ""
+        }
+    }, app)
 def resp_reviews_1(data):
     return {
         "jsonrpc": "2.0",

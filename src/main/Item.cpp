@@ -4,16 +4,13 @@
 #include "ApiEnv.h"
 #include "util/JSONHelper.h"
 #include "util/ApiCaller.h"
+#include <fstream>
 #ifdef COMPILE_LUA
 #include "lua/LuaInterface.h"
 #include <LuaBridge/Vector.h>
 #include <LuaBridge/Optional.h>
 #include <LuaBridge/Map.h>
 #include "lua/ResponseLua.h"
-#endif
-#ifdef COMPILE_LIBGOUROU
-#include <libgourou_log.h>
-#include "model/LoanActive.h"
 #endif
 
 const std::string otherTypesOfSameTitleMethod = "getOtherTypesOfSameTitle";
@@ -29,6 +26,8 @@ const std::string loanStatusesMethod = "ereolen.getLoanStatuses";
 const std::string productMethod = "getProduct";
 const std::string recordsMethod = "getRecordsByIdentifiers";
 const std::string searchMethod = "search";
+const std::string createLoanMethod = "createLoan";
+const std::string suggestionsMethod = "getSuggestions";
 
 ereol::Response<std::vector<ereol::Record>> ereol::Item::getOthersOfSameTitle(std::string identifier, ereol::Token token){
     std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(otherTypesOfSameTitleMethod, identifier, token.library);
@@ -47,8 +46,8 @@ ereol::Response<std::vector<ereol::Record>> ereol::Item::getOthersOfSameTitle(st
                     results.push_back(jr["result"]["data"]["audiobook"].get<ereol::Record>());
                 }
                 return ereol::Response<std::vector<ereol::Record>>(results);
-            } else { return ereol::ErrorResponse::invalidInput<std::vector<ereol::Record>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::vector<ereol::Record>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::vector<ereol::Record>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::vector<ereol::Record>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::vector<ereol::Record>>({}); }
 }
 
@@ -69,27 +68,19 @@ ereol::Response<ereol::PageResult> ereol::Item::getMoreInSameSeries(std::string 
 }
 
 ereol::Response<std::vector<ereol::Record>> ereol::Item::getSomethingSimilar(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
+    // This method takes exactly 7 params. Sending facets as an 8th gets
+    // "Invalid parameter count for method getSomethingSimilar. Expected 7
+    // parameters." -- so drop them rather than let a caller trip over it.
+    settings.facets = std::nullopt;
     std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierConfiguredJSON(somethingSimilarMethod, identifier, token.library, settings);
     return ereol::ApiCaller::getResponse<std::vector<ereol::Record>>(payloadJson, token);
 }
-//TODO: Not implemented correctly
-ereol::Response<std::vector<ereol::Record>> ereol::Item::getPersonalRecommendations(std::string identifier, ereol::Token token, ereol::QuerySettings settings) {
-    return ereol::Response<std::vector<ereol::Record>>("Error",false);
-    /*
-     std::string payloadJson = ereol::ApiEnv::getRpcPayloadJSON(
-            personalRecommendationsMethod,
-            {
-                    ereol::ApiEnv::getApiKey(),
-                    ereol::ApiEnv::getAppVersion(),
-                    ereol::ApiEnv::getLanguage(),
-                    ereol::ApiEnv::getLibraryCode(token.library),
-                    identifier
-            },
-            settings
-    );
-    ereol::Response<std::vector<ereol::Record>> response = ereol::ApiCaller::getResponse<std::vector<ereol::Record>>(payloadJson, token);
-    return response.data;
-     */
+// Takes no arguments at all: 4 params, just the standard prefix. The original
+// implementation passed an identifier and QuerySettings, which is why it never
+// worked and was left commented out. Some accounts still answer 11675.
+ereol::Response<std::vector<ereol::Record>> ereol::Item::getPersonalRecommendations(ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadJSON(personalRecommendationsMethod, token.library);
+    return ereol::ApiCaller::getResponse<std::vector<ereol::Record>>(payloadJson, token);
 }
 
 ereol::Response<std::vector<ereol::Review>> ereol::Item::getReviews(std::string identifier, ereol::Token token) {
@@ -119,7 +110,8 @@ ereol::Response<std::map<std::string, std::string>> ereol::Item::getCoverUrls(st
             cpr::Url{ereol::ApiEnv::getRPC()},
             cpr::Body{payloadJson},
             cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+            cpr::Cookies{{"PHPSESSID", token.sessid}},
+            ereol::sslOptions());
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
@@ -136,8 +128,8 @@ ereol::Response<std::map<std::string, std::string>> ereol::Item::getCoverUrls(st
                     }
                 }
                 return ereol::Response<std::map<std::string, std::string>>(result);
-            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::map<std::string, std::string>>({}); }
 }
 
@@ -163,7 +155,8 @@ ereol::Item::getLoanStatuses(std::vector<std::string> identifiers, ereol::Token 
             cpr::Url{ereol::ApiEnv::getRPC()},
             cpr::Body{payloadJson},
             cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+            cpr::Cookies{{"PHPSESSID", token.sessid}},
+            ereol::sslOptions());
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
@@ -180,8 +173,8 @@ ereol::Item::getLoanStatuses(std::vector<std::string> identifiers, ereol::Token 
                     }
                 }
                 return ereol::Response<std::map<std::string, std::string>>(result);
-            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, std::string>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, std::string>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::map<std::string, std::string>>({}); }
 }
 
@@ -193,6 +186,17 @@ ereol::Response<ereol::Record> ereol::Item::getProduct(std::string identifier, e
 ereol::Response<ereol::PageResult> ereol::Item::search(std::string queryString, ereol::Token token, ereol::QuerySettings settings) {
     std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierConfiguredJSON(searchMethod, queryString, token.library, settings);
     return ereol::ApiCaller::getResponse<ereol::PageResult>(payloadJson, token);
+}
+
+// aboutCreatorsMethod was declared above with no function behind it since 2023.
+ereol::Response<std::vector<ereol::CreatorInfo>> ereol::Item::getAboutCreators(std::string identifier, ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(aboutCreatorsMethod, identifier, token.library);
+    return ereol::ApiCaller::getResponse<std::vector<ereol::CreatorInfo>>(payloadJson, token);
+}
+
+ereol::Response<std::vector<ereol::Suggestion>> ereol::Item::getSuggestions(std::string prefix, ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(suggestionsMethod, prefix, token.library);
+    return ereol::ApiCaller::getResponse<std::vector<ereol::Suggestion>>(payloadJson, token);
 }
 
 ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(std::vector<std::string> identifiers, ereol::Token token) {
@@ -216,7 +220,8 @@ ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(st
             cpr::Url{ereol::ApiEnv::getRPC()},
             cpr::Body{payloadJson},
             cpr::Header{{"Content-Type", "text/plain"}},
-            cpr::Cookies{{"PHPSESSID", token.sessid}});
+            cpr::Cookies{{"PHPSESSID", token.sessid}},
+            ereol::sslOptions());
 
     if(r.status_code == 200) {
         auto jr = nlohmann::json::parse(r.text);
@@ -232,22 +237,102 @@ ereol::Response<std::map<std::string, ereol::Record>> ereol::Item::getRecords(st
                     }
                 }
                 return ereol::Response<std::map<std::string, ereol::Record>>(result);
-            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, ereol::Record>>(); }
-        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, ereol::Record>>({}); }
+            } else { return ereol::ErrorResponse::invalidInput<std::map<std::string, ereol::Record>>().withCode(ereol::ErrorResponse::resultCode(jr)); }
+        } else { return ereol::ErrorResponse::genericErrorAPI<std::map<std::string, ereol::Record>>({}).withCode(ereol::ErrorResponse::resultCode(jr)); }
     } else { return ereol::ErrorResponse::genericErrorHTTP<std::map<std::string, ereol::Record>>({}); }
 }
 
 
-#ifdef COMPILE_LIBGOUROU
-ereol::Response<std::string> ereol::Item::download(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x) {
-    gourou::GOUROU_LOG_LEVEL a =  gourou::GOUROU_LOG_LEVEL::LG_LOG_WARN;
-    return ereol::ErrorResponse::genericErrorAPI<std::string>("Could not download"); 
-};
+// createLoan's response data is a loan object, but the app only uses it to
+// trigger a getLoans() refresh (bundle module 1322). Parse it defensively rather
+// than through LoanActive::from_json, which throws on a missing field: a
+// successful borrow must not be reported as a failure over a shape difference.
+ereol::Response<ereol::LoanActive> ereol::Item::createLoan(std::string identifier, ereol::Token token) {
+    std::string payloadJson = ereol::ApiCaller::defaultPayloadIdentifierJSON(createLoanMethod, identifier, token.library);
+    cpr::Response r = ereol::ApiCaller::requestPost(payloadJson, token);
 
-ereol::Response<std::string> ereol::Item::downloadWithoutDRM(const std::string  &path, const std::string  &filename, const ereol::LoanActive & x) {
-    return ereol::Item::download(path, filename, x);
-}   
-#endif //COMPILE_LIBGOUROU
+    if(r.status_code != 200) { return ereol::ErrorResponse::genericErrorHTTP<ereol::LoanActive>({}); }
+
+    auto jr = nlohmann::json::parse(r.text, nullptr, false);
+    if(jr.is_discarded()) { return ereol::ErrorResponse::genericErrorAPI<ereol::LoanActive>("Malformed response"); }
+
+    if(jr["result"] == nullptr || jr["result"]["result"] == nullptr) {
+        return ereol::ErrorResponse::genericErrorAPI<ereol::LoanActive>({}).withCode(ereol::ErrorResponse::resultCode(jr));
+    }
+    if(!jr["result"]["result"].get<bool>()) {
+        return ereol::ErrorResponse::invalidInput<ereol::LoanActive>().withCode(ereol::ErrorResponse::resultCode(jr));
+    }
+
+    ereol::LoanActive loan;
+    const auto &d = jr["result"]["data"];
+    if(d.is_object()) {
+        loan.loanIdentifier.identifier = d.value("identifier", identifier);
+        loan.loanIdentifier.isbn       = d.value("isbn", std::string{});
+        loan.retailerOrderNumber       = d.value("retailerOrderNumber", std::string{});
+        loan.internalOrderNumber       = d.value("internalOrderNumber", std::string{});
+        loan.orderDate                 = d.value("orderDate", static_cast<int64_t>(0));
+        loan.expireDate                = d.value("expireDate", static_cast<int64_t>(0));
+        loan.downloadUrl               = d.value("downloadUrl", std::string{});
+        loan.isSubscription            = d.value("isSubscription", false);
+    } else {
+        loan.loanIdentifier.identifier = identifier;
+    }
+    return ereol::Response<ereol::LoanActive>(loan);
+}
+
+// Fetches a loan's fulfilment ticket to disk. For an ebook this is an Adobe
+// ACSM (application/vnd.adobe.adept+xml), which a fulfilment implementation
+// then redeems against the operator at acs.pubhub.dk; for an audiobook the same
+// field is a plain media URL. Needs no session cookie -- verified 2026-07-25,
+// the loan's internalOrderNumber in the URL is the only authorisation.
+//
+// This is deliberately not fulfilment. Redeeming the ACSM needs an activated
+// Adobe device and produces an *encrypted* EPUB that must then be decrypted;
+// KOReader cannot read the encrypted form.
+ereol::Response<std::string> ereol::Item::download(const std::string &path, const std::string &filename, const ereol::LoanActive &x) {
+    if(x.downloadUrl.empty()) {
+        return ereol::ErrorResponse::genericErrorAPI<std::string>("Loan has no downloadUrl");
+    }
+
+    cpr::Response r = cpr::Get(cpr::Url{x.downloadUrl}, cpr::Redirect{}, ereol::sslOptions());
+    if(r.status_code != 200) {
+        return ereol::ErrorResponse::genericErrorHTTP<std::string>(
+                "HTTP " + std::to_string(r.status_code) + " for " + x.downloadUrl);
+    }
+    if(r.text.empty()) {
+        return ereol::ErrorResponse::genericErrorHTTP<std::string>("Empty body");
+    }
+
+    // Trust the server's own type rather than the URL, which differs between
+    // the createLoan response and the getLoans field for the same loan.
+    std::string extension = ".bin";
+    auto contentType = r.header.find("Content-Type");
+    if(contentType != r.header.end()) {
+        if(contentType->second.find("adept") != std::string::npos) { extension = ".acsm"; }
+        else if(contentType->second.find("epub") != std::string::npos) { extension = ".epub"; }
+        else if(contentType->second.find("pdf") != std::string::npos) { extension = ".pdf"; }
+        else if(contentType->second.find("mpeg") != std::string::npos) { extension = ".mp3"; }
+    }
+
+    std::string outputPath = path;
+    if(!outputPath.empty() && outputPath.back() != '/') { outputPath += '/'; }
+    outputPath += filename + extension;
+
+    std::ofstream out(outputPath, std::ios::binary | std::ios::trunc);
+    if(!out) {
+        return ereol::ErrorResponse::genericErrorAPI<std::string>("Cannot write " + outputPath);
+    }
+    out.write(r.text.data(), static_cast<std::streamsize>(r.text.size()));
+    out.close();
+    if(!out) {
+        return ereol::ErrorResponse::genericErrorAPI<std::string>("Write failed for " + outputPath);
+    }
+
+    // Response<std::string> has both Response(optional<T> data) and
+    // Response(string message); a bare string picks the message overload and
+    // silently leaves data empty. Be explicit.
+    return ereol::Response<std::string>(std::optional<std::string>{outputPath});
+}
 
 #ifdef COMPILE_LUA
 void ereol::luaRegisterItem(lua_State* L){
@@ -268,11 +353,15 @@ void ereol::luaRegisterItem(lua_State* L){
             .addStaticFunction ("getSomethingSimilar", ereol::Item::getSomethingSimilar)
             .addStaticFunction ("getPersonalRecommendations", ereol::Item::getPersonalRecommendations)
             .addStaticFunction ("getReviews", ereol::Item::getReviews)
+            .addStaticFunction ("getAboutCreators", ereol::Item::getAboutCreators)
+            .addStaticFunction ("getSuggestions", ereol::Item::getSuggestions)
             .addStaticFunction ("getCoverUrls", ereol::Item::getCoverUrls)
             .addStaticFunction ("getLoanStatuses", ereol::Item::getLoanStatuses)
             .addStaticFunction ("getProduct", ereol::Item::getProduct)
             .addStaticFunction ("getRecords", ereol::Item::getRecords)
             .addStaticFunction ("search", ereol::Item::search)
+            .addStaticFunction ("createLoan", ereol::Item::createLoan)
+            .addStaticFunction ("download", ereol::Item::download)
 
         .endClass()
     .endNamespace();

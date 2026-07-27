@@ -29,6 +29,8 @@ int luaopen_libereolenwrapper(lua_State *L) {
     ereol::luaRegisterReservation(L);
     ereol::luaRegisterResponse(L);
     ereol::luaRegisterReview(L);
+    ereol::luaRegisterCreatorInfo(L);
+    ereol::luaRegisterSuggestion(L);
     ereol::luaRegisterRpcPayload(L);
     ereol::luaRegisterTerm(L);
     ereol::luaRegisterToken(L);
@@ -38,6 +40,9 @@ int luaopen_libereolenwrapper(lua_State *L) {
     ereol::luaRegisterItem(L);
     ereol::luaRegisterApiEnv(L);
 
+    // Everything above registers into the global table, so nothing has been
+    // pushed yet. require() expects exactly one value back.
+    lua_pushboolean(L, 1);
     return 1;
 }
 

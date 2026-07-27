@@ -12,6 +12,7 @@ namespace ereol {
         std::string _message;
         std::optional<std::string> _detailedMessage;
         std::optional<T> _data;
+        int _code = 0;
     public:
         explicit Response(std::optional<T> data);
         explicit Response(std::optional<T> data, std::string message);
@@ -24,6 +25,10 @@ namespace ereol {
         std::optional<T> data() const;
         std::string message() const;
         std::optional<std::string> detailedMessage() const;
+        // eReolen result code: 0 OK, 11101 wrong card/PIN, 12003 no authenticated
+        // user, 10403 app version rejected, 11675 unavailable for this account.
+        int code() const;
+        Response<T>& withCode(int code);
 
     };
 
@@ -64,6 +69,17 @@ namespace ereol {
     template<typename T>
     std::optional<std::string> Response<T>::detailedMessage() const {
         return Response::_detailedMessage;
+    }
+
+    template<typename T>
+    int Response<T>::code() const {
+        return Response::_code;
+    }
+
+    template<typename T>
+    Response<T>& Response<T>::withCode(int code) {
+        Response::_code = code;
+        return *this;
     }
 
 

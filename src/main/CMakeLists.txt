@@ -38,9 +38,12 @@ add_library(${PROJECT_NAME} ${LIBRARY_INST_TYPE}
 	model/PageResult.h      model/PageResult.cpp
 	model/Response.h        model/Response.cpp
 	model/Review.h          model/Review.cpp
+	model/CreatorInfo.h     model/CreatorInfo.cpp
+	model/Suggestion.h      model/Suggestion.cpp
 
 	util/JSONHelper.h
 	util/ApiCaller.h
+	util/SslOptions.h
 	util/ErrorResponse.h
 	util/HelperFunctions.h
 
@@ -57,8 +60,4 @@ if(ENABLE_LUA)
 	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 	find_path(LUABRIDGE_INCLUDE_DIRS "LuaBridge/LuaBridge.h")
 	target_include_directories(${PROJECT_NAME} PRIVATE ${LUABRIDGE_INCLUDE_DIRS})
-endif()
-if(ENABLE_LIBGOUROU)
-	target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBGOUROU_LIBRARIES})
-	target_include_directories(${PROJECT_NAME} PRIVATE ${LIBGOUROU_INCLUDE_DIR})
 endif()

@@ -148,21 +148,23 @@ TEST(ItemTest, GetSomethingSimilar) {
         }
     }
 }
-TEST(ItemTest, DISABLED_GetPersonalRecommendations) {
+TEST(ItemTest, GetPersonalRecommendations) {
     itemTH.ensureLoaded();
 
     EXPECT_TRUE(itemTH.optToken.has_value());
-    EXPECT_TRUE(ereol::Auth::isAuthenticated(itemTH.optToken.value()).success());
 
+    // No method args: 4 params, prefix only.
     ereol::Response<std::vector<ereol::Record>> result = ereol::Item::getPersonalRecommendations(
-            ItemTestHelper::item1,
-            itemTH.optToken.value(),
-            ereol::QuerySettings {
-                    0,
-                    20
-            }
+            itemTH.optToken.value()
     );
-
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    EXPECT_EQ(result.data().value().size(), ItemTestHelper::recordsPersonalRecs1.size());
+    if(result.data().has_value() && (result.data().value().size() == ItemTestHelper::recordsPersonalRecs1.size())) {
+        for (std::size_t i = 0; i < result.data().value().size(); ++i) {
+            ItemTestHelper::tryCompare(ItemTestHelper::recordsPersonalRecs1[i], result.data().value()[i]);
+        }
+    }
 }
 TEST(ItemTest, GetReviews) {
     itemTH.ensureLoaded();
@@ -856,6 +858,9 @@ std::vector<ereol::Record> ItemTestHelper::recordsSimilar1 = {
                 }
         }
 };
+// The mock answers getPersonalRecommendations with an empty result set, which is
+// also what the live API gives accounts without a recommendation profile.
+std::vector<ereol::Record> ItemTestHelper::recordsPersonalRecs1 = { };
 std::vector<ereol::Review> ItemTestHelper::reviews1 = {
         {
             "Lektørudtalelse",
@@ -1029,3 +1034,32 @@ ereol::PageResult ItemTestHelper::pageResultSearch1  = {
         std::string type;
         std::string translationKey;
  */
+
+TEST(ItemTest, GetAboutCreators) {
+    itemTH.ensureLoaded();
+    EXPECT_TRUE(itemTH.optToken.has_value());
+
+    ereol::Response<std::vector<ereol::CreatorInfo>> result = ereol::Item::getAboutCreators(
+            ItemTestHelper::item2, itemTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    ASSERT_EQ(result.data().value().size(), 1u);
+    EXPECT_STREQ("Forfatterweb", result.data().value()[0].source.c_str());
+    EXPECT_STREQ("Knut Hamsun", result.data().value()[0].creator.c_str());
+    EXPECT_FALSE(result.data().value()[0].subTitle.empty());
+    EXPECT_FALSE(result.data().value()[0].url.empty());
+}
+
+TEST(ItemTest, GetSuggestions) {
+    itemTH.ensureLoaded();
+    EXPECT_TRUE(itemTH.optToken.has_value());
+
+    ereol::Response<std::vector<ereol::Suggestion>> result = ereol::Item::getSuggestions(
+            "or", itemTH.optToken.value());
+    EXPECT_TRUE(result.success());
+    EXPECT_TRUE(result.data().has_value());
+    ASSERT_EQ(result.data().value().size(), 2u);
+    EXPECT_STREQ("redia.subject", result.data().value()[0].facet.c_str());
+    EXPECT_FALSE(result.data().value()[0].suggestion.empty());
+    EXPECT_STREQ("redia.creator", result.data().value()[1].facet.c_str());
+}

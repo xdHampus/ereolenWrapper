@@ -1,6 +1,6 @@
 from flask import request
 import json
-from common import wrap_response, invalid_params
+from common import wrap_response, invalid_params, invalid_params_count
 
 
 def m_library_profile(data, app):
@@ -223,6 +223,48 @@ def m_loan_history(data, app):
             "message": ""
         }
     }, app)
+
+def _ack(data, app, ok=True, code=0):
+    return wrap_response({
+        "jsonrpc": "2.0",
+        "id": data["id"] if "id" in data else "",
+        "result": {
+            "result": ok,
+            "data": None,
+            "code": code,
+            "message": ""
+        }
+    }, app)
+
+
+# The four write methods all answer with result.result and a null data field.
+# Arities confirmed against the live server: 5, 5, 7-8, 5.
+def m_add_to_checklist(data, app):
+    if len(data["params"]) != 5:
+        return wrap_response(invalid_params_count(data), app)
+    return _ack(data, app)
+
+
+def m_remove_from_checklist(data, app):
+    if len(data["params"]) != 5 or not isinstance(data["params"][4], list):
+        return wrap_response(invalid_params_count(data), app)
+    return _ack(data, app)
+
+
+def m_add_reservation(data, app):
+    if len(data["params"]) not in (7, 8):
+        return wrap_response(invalid_params_count(data), app)
+    identifier, email, phone = data["params"][4], data["params"][5], data["params"][6]
+    if not identifier or not email or not phone:
+        return wrap_response(invalid_params(data), app)
+    return _ack(data, app)
+
+
+def m_remove_reservations(data, app):
+    if len(data["params"]) != 5 or not isinstance(data["params"][4], list):
+        return wrap_response(invalid_params_count(data), app)
+    return _ack(data, app)
+
 
 #TODO: Create mock data
 def m_collect_events(data, app):

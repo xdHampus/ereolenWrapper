@@ -43,7 +43,11 @@ option(ENABLE_INSTALL
     "Should ${PROJECT_NAME} be added to the install list? Useful if included using add_subdirectory." ON)
 option(ENABLE_TESTING "Should unit tests be compiled?" ON)
 option(ENABLE_LUA "Should the Lua interface be compiled?" OFF)
-option(ENABLE_LIBGOUROU "Should LibGourou and DeDRM be compiled?" ON)
+# A Lua loadable module gets its lua_* symbols from the host interpreter at
+# load time, so it needs the headers but not the library. Turn this OFF when
+# the target has no Lua library to link -- e.g. cross-compiling for a Kobo,
+# where KOReader's LuaJIT binary provides the symbols.
+option(ENABLE_LUA_LINK "Link against the Lua library as well as its headers" ON)
 option(EXPORT_UTIL "Export utility headers" OFF)
 option(ENABLE_PI_CODE "Enable position-independent code" ON)
 option(ENABLE_COMPILE_STATIC "Compile library as STATIC" OFF)
@@ -64,22 +68,14 @@ if(ENABLE_TESTING)
     enable_testing()
 endif()
 if(ENABLE_LUA)
-    include(FindLua)
-    find_package(Lua 5.1 REQUIRED)
-    add_definitions(-DCOMPILE_LUA)
-endif()
-if(ENABLE_LIBGOUROU)
-    find_library(
-        LIBGOUROU_LIBRARIES
-        NAMES libgourou.so
-    )
-    find_path(LIBGOUROU_INCLUDE_DIR
-        NAMES libgourou.h
-    )
-    if(NOT LIBGOUROU_INCLUDE_DIR OR NOT LIBGOUROU_LIBRARIES)
-        message(FATAL_ERROR "LIBGOUROU library not found")  
+    if(ENABLE_LUA_LINK)
+        include(FindLua)
+        find_package(Lua 5.1 REQUIRED)
+    else()
+        find_path(LUA_INCLUDE_DIR lua.h REQUIRED)
+        set(LUA_LIBRARIES "")
     endif()
-    add_definitions(-DCOMPILE_LIBGOUROU)
+    add_definitions(-DCOMPILE_LUA)
 endif()
 
 ###############
