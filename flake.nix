@@ -10,6 +10,7 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
+        inherit (pkgs) lib;
 
         # cpr comes from nixpkgs; the vendored 1.10.0 no longer compiles
         # against curl 8. libgourou and updfparser are gone entirely: ACSM
@@ -22,6 +23,15 @@
           enableLua = true;
           lua = pkgs.lua5_1;
           luabridge = libluabridgeDrv;
+        };
+
+        # The Kobo build cross-compiles with koreader/koxtoolchain rather than a
+        # nixpkgs cross stdenv: the device runs glibc 2.19, and anything linked
+        # against a current glibc references symbol versions it does not have.
+        # Only offered on x86_64-linux, which is what upstream ships.
+        koboDrv = pkgs.callPackage ./cross/kobo {
+          luabridge = libluabridgeDrv;
+          src = self;
         };
       in {
         devShells.default = pkgs.mkShell rec {
@@ -51,6 +61,9 @@
           ereolenWrapperLua = ereolenWrapperLuaDrv;
           libluabridge = libluabridgeDrv;
           libcpr = pkgs.cpr;
+        } // lib.optionalAttrs (system == "x86_64-linux") {
+          kobo = koboDrv;
+          koboToolchain = koboDrv.koboToolchain;
         };
         checks = {
           tests = pkgs.callPackage ./default.nix {
