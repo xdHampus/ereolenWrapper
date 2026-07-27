@@ -4,12 +4,42 @@ Produces `libereolenwrapper.so` as an ARM Lua C module that KOReader's LuaJIT
 can `require()` on a Kobo e-reader.
 
 ```sh
+nix build .#kobo        # -> result/lib/libereolenwrapper.so
+```
+
+Every download is a fixed-output derivation, so the build itself runs offline
+and the result is cached like any other package. The toolchain alone is 288 MB
+unpacked and the first build takes a few minutes; after that only a change to
+the wrapper's own sources causes a rebuild.
+
+There is also `./build.sh`, which does the same thing outside Nix:
+
+```sh
 nix shell nixpkgs#cmake nixpkgs#pkg-config --command ./cross/kobo/build.sh
 ```
 
-Everything is fetched into `cross/kobo/work/` (gitignored) and every version is
-pinned in the script. First run downloads about 130 MB and takes a few minutes;
-later runs reuse what is already there and only relink the wrapper.
+It fetches into `cross/kobo/work/` (gitignored) and is the quicker loop when
+iterating on the cross build itself, since it reuses one build tree instead of
+starting clean. Both paths share `kobo.cmake` and compile the wrapper with the
+same flags — `-Wall -Wextra -O2 -std=gnu++20 -fPIC` — so they produce
+equivalent binaries.
+
+Two things the Nix path needs that a normal shell hides:
+
+  * **binutils by name.** `kobo.cmake` sets `CMAKE_AR` and friends with `FORCE`.
+    Creating an archive is arch-agnostic enough that the host's `ar` works, so
+    a shell with binutils installed never notices they were never configured;
+    a Nix build has no `ar` at all and fails at "Linking CXX static library"
+    with `Error running link command: no such file or directory`. `FORCE` is
+    needed because nixpkgs' CMake hook passes `-DCMAKE_AR="$(command -v $AR)"`,
+    which under `stdenvNoCC` expands to an empty string and seeds the cache
+    with it — leaving a link line that literally starts with `""`.
+
+  * **the build type stays Release.** The top-level `CMakeLists.txt` defines
+    `CMAKE_CXX_FLAGS_RELEASE` as `-O2` and defaults to Release when no build
+    type is given, so Release is what reproduces `build.sh`. `None` looks
+    tidier and silently yields `-O0`, because the project sets flags only for
+    Release and Debug.
 
 ## Why each dependency is handled the way it is
 
@@ -58,10 +88,16 @@ libssl.so.60     libcrypto.so.57     libstdc++.so.6     <- shipped by KOReader
 libm.so.6        libgcc_s.so.1       libc.so.6          <- device glibc 2.19
 ```
 
-Highest versioned symbols required are `GLIBC_2.4`, `GLIBCXX_3.4.32` and
-`CXXABI_1.3.13`, against 2.19 / 3.4.33 / 1.3.15 available. Comfortable margin,
-and `build.sh` prints these at the end so a toolchain bump cannot quietly
-break it.
+Highest versioned symbols required are `GLIBC_2.7`, `GLIBCXX_3.4.32` and
+`CXXABI_1.3.15`, against 2.19 / 3.4.33 / 1.3.15 available. `build.sh` prints
+these at the end; the Nix build asserts them, and also that `libssl.so.60` and
+`libcrypto.so.57` really are in `DT_NEEDED` and that
+`luaopen_libereolenwrapper` is exported. A toolchain or KOReader bump that
+pushed any of them past what the device has would fail the build rather than
+produce a module that only fails at `dlopen` time on the Kobo.
+
+Note CXXABI is at the ceiling exactly, not below it: the margin there is zero,
+so a newer C++ runtime in the toolchain is the bump most likely to break this.
 
 ## Testing without a device
 
