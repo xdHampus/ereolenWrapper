@@ -168,5 +168,8 @@ for family in GLIBC GLIBCXX CXXABI; do
         "$KOBO_TC/bin/$TRIPLE-readelf" -V "$OUT" 2>/dev/null \
             | grep -oE "\b${family}_[0-9.]+" | sort -u -V | tail -1)"
 done
+# Note the lib/ -- pluginloader.lua puts "<plugin_root>/lib/?.so" on
+# package.cpath and nothing else, so the plugin directory itself is not
+# searched and require("libereolenwrapper") would fail from there.
 printf '\nCopy to the device as:\n  %s\n' \
-    "/mnt/onboard/.adds/koreader/plugins/ereolen.koplugin/libereolenwrapper.so"
+    "/mnt/onboard/.adds/koreader/plugins/ereolen.koplugin/lib/libereolenwrapper.so"
