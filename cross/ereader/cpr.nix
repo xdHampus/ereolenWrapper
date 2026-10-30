@@ -5,10 +5,14 @@
 # already wired to KOReader's LibreSSL. CURL_STATICLIB has to be defined for
 # every translation unit that sees curl.h, or the headers declare the symbols
 # dllimport-style and the link fails.
-{ stdenvNoCC, lib, fetchurl, cmake, koboToolchain, koboCurl, toolchainFile }:
+{ stdenvNoCC, lib, fetchurl, cmake, toolchain, crossCurl, toolchainFile
+, target ? "kobo"
+, triple ? "arm-kobo-linux-gnueabihf"
+, archFlags ? "-march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard"
+}:
 
 stdenvNoCC.mkDerivation rec {
-  pname = "cpr-kobo";
+  pname = "cpr-${target}";
   version = "1.14.2";
 
   src = fetchurl {
@@ -16,11 +20,13 @@ stdenvNoCC.mkDerivation rec {
     hash = "sha256-ubUptHCDv+gLuoVcpTCNEtdnrnx7YprvXvAYxDQ89is=";
   };
 
-  # koboCurl is here for its bin/curl-config, which FindCURL runs.
-  nativeBuildInputs = [ cmake koboToolchain koboCurl ];
+  # crossCurl is here for its bin/curl-config, which FindCURL runs.
+  nativeBuildInputs = [ cmake toolchain crossCurl ];
 
-  KOBO_TC = koboToolchain;
-  KOBO_PREFIX = koboCurl;
+  EREADER_TC = toolchain;
+  EREADER_PREFIX = crossCurl;
+  EREADER_TRIPLE = triple;
+  EREADER_ARCH_FLAGS = archFlags;
 
   cmakeFlags = [
     "-DCMAKE_TOOLCHAIN_FILE=${toolchainFile}"
@@ -29,9 +35,14 @@ stdenvNoCC.mkDerivation rec {
     "-DCPR_ENABLE_SSL=OFF"
     "-DBUILD_SHARED_LIBS=OFF"
     "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
-    "-DCMAKE_C_FLAGS=-DCURL_STATICLIB"
-    "-DCMAKE_CXX_FLAGS=-DCURL_STATICLIB"
   ];
+
+  preConfigure = ''
+    cmakeFlagsArray+=(
+      "-DCMAKE_C_FLAGS=-DCURL_STATICLIB ${archFlags}"
+      "-DCMAKE_CXX_FLAGS=-DCURL_STATICLIB ${archFlags}"
+    )
+  '';
 
   dontStrip = true;
   dontPatchELF = true;
@@ -41,14 +52,14 @@ stdenvNoCC.mkDerivation rec {
     runHook preInstallCheck
     test -f "$out/lib/libcpr.a"
     # Via a file, not a pipe: see the note in curl.nix about pipefail + SIGPIPE.
-    ${koboToolchain}/bin/arm-kobo-linux-gnueabihf-readelf -h \
+    ${toolchain}/bin/${triple}-readelf -h \
       "$out/lib/libcpr.a" > headers.txt 2>/dev/null
     grep -q 'Machine:.*ARM' headers.txt || { echo "libcpr.a is not ARM"; exit 1; }
     runHook postInstallCheck
   '';
 
   meta = with lib; {
-    description = "Static cpr for arm-kobo-linux-gnueabihf";
+    description = "Static cpr for ${triple}";
     homepage = "https://github.com/libcpr/cpr";
     license = licenses.mit;
     platforms = [ "x86_64-linux" ];

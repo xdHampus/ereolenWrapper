@@ -61,6 +61,7 @@ ereol.Auth.deauthenticate(auth.data)
 nix build                      # the C++ library
 nix build .#ereolenWrapperLua  # ...with the Lua module
 nix build .#kobo               # ...cross-compiled for a Kobo e-reader
+nix build .#kindlepw2          # ...for KOReader's kindlepw2 Kindle family
 ```
 
 Or with CMake directly — needs `nlohmann_json`, `cpr`, `curl`, `openssl` and
@@ -96,8 +97,61 @@ glibc 2.19 and linked to the LibreSSL that KOReader itself ships. The build
 asserts its own ABI ceiling, so a toolchain bump that outgrew the device fails
 here rather than at `dlopen` time on the e-reader.
 
-[cross/kobo/README.md](cross/kobo/README.md) explains why each dependency is
-handled the way it is.
+[cross/ereader/README.md](cross/ereader/README.md) describes the shared recipes;
+[cross/kobo/README.md](cross/kobo/README.md) explains the Kobo-specific dependency
+choices and standalone scripts.
+
+## Kindle cross-build
+
+On an `x86_64-linux` host:
+
+```sh
+nix build .#kindlepw2 --out-link result-kindlepw2
+```
+
+This produces `result-kindlepw2/lib/libereolenwrapper.so` for the **PW2 family**
+running firmware **5.16.2 and below**. See the
+[official KOReader installation guide](https://github.com/koreader/koreader/wiki/Installation-on-Kindle-devices).
+
+The `kindlepw2` target determines the CPU flags, float ABI, and toolchain.
+It uses koxtoolchain 2025.05's
+`arm-kindlepw2-linux-gnueabi` compiler and the soft-float calling convention;
+the Kobo hard-float binary is not interchangeable with it. Both cross targets
+are available only on `x86_64-linux` hosts.
+
+The default runtime baseline is **`koreader-kindlepw2-v2026.07.1`**, with matching
+LibreSSL 4.3.2 headers. This pins reproducible link-time dependencies; it is
+not an exact installed KOReader version requirement. Other releases can work
+if their TLS libraries, C++ runtime, and Lua ABI are compatible.
+
+Copy the module into `/mnt/us/koreader/plugins/ereolen.koplugin/` on the Kindle.
+It resolves Lua symbols from KOReader's LuaJIT and uses KOReader's bundled
+`libssl.so.60`, `libcrypto.so.57` (LibreSSL 4.3.2), and `libstdc++.so.6`.
+curl and cpr are compiled for the `kindlepw2` target and linked statically into the module.
+The fallback CA bundle is `/mnt/us/koreader/data/ca-bundle.crt`; the plugin can
+override it with `ereol.ApiEnv.setCaBundle(path)` for other installation paths.
+
+The recipes are shared with Kobo under `cross/ereader/`. Callers can select
+another KOReader archive and matching LibreSSL headers using the
+[runtimeBaseline override](cross/ereader/README.md#runtime-baseline-overrides),
+without editing the shared recipes. When changing baselines, check the TLS
+dependencies and runtime ABI limits together; linking against the latest release
+does not guarantee compatibility with older installed releases.
+The build checks ARM soft-float ABI, TLS dependencies, the Lua entry point,
+and symbol requirements against glibc 2.12.2, GLIBCXX 3.4.33, and CXXABI 1.3.15.
+The glibc limit is the toolchain baseline, not a claim about every firmware's
+installed version. Loading and making an HTTPS request on the device remain
+the final runtime checks.
+
+`nix build .#kindlepw2Toolchain` builds just the cross-compiler.
+
+### Cross-build layout
+
+```text
+cross/
+  ereader/  # shared Nix recipes and toolchain.cmake for Kobo and Kindle kindlepw2
+  kobo/     # Kobo-only build.sh, qemu-run.sh, smoke.lua, and scratch work/
+```
 
 ## License
 

@@ -1,4 +1,4 @@
-# libcurl for Kobo: static, PIC, LibreSSL.
+# libcurl for e-readers: static, PIC, LibreSSL.
 #
 # Static because the device has no libcurl at all and shipping another .so
 # beside the plugin means another thing to keep in step. PIC because the result
@@ -10,12 +10,15 @@
 # library -- so this default is the only one a build gets. It is just a
 # fallback: the plugin calls ereol.ApiEnv.setCaBundle() with the path it
 # actually found at runtime.
-{ stdenvNoCC, lib, fetchurl, koboToolchain, libresslSdk
+{ stdenvNoCC, lib, fetchurl, toolchain, libresslSdk
 , caBundle ? "/mnt/onboard/.adds/koreader/data/ca-bundle.crt"
+, target ? "kobo"
+, triple ? "arm-kobo-linux-gnueabihf"
+, archFlags ? "-march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard"
 }:
 
 stdenvNoCC.mkDerivation rec {
-  pname = "curl-kobo";
+  pname = "curl-${target}";
   version = "8.21.0";
 
   src = fetchurl {
@@ -23,14 +26,14 @@ stdenvNoCC.mkDerivation rec {
     hash = "sha256-qhtmpw6s6D3GJFCHRWRsCK5WHeUSq0A63/uTrIf8cuY=";
   };
 
-  nativeBuildInputs = [ koboToolchain ];
+  nativeBuildInputs = [ toolchain ];
 
   # stdenv's own cross handling is not in play here: the compiler comes from
   # koxtoolchain, not from a nixpkgs cross stdenv, so --host is ours to pass.
   configurePlatforms = [ ];
 
   configureFlags = [
-    "--host=arm-kobo-linux-gnueabihf"
+    "--host=${triple}"
     "--with-openssl=${libresslSdk}"
     "--with-pic"
     "--with-ca-bundle=${caBundle}"
@@ -50,7 +53,7 @@ stdenvNoCC.mkDerivation rec {
     "--disable-docs"
   ];
 
-  env.CFLAGS = "-O2 -fPIC -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard";
+  env.CFLAGS = "-O2 -fPIC ${archFlags}";
 
   # Only the library is wanted; building src/ would also build the curl binary.
   buildPhase = ''
@@ -85,14 +88,14 @@ stdenvNoCC.mkDerivation rec {
     # A stray host build would be caught here. Note the file rather than a pipe:
     # the stdenv runs with `set -o pipefail`, and `grep -q` closing the pipe
     # early makes readelf die of SIGPIPE, failing the whole pipeline.
-    ${koboToolchain}/bin/arm-kobo-linux-gnueabihf-readelf -h \
+    ${toolchain}/bin/${triple}-readelf -h \
       "$out/lib/libcurl.a" > headers.txt 2>/dev/null
     grep -q 'Machine:.*ARM' headers.txt || { echo "libcurl.a is not ARM"; exit 1; }
     runHook postInstallCheck
   '';
 
   meta = with lib; {
-    description = "Static PIC libcurl for arm-kobo-linux-gnueabihf, against KOReader's LibreSSL";
+    description = "Static PIC libcurl for ${triple}, against KOReader's LibreSSL";
     homepage = "https://curl.se";
     license = licenses.curl;
     platforms = [ "x86_64-linux" ];

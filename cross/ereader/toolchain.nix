@@ -1,4 +1,4 @@
-# koxtoolchain's prebuilt Kobo cross-toolchain, made runnable under Nix.
+# koxtoolchain's prebuilt e-reader cross-toolchains, made runnable under Nix.
 #
 # This is a binary release, not something we build: crosstool-ng needs network
 # access and hours of CPU to produce a GCC, and the whole point of pinning
@@ -14,18 +14,22 @@
 # with host tools would wreck them. autoPatchelf skips non-native ELFs by
 # architecture, and dontStrip keeps the generic fixup away from them; the
 # installCheck below is what actually proves both.
-{ stdenv, lib, fetchurl, autoPatchelfHook }:
+{ stdenv, lib, fetchurl, autoPatchelfHook
+, target ? "kobo"
+, triple ? "arm-kobo-linux-gnueabihf"
+, toolchainHash ? "sha256-urE2gUgmMIvRou3vrH1QxPxDkKR6oCq/Y21t6uHaHyQ="
+}:
 
 stdenv.mkDerivation rec {
-  pname = "koxtoolchain-kobo";
+  pname = "koxtoolchain-${target}";
   version = "2025.05";
 
   src = fetchurl {
-    url = "https://github.com/koreader/koxtoolchain/releases/download/${version}/kobo.tar.gz";
-    hash = "sha256-urE2gUgmMIvRou3vrH1QxPxDkKR6oCq/Y21t6uHaHyQ=";
+    url = "https://github.com/koreader/koxtoolchain/releases/download/${version}/${target}.tar.gz";
+    hash = toolchainHash;
   };
 
-  sourceRoot = "x-tools/arm-kobo-linux-gnueabihf";
+  sourceRoot = "x-tools/${triple}";
 
   nativeBuildInputs = [ autoPatchelfHook ];
   buildInputs = [ stdenv.cc.cc.lib ];
@@ -47,19 +51,19 @@ stdenv.mkDerivation rec {
   installCheckPhase = ''
     runHook preInstallCheck
     echo "--- host driver runs:"
-    "$out/bin/arm-kobo-linux-gnueabihf-gcc" --version | head -1
+    "$out/bin/${triple}-gcc" --version | head -1
     echo "--- and can actually compile and link for ARM:"
     echo 'int f(int x){return x+1;}' > probe.c
-    "$out/bin/arm-kobo-linux-gnueabihf-gcc" -shared -fPIC -o probe.so probe.c
-    "$out/bin/arm-kobo-linux-gnueabihf-readelf" -h probe.so | grep -q 'Machine:.*ARM'
+    "$out/bin/${triple}-gcc" -shared -fPIC -o probe.so probe.c
+    "$out/bin/${triple}-readelf" -h probe.so | grep -q 'Machine:.*ARM'
     echo "--- target sysroot left alone:"
-    "$out/bin/arm-kobo-linux-gnueabihf-readelf" -h \
-      "$out/arm-kobo-linux-gnueabihf/sysroot/lib/libc-2.15.so" | grep -q 'Machine:.*ARM'
+    "$out/bin/${triple}-readelf" -h \
+      "$out/${triple}/sysroot/lib/libc.so.6" | grep -q 'Machine:.*ARM'
     runHook postInstallCheck
   '';
 
   meta = with lib; {
-    description = "Prebuilt arm-kobo-linux-gnueabihf toolchain from koreader/koxtoolchain";
+    description = "Prebuilt ${triple} toolchain from koreader/koxtoolchain";
     homepage = "https://github.com/koreader/koxtoolchain";
     license = licenses.gpl3Plus;
     platforms = [ "x86_64-linux" ];

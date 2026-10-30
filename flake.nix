@@ -29,7 +29,12 @@
         # nixpkgs cross stdenv: the device runs glibc 2.19, and anything linked
         # against a current glibc references symbol versions it does not have.
         # Only offered on x86_64-linux, which is what upstream ships.
-        koboDrv = pkgs.callPackage ./cross/kobo {
+        koboDrv = pkgs.callPackage ./cross/ereader {
+          luabridge = libluabridgeDrv;
+          src = self;
+        };
+        kindlepw2Drv = pkgs.callPackage ./cross/ereader {
+          target = "kindlepw2";
           luabridge = libluabridgeDrv;
           src = self;
         };
@@ -63,7 +68,9 @@
           libcpr = pkgs.cpr;
         } // lib.optionalAttrs (system == "x86_64-linux") {
           kobo = koboDrv;
-          koboToolchain = koboDrv.koboToolchain;
+          koboToolchain = koboDrv.toolchain;
+          kindlepw2 = kindlepw2Drv;
+          kindlepw2Toolchain = kindlepw2Drv.toolchain;
         };
         checks = {
           tests = pkgs.callPackage ./default.nix {

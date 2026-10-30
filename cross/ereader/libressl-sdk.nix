@@ -1,31 +1,32 @@
-# A link target for LibreSSL that matches what the device actually runs.
+# A reproducible LibreSSL link target from a selected KOReader runtime baseline.
 #
 # KOReader ships its own LibreSSL (libssl.so.60 / libcrypto.so.57) and the Kobo
 # has no system OpenSSL, so those are the libraries our .so will resolve against
-# at runtime. Linking against any other build would compile fine and then fail
-# to find symbols on the device.
+# at runtime. A different build may require symbols unavailable on the device.
 #
 # The .so files come out of the KOReader release; the headers come from the
 # matching upstream LibreSSL tarball, because a release zip carries no headers.
 # Both versions are pinned together and must stay in step.
-{ stdenvNoCC, lib, fetchurl, unzip }:
+{ stdenvNoCC, lib, fetchurl, unzip
+, target ? "kobo"
+, libresslVersion ? "4.2.1"
+, libresslHash ? "sha256-bVwvWFg1iOp5H0yGRQBAcdAN+lVKW/eIoAbKHrWr1ws="
+, koreaderVersion ? "v2026.03"
+, koreaderHash ? "sha256-UQu8RhjcxaL8VKKoBp+U6lqnpHpdbFqSt1wi17cBFG8="
+}:
 
-let
-  libresslVersion = "4.2.1";
-  koreaderVersion = "v2026.03";
-in
 stdenvNoCC.mkDerivation {
-  pname = "kobo-libressl-sdk";
+  pname = "${target}-libressl-sdk";
   version = libresslVersion;
 
   srcs = [
     (fetchurl {
       url = "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-${libresslVersion}.tar.gz";
-      hash = "sha256-bVwvWFg1iOp5H0yGRQBAcdAN+lVKW/eIoAbKHrWr1ws=";
+      hash = libresslHash;
     })
     (fetchurl {
-      url = "https://github.com/koreader/koreader/releases/download/${koreaderVersion}/koreader-kobo-${koreaderVersion}.zip";
-      hash = "sha256-UQu8RhjcxaL8VKKoBp+U6lqnpHpdbFqSt1wi17cBFG8=";
+      url = "https://github.com/koreader/koreader/releases/download/${koreaderVersion}/koreader-${target}-${koreaderVersion}.zip";
+      hash = koreaderHash;
     })
   ];
 
@@ -49,6 +50,10 @@ stdenvNoCC.mkDerivation {
   dontStrip = true;
   dontPatchELF = true;
 
+  passthru.runtimeBaseline = {
+    inherit koreaderVersion koreaderHash libresslVersion libresslHash;
+  };
+
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/include" "$out/lib"
@@ -71,7 +76,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = with lib; {
-    description = "LibreSSL headers plus the ARM libssl/libcrypto that KOReader ships for Kobo";
+    description = "LibreSSL headers plus the ARM libssl/libcrypto that KOReader ships for ${target}";
     license = licenses.isc;
     platforms = [ "x86_64-linux" ];
   };
