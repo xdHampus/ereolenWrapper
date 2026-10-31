@@ -7,6 +7,12 @@ can `require()` on a Kobo e-reader.
 nix build .#kobo        # -> result/lib/libereolenwrapper.so
 ```
 
+The shared Nix recipes live in [../ereader/](../ereader/README.md) and also serve
+`nix build .#kindlepw2`, with a separate soft-float toolchain and KOReader/LibreSSL
+pins. See the
+[Kindle family instructions](../../README.md#kindle-cross-build) for that target.
+The standalone shell scripts and the device-specific details below are Kobo-only.
+
 Every download is a fixed-output derivation, so the build itself runs offline
 and the result is cached like any other package. The toolchain alone is 288 MB
 unpacked and the first build takes a few minutes; after that only a change to
@@ -20,13 +26,14 @@ nix shell nixpkgs#cmake nixpkgs#pkg-config --command ./cross/kobo/build.sh
 
 It fetches into `cross/kobo/work/` (gitignored) and is the quicker loop when
 iterating on the cross build itself, since it reuses one build tree instead of
-starting clean. Both paths share `kobo.cmake` and compile the wrapper with the
+starting clean. Both paths share [../ereader/toolchain.cmake](../ereader/toolchain.cmake)
+and compile the wrapper with the
 same flags — `-Wall -Wextra -O2 -std=gnu++20 -fPIC` — so they produce
 equivalent binaries.
 
 Two things the Nix path needs that a normal shell hides:
 
-  * **binutils by name.** `kobo.cmake` sets `CMAKE_AR` and friends with `FORCE`.
+  * **binutils by name.** `../ereader/toolchain.cmake` sets `CMAKE_AR` and friends with `FORCE`.
     Creating an archive is arch-agnostic enough that the host's `ar` works, so
     a shell with binutils installed never notices they were never configured;
     a Nix build has no `ar` at all and fails at "Linking CXX static library"
@@ -59,12 +66,19 @@ only shows up on someone else's device. Static costs about 1 MB and removes the
 question. It has to be built `--with-pic`, or the ARM linker refuses the
 absolute `R_ARM_THM_MOVW_ABS_NC` relocations when they land in a shared object.
 
-**TLS — LibreSSL, dynamically linked against KOReader's own copy.** KOReader
-ships `libssl.so.60` / `libcrypto.so.57` (LibreSSL 4.2.1), so there is no
+**TLS — LibreSSL, dynamically linked against KOReader's own copy.** The default
+Kobo runtime baseline, KOReader v2026.03, ships `libssl.so.60` / `libcrypto.so.57`
+(LibreSSL 4.2.1), so there is no
 reason to ship a second TLS stack. Headers come from the matching upstream
 tarball and the link target is KOReader's actual binary, so the ABI matches by
 construction. `LIBRESSL_VER` and `KOREADER_VER` in `build.sh` must be kept in
 step; the build prints the version it found.
+
+This is a reproducible link-time baseline, not an exact installed KOReader
+version requirement. Other releases need compatible runtime libraries.
+The Nix package supports [runtime baseline overrides](../ereader/README.md#runtime-baseline-overrides).
+The standalone script retains its pinned Kobo baseline; changing its pins
+requires a fresh `WORKDIR` so cached SDK and static libraries are not reused.
 
 Note the link needs `-Wl,--no-as-needed`: the TLS symbols come from inside
 `libcurl.a`, which the linker processes *after* `-lssl -lcrypto`, so with

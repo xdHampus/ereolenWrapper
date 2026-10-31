@@ -1,8 +1,8 @@
-# libereolenwrapper.so for Kobo e-readers, as a Nix output.
+# libereolenwrapper.so for Kobo or KOReader's kindlepw2 Kindle family.
 #
-# Same recipe as build.sh, with the downloads turned into fixed-output
+# Same recipe as ../kobo/build.sh, with the downloads turned into fixed-output
 # derivations so the build itself runs offline and reproducibly. Everything is
-# pinned in the files beside this one; see README.md for why each choice is
+# pinned in the files beside this one; see ../kobo/README.md for why each choice is
 # what it is.
 #
 #   nix build .#kobo
@@ -18,6 +18,8 @@
 , lua5_1
 , nlohmann_json
 , luabridge
+, target ? "kobo"
+, runtimeBaseline ? { }
 , src ? lib.cleanSourceWith {
     name = "ereolenWrapper-source";
     src = ../..;
@@ -29,44 +31,82 @@
   }
 }:
 
+assert lib.assertMsg
+  (runtimeBaseline == { } || builtins.all (name: builtins.hasAttr name runtimeBaseline)
+    [ "koreaderVersion" "koreaderHash" "libresslVersion" "libresslHash" ])
+  "runtimeBaseline must include koreaderVersion, koreaderHash, libresslVersion, and libresslHash";
+
 let
-  toolchainFile = ./kobo.cmake;
-  triple = "arm-kobo-linux-gnueabihf";
+  toolchainFile = ./toolchain.cmake;
+  config = {
+    kobo = {
+      triple = "arm-kobo-linux-gnueabihf";
+      archFlags = "-march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard";
+      floatAbi = "hard";
+      caBundle = "/mnt/onboard/.adds/koreader/data/ca-bundle.crt";
+      toolchain = { };
+      tls = { };
+      abiCeiling = {
+        GLIBC = "2.19";
+        GLIBCXX = "3.4.33";
+        CXXABI = "1.3.15";
+      };
+    };
+    kindlepw2 = {
+      triple = "arm-kindlepw2-linux-gnueabi";
+      archFlags = "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mthumb";
+      floatAbi = "soft";
+      caBundle = "/mnt/us/koreader/data/ca-bundle.crt";
+      toolchain = {
+        toolchainHash = "sha256-Xlxhlw0kWY/sUMPWCdDrl3VwUg1U0850hm3IfDcjhQY=";
+      };
+      tls = {
+        koreaderVersion = "v2026.07.1";
+        koreaderHash = "sha256-6h9XXFRJKixnnRKLfzIQ/X1qh+X1of8fen/iCA/2j4Y=";
+        libresslVersion = "4.3.2";
+        libresslHash = "sha256-7fAa7iTGXWnmqe/LnUS82mgv+dTzu72V55Th36kIR7U=";
+      };
+      abiCeiling = {
+        GLIBC = "2.12.2";
+        GLIBCXX = "3.4.33";
+        CXXABI = "1.3.15";
+      };
+    };
+  }.${target};
+  inherit (config) triple archFlags abiCeiling;
 
-  koboToolchain = callPackage ./toolchain.nix { };
-  libresslSdk = callPackage ./libressl-sdk.nix { };
-  koboCurl = callPackage ./curl.nix { inherit koboToolchain libresslSdk; };
-  koboCpr = callPackage ./cpr.nix { inherit koboToolchain koboCurl toolchainFile; };
+  toolchain = callPackage ./toolchain.nix (config.toolchain // { inherit target triple; });
+  libresslSdk = callPackage ./libressl-sdk.nix (config.tls // runtimeBaseline // { inherit target; });
+  crossCurl = callPackage ./curl.nix {
+    inherit target triple archFlags toolchain libresslSdk;
+    inherit (config) caBundle;
+  };
+  crossCpr = callPackage ./cpr.nix {
+    inherit target triple archFlags toolchain crossCurl toolchainFile;
+  };
 
-  # kobo.cmake points CMAKE_FIND_ROOT_PATH at exactly one prefix, and
+  # toolchain.cmake points CMAKE_FIND_ROOT_PATH at exactly one prefix, and
   # FIND_ROOT_PATH_MODE_PACKAGE is ONLY, so everything findable has to live
   # under a single root. The three header-only dependencies are architecture
   # independent, so the ordinary native nixpkgs outputs are correct here.
-  koboPrefix = symlinkJoin {
-    name = "kobo-prefix";
-    paths = [ koboCurl koboCpr nlohmann_json lua5_1 luabridge ];
+  prefix = symlinkJoin {
+    name = "${target}-prefix";
+    paths = [ crossCurl crossCpr nlohmann_json lua5_1 luabridge ];
   };
 
-  # What the device can actually resolve. The Libra H2O runs glibc 2.19; the
-  # C++ runtime is whatever KOReader ships, currently GLIBCXX 3.4.33 and
-  # CXXABI 1.3.15. Linking something newer compiles cleanly and then fails at
-  # dlopen time on the device, which is a slow way to find out.
-  abiCeiling = {
-    GLIBC = "2.19";
-    GLIBCXX = "3.4.33";
-    CXXABI = "1.3.15";
-  };
 in
 stdenvNoCC.mkDerivation {
-  pname = "ereolenwrapper-kobo";
+  pname = "ereolenwrapper-${target}";
   version = "0.1.0";
 
   inherit src;
 
-  nativeBuildInputs = [ cmake koboToolchain koboCurl ];
+  nativeBuildInputs = [ cmake toolchain crossCurl ];
 
-  KOBO_TC = koboToolchain;
-  KOBO_PREFIX = koboPrefix;
+  EREADER_TC = toolchain;
+  EREADER_PREFIX = prefix;
+  EREADER_TRIPLE = triple;
+  EREADER_ARCH_FLAGS = archFlags;
 
   # Release, which is the setup hook's default and is left alone deliberately.
   # The top-level CMakeLists defines CMAKE_CXX_FLAGS_RELEASE as "-O2" and falls
@@ -83,9 +123,9 @@ stdenvNoCC.mkDerivation {
     "-DENABLE_LUA_LINK=OFF"
     "-DENABLE_TESTING=OFF"
     "-DENABLE_INSTALL=OFF"
-    "-DCMAKE_PREFIX_PATH=${koboPrefix}"
-    "-DLUA_INCLUDE_DIR=${koboPrefix}/include"
-    "-DLUABRIDGE_INCLUDE_DIRS=${koboPrefix}/include"
+    "-DCMAKE_PREFIX_PATH=${prefix}"
+    "-DLUA_INCLUDE_DIR=${prefix}/include"
+    "-DLUABRIDGE_INCLUDE_DIRS=${prefix}/include"
   ];
 
   # Anything with a space in it has to go through cmakeFlagsArray: entries of
@@ -93,7 +133,7 @@ stdenvNoCC.mkDerivation {
   # "-lcrypto" and make it exit with "Unknown argument".
   preConfigure = ''
     cmakeFlagsArray+=(
-      "-DCMAKE_CXX_FLAGS=-Wall -Wextra -DCURL_STATICLIB"
+      "-DCMAKE_CXX_FLAGS=-Wall -Wextra -DCURL_STATICLIB ${archFlags}"
       # libcurl.a is processed after -lssl/-lcrypto, so with the default
       # --as-needed the linker has not yet seen the SSL references and drops
       # both from DT_NEEDED; the module then fails to load on the device.
@@ -112,7 +152,7 @@ stdenvNoCC.mkDerivation {
     runHook preInstall
     mkdir -p "$out/lib"
     cp src/main/libereolenwrapper.so "$out/lib/"
-    ${koboToolchain}/bin/${triple}-strip "$out/lib/libereolenwrapper.so"
+    ${toolchain}/bin/${triple}-strip "$out/lib/libereolenwrapper.so"
     runHook postInstall
   '';
 
@@ -124,13 +164,15 @@ stdenvNoCC.mkDerivation {
   installCheckPhase = ''
     runHook preInstallCheck
     so="$out/lib/libereolenwrapper.so"
-    readelf="${koboToolchain}/bin/${triple}-readelf"
+    readelf="${toolchain}/bin/${triple}-readelf"
 
     # Everything below reads readelf's output from a file rather than a pipe:
     # the stdenv sets `set -o pipefail`, so a `grep -q` that quits early kills
     # readelf with SIGPIPE and fails the pipeline regardless of what it found.
     $readelf -h "$so" > header.txt
     grep -q 'Machine:.*ARM' header.txt || { echo "not an ARM object"; exit 1; }
+    grep -q 'Flags:.*${config.floatAbi}-float ABI' header.txt \
+      || { echo "wrong float ABI for ${target}"; exit 1; }
 
     $readelf -d "$so" > dynamic.txt
     echo "--- DT_NEEDED:"
@@ -171,10 +213,10 @@ stdenvNoCC.mkDerivation {
     runHook postInstallCheck
   '';
 
-  passthru = { inherit koboToolchain libresslSdk koboCurl koboCpr koboPrefix; };
+  passthru = { inherit toolchain libresslSdk crossCurl crossCpr prefix; };
 
   meta = with lib; {
-    description = "libereolenwrapper.so cross-built for Kobo e-readers (KOReader Lua C module)";
+    description = "libereolenwrapper.so cross-built for ${target} e-readers (KOReader Lua C module)";
     homepage = "https://github.com/xdHampus/ereolenWrapper";
     license = licenses.lgpl3Plus;
     platforms = [ "x86_64-linux" ];
